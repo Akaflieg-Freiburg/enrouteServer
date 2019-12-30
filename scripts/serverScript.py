@@ -119,13 +119,13 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "~/Software/projects/enroute/serverScripts/AIXM2GeoJSON.py asp.aip nav.aip wpt.aip aixm.xml",
+            "any2GeoJSON.py asp.aip nav.aip wpt.aip aixm.xml",
             shell=True,
             check=True,
         )
     else:
         subprocess.run(
-            "~/Software/projects/enroute/serverScripts/AIXM2GeoJSON.py asp.aip nav.aip wpt.aip",
+            "any2GeoJSON.py asp.aip nav.aip wpt.aip",
             shell=True,
             check=True,
         )

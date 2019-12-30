@@ -52,7 +52,7 @@ This script does the following.
 ./serverScript.py
 ```
 
-### ## 2.2. shrinkTileSet.sh
+### 2.2. shrinkTileSet.sh
 
 This is a trivial shell script that the author uses to set up mbtile file for use with the **enroute** app.
 
@@ -65,7 +65,3 @@ This is a trivial shell script that the author uses to set up mbtile file for us
 ```shell
 ./shrinkTileSet.sh
 ```
-
-
-
-
