@@ -73,6 +73,7 @@ serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv001"
 airac = ("%04d" % datetime.date.today().year)[2:4] + (
     "%02d" % datetime.date.today().month
 )
+airac = "1912"
 
 opener = urllib.request.build_opener()
 opener.addheaders = [("User-agent", "Mozilla/5.0")]
