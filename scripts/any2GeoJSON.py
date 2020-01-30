@@ -83,7 +83,7 @@ def readOpenAIP(fileName):
     #
     for airport in root.findall('./WAYPOINTS/AIRPORT'):
         
-        # Ignore the following navaids
+        # Ignore the following airfields
         if airport.get('TYPE') in ["HELI_CIVIL", "HELI_MIL", ""]:
             continue
         
@@ -177,8 +177,12 @@ def readOpenAIP(fileName):
             RWYsIsPaved = rwy.find('SFC').text in ["ASPH", "CONC"]
             
             if RWYsIsPaved and not bestRWY_isPaved:
-                bestRWY_len = 0.0
-            if float(rwy.find('LENGTH').text) > bestRWY_len:
+                bestRWY_isPaved = RWYsIsPaved
+                bestRWY_dir     = float(rwy.find('DIRECTION').get('TC'))
+                bestRWY_found   = True
+                bestRWY_len     = float(rwy.find('LENGTH').text)
+
+            if (RWYsIsPaved == bestRWY_isPaved) and (float(rwy.find('LENGTH').text) > bestRWY_len):
                 bestRWY_isPaved = RWYsIsPaved
                 bestRWY_dir     = float(rwy.find('DIRECTION').get('TC'))
                 bestRWY_found   = True
