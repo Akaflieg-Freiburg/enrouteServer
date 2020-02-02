@@ -73,7 +73,6 @@ serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv001"
 airac = ("%04d" % datetime.date.today().year)[2:4] + (
     "%02d" % datetime.date.today().month
 )
-airac = "1912"
 
 opener = urllib.request.build_opener()
 opener.addheaders = [("User-agent", "Mozilla/5.0")]
@@ -86,26 +85,27 @@ os.chdir(workingDir)
 for region in regions:
     print("Working on region " + region[1])
 
+    # http://snapshots.openflightmaps.org/live/2002/ofmx/ed/latest/ofmx_ed.zip
     if region[0] != "":
-        print("  … downloading AIXM")
+        print("  … downloading OFMX")
         urllib.request.urlretrieve(
             "http://snapshots.openflightmaps.org/live/"
             + airac
-            + "/aixm45/"
+            + "/ofmx/"
             + region[0]
-            + "/latest/aixm_"
+            + "/latest/ofmx_"
             + region[0][0:2]
             + ".zip",
-            "aixm.zip",
+            "ofmx.zip",
         )
         print("  … extracting")
-        with zipfile.ZipFile("aixm.zip", "r") as zip_ref:
-            fileName = "aixm_" + region[0][0:2] + "/isolated/aixm_" + region[0][0:2] + ".xml"
+        with zipfile.ZipFile("ofmx.zip", "r") as zip_ref:
+            fileName = "ofmx_" + region[0][0:2] + "/isolated/ofmx_" + region[0][0:2] + ".xml"
             zip_ref.extract(fileName)
-            os.rename(fileName, "aixm.xml")
+            os.rename(fileName, "ofmx.xml")
             # Delete leftover files
-            os.remove("aixm.zip")
-            shutil.rmtree("aixm_" + region[0][0:2])
+            os.remove("ofmx.zip")
+            shutil.rmtree("ofmx_" + region[0][0:2])
 
     print("  … downloading openAIP asp")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_asp.aip"
@@ -120,7 +120,7 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "any2GeoJSON.py asp.aip nav.aip wpt.aip aixm.xml",
+            "any2GeoJSON.py asp.aip nav.aip wpt.aip ofmx.xml",
             shell=True,
             check=True,
         )
