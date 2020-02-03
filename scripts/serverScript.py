@@ -8,6 +8,7 @@ import os.path, time
 import shutil
 import subprocess
 import urllib.request
+import sys
 import zipfile
 
 regions = [
@@ -85,27 +86,36 @@ os.chdir(workingDir)
 for region in regions:
     print("Working on region " + region[1])
 
-    # http://snapshots.openflightmaps.org/live/2002/ofmx/ed/latest/ofmx_ed.zip
     if region[0] != "":
-        print("  … downloading OFMX")
+        # Download and extract OFMX
+        print("  … downloading OFMX", end=' ')
         urllib.request.urlretrieve(
-            "http://snapshots.openflightmaps.org/live/"
-            + airac
-            + "/ofmx/"
-            + region[0]
-            + "/latest/ofmx_"
-            + region[0][0:2]
-            + ".zip",
-            "ofmx.zip",
+            "http://snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/ofmx_{2}.zip".format(airac, region[0], region[0][0:2]),
+            "ofmx.zip"
         )
         print("  … extracting")
         with zipfile.ZipFile("ofmx.zip", "r") as zip_ref:
             fileName = "ofmx_" + region[0][0:2] + "/isolated/ofmx_" + region[0][0:2] + ".xml"
             zip_ref.extract(fileName)
-            os.rename(fileName, "ofmx.xml")
+            os.rename(fileName, "data.ofmx")
             # Delete leftover files
             os.remove("ofmx.zip")
             shutil.rmtree("ofmx_" + region[0][0:2])
+
+        # Download and extract OFMX
+        print("  … downloading AIXM", end=' ')
+        urllib.request.urlretrieve(
+            "http://snapshots.openflightmaps.org/live/1912/aixm45/{}/latest/aixm_{}.zip".format(region[0], region[0][0:2]),
+            "aixm.zip"
+        )
+        print("  … extracting")
+        with zipfile.ZipFile("aixm.zip", "r") as zip_ref:
+            fileName = "aixm_" + region[0][0:2] + "/isolated/aixm_" + region[0][0:2] + ".xml"
+            zip_ref.extract(fileName)
+            os.rename(fileName, "data.aixm")
+            # Delete leftover files
+            os.remove("aixm.zip")
+            shutil.rmtree("aixm_" + region[0][0:2])
 
     print("  … downloading openAIP asp")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_asp.aip"
@@ -120,13 +130,13 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "any2GeoJSON.py asp.aip nav.aip wpt.aip ofmx.xml",
+            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx".format(sys.path[0], workingDir),
             shell=True,
             check=True,
         )
     else:
         subprocess.run(
-            "any2GeoJSON.py asp.aip nav.aip wpt.aip",
+            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip".format(sys.path[0], workingDir),
             shell=True,
             check=True,
         )

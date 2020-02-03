@@ -300,8 +300,8 @@ def readOpenAIP(fileName):
 
 
 
-def readAIXM(fileName):
-    print('Read AIXM…')
+def readOFMX(fileName):
+    print('Read OFMX…')
     tree = ET.parse(fileName)
     root = tree.getroot()
 
@@ -408,7 +408,7 @@ def readAIXM(fileName):
 
 
 
-def readNavaidsFromAIXM(fileName):
+def readNavaidsFromOFMX(fileName):
     print('Read AIXM for navaids…')
     tree = ET.parse(fileName)
     root = tree.getroot()
@@ -492,11 +492,11 @@ for arg in [arg for arg in sys.argv[1:] if arg.endswith('.aip')]:
         if os.path.getsize(arg) != 0:
             haveNav = True
     readOpenAIP(arg)
-for arg in [arg for arg in sys.argv[1:] if arg.endswith('.xml')]:
-    readAIXM(arg)
+for arg in [arg for arg in sys.argv[1:] if arg.endswith('.ofmx')]:
+    readOFMX(arg)
     if not haveNav:
-        readNavaidsFromAIXM(arg)    
-for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".xml")]:
+        readNavaidsFromOFMX(arg)    
+for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx")]:
     print("Unknown file type {}".format(arg))
     exit(-1)
 
