@@ -130,7 +130,7 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx".format(sys.path[0], workingDir),
+            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx {1}/data.aixm".format(sys.path[0], workingDir),
             shell=True,
             check=True,
         )

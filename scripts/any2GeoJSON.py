@@ -300,7 +300,7 @@ def readOpenAIP(fileName):
 
 
 
-def readOFMX(fileName):
+def readAIXM(fileName):
     print('Read OFMX…')
     tree = ET.parse(fileName)
     root = tree.getroot()
@@ -342,7 +342,13 @@ def readOFMX(fileName):
 
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
-        
+
+
+def readOFMX(fileName):
+    print('Read OFMX…')
+    tree = ET.parse(fileName)
+    root = tree.getroot()
+
 
     #
     # Interpret all reporting points
@@ -404,8 +410,6 @@ def readOFMX(fileName):
         
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
-
-
 
 
 def readNavaidsFromOFMX(fileName):
@@ -496,7 +500,9 @@ for arg in [arg for arg in sys.argv[1:] if arg.endswith('.ofmx')]:
     readOFMX(arg)
     if not haveNav:
         readNavaidsFromOFMX(arg)    
-for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx")]:
+for arg in [arg for arg in sys.argv[1:] if arg.endswith('.aixm')]:
+    readAIXM(arg)
+for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
     print("Unknown file type {}".format(arg))
     exit(-1)
 
