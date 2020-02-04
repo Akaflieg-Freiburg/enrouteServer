@@ -301,7 +301,7 @@ def readOpenAIP(fileName):
 
 
 def readAIXM(fileName):
-    print('Read OFMX…')
+    print('Read AIXM…')
     tree = ET.parse(fileName)
     root = tree.getroot()
 
