@@ -353,59 +353,108 @@ def readOFMX(fileName):
     #
     # Interpret all reporting points
     #
-    for dpn in root.findall('./Dpn'):
-        if not dpn.find("codeType").text in ["VFR-MRP", "VFR-RP"]:
+    for Dpn in root.findall('./Dpn'):
+        if not Dpn.find("codeType").text in ["VFR-MRP", "VFR-RP"]:
             continue
+        DpnUid   = Dpn.find('DpnUid')
 
-        DpnUid = dpn.find('DpnUid')
-        mid = DpnUid.get('mid')
+        mid      = DpnUid.get('mid')
+        WPcodeId = ""
+        APcodeId = ""
+        txtName  = ""
 
+        if DpnUid.find('codeId').text != None:
+            WPcodeId = DpnUid.find('codeId').text
+        
+        if Dpn.find('AhpUidAssoc') != None:
+            if Dpn.find('AhpUidAssoc').find('codeId') != None:
+                if Dpn.find('AhpUidAssoc').find('codeId').text != None:
+                    APcodeId = Dpn.find('AhpUidAssoc').find('codeId').text
+
+        if Dpn.find('txtName') != None:
+            if Dpn.find('txtName').text != None:
+                txtName = Dpn.find('txtName').text
+
+        if txtName == "":
+            print("Found Dpn without txtName. Exiting")
+            exit(-1)
+
+        if WPcodeId == "" and txtName != "":
+            WPcodeId = txtName
+            
         # Feature dictionary, will be filled in here and included into JSON
         feature = {'type': 'Feature'}
        
         # Position
         feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(DpnUid)}
         
+        #
         # Properties
+        # 
         properties = {'TYP': 'WP'}
         properties['MID'] = DpnUid.get('mid')
-        if dpn.find("codeType").text == "VFR-MRP":
+        if Dpn.find("codeType").text == "VFR-MRP":
             properties['CAT'] = 'MRP'
-        if dpn.find("codeType").text == "VFR-RP":
+        if Dpn.find("codeType").text == "VFR-RP":
             properties['CAT'] = 'RP'
+
+        # Property: COD - required
+        #
+        # This property holds a code name of the waypoint, such as "EDDE-S1".
+        # The **enroute** app uses this property for the ID field on the
+        # waypoint description dialog.
+
+        if APcodeId != "":
+            properties['COD']  = APcodeId + "-" + WPcodeId
+        else:
+            properties['COD']  = WPcodeId
+
+        # Property: COM - optional
+        #
+        # A string that describes an associated frequency, such as "EDDE - TWR
+        # 121.150 MHz".
+
+        if APcodeId != "" and APcodeId in ADFrequencies:
+            properties['COM'] = APcodeId + " - " + ADFrequencies[APcodeId]
+
+        # Property: ICA - optional
+        #
+        # A string with the ICAO code of an associated airfield, such as "EDDE".
+
+        if APcodeId != "":
+            properties['ICA'] = APcodeId
+
+        # Property: MID - optional
+        #
+        # Internal ID of the waypoint in the AIXM database. This is a string
+        # such as "7295".
+
+        properties['MID'] = mid
+
+        # Property: NAM - required
+        #
+        # Name of the waypoint, such as "ERFURT-WEIMAR (SIERRA1)".  The
+        # **enroute** app uses this property for the title of the waypoint
+        # description dialog.
+
+        if APcodeId != "" and APcodeId in ADNames:
+            fullName = ADNames[APcodeId]
+            if txtName != "":
+                fullName += " (" + txtName + ")"
+            properties['NAM'] = fullName
+        else:
+            properties['NAM']  = txtName
+
+        # Property: SCO - required for CAT == MRP and CAT == RP
+        #    
+        # Short description of the waypoint, such as "S1".  The **enroute** app
+        # uses this property for the display name of the point on the moving
+        # map.
         
-        if dpn.find('AhpUid_codeId') != None:
-            properties['ICA'] = dpn.find('AhpUid_codeId').text
+        properties['SCO'] = WPcodeId
 
-        if dpn.find('AhpUid_codeId') != None:
-            if dpn.find('AhpUid_codeId').text in ADNames:
-                fullName = ADNames[dpn.find('AhpUid_codeId').text]
-                if (dpn.find('txtName') != None) and (dpn.find('txtName').text != None):
-                    fullName += " (" + dpn.find('txtName').text + ")"
-                properties['NAM'] = fullName
-            if dpn.find('AhpUid_codeId').text in ADFrequencies:
-                properties['COM'] = dpn.find('AhpUid_codeId').text + " - " + ADFrequencies[dpn.find('AhpUid_codeId').text]
-        else:
-            properties['NAM']  = DpnUid.find('codeId').text
-
-        if dpn.find('AhpUid_codeId') != None and dpn.find('AhpUid_codeId').text != None:
-            if DpnUid.find('codeId').text != None:
-                properties['COD']  = dpn.find('AhpUid_codeId').text + "-" + DpnUid.find('codeId').text
-            else:
-                properties['COD']  = dpn.find('AhpUid_codeId').text + "-" + dpn.find('txtName').text
-        if DpnUid.find('codeId').text != None:
-            properties['SCO'] = DpnUid.find('codeId').text
-        else:
-            properties['SCO'] = dpn.find('txtName').text
-        if ('NAM' not in properties) and ('COD' in properties):
-            properties['NAM'] = properties['COD']
-        if ('NAM' not in properties) and ('SCO' in properties):
-            properties['NAM'] = properties['SCO']
-        if 'NAM' not in properties:
-            print('Error. Cannot find name for Waypoint')
-            exit(-1)
-            
-            
+        # Done with properties
+        
         feature['properties'] = properties
         
         # Feature is now complete. Add it to the 'features' array
@@ -413,7 +462,7 @@ def readOFMX(fileName):
 
 
 def readNavaidsFromOFMX(fileName):
-    print('Read AIXM for navaids…')
+    print('Read OFMX for navaids…')
     tree = ET.parse(fileName)
     root = tree.getroot()
 
