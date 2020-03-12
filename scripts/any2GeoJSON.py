@@ -337,7 +337,7 @@ def readAIXM(fileName):
         if ("GLIDER" in txtName.upper()) or ("UL" in txtName.upper()):
             properties['GAC'] = "red"
         else:
-            properties['GAC'] = "green"
+            properties['GAC'] = "blue"
         feature['properties'] = properties        
 
         # Feature is now complete. Add it to the 'features' array
