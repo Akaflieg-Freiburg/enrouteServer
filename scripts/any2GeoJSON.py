@@ -53,7 +53,12 @@ def getCoordinate(xmlNode):
 
 def interpretAltitudeLimit(limit):
     alt   = limit.find('ALT')
-    altText = str(round(float(alt.text)))
+    if alt.text != None:
+        altText = str(round(float(alt.text)))
+    else:
+        print("WARNING: Cannot interpret vertical airspace limit, assuming '0' as a default!")
+        altText = "0"
+        
     if alt.get('UNIT') == "FL":
         return "FL " + altText 
     if alt.get('UNIT') != "F":
