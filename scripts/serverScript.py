@@ -58,6 +58,7 @@ regions = [
     ["",     "Europe/Iceland", "is"],
     ["",     "Europe/Liechtenstein", "li"],
     ["",     "Europe/Norway", "no"],
+    ["",     "Europe/Serbia", "rs"],
     ["lsas", "Europe/Switzerland", "ch"],
     ["",     "Europe/United Kingdom", "gb"],
     #
