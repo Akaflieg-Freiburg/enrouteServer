@@ -262,8 +262,13 @@ def readOpenAIP(fileName):
     #
     # Read airspaces
     #
+    if verbose:
+        print(': Read airspaces')
     for airspace in root.findall('./AIRSPACES/ASP'):
-        
+        if verbose:
+            print('')
+            print(': -- Airspace')
+            ET.dump(airspace)       
         # Ignore the following airspaces
         if airspace.get('CATEGORY') in ["E", "F", "FIR", "GLIDING", "G", "OTH", "UIR", "WAVE"]:
             continue
@@ -538,6 +543,7 @@ def readNavaidsFromOFMX(fileName):
 #
 
 numCoordDigits = 5
+verbose = False
 
 features = []
 
