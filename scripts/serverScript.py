@@ -96,7 +96,7 @@ for region in regions:
         )
         print("  … extracting")
         with zipfile.ZipFile("ofmx.zip", "r") as zip_ref:
-            fileName = "ofmx_" + region[0][0:2] + "/isolated/ofmx_" + region[0][0:2] + ".xml"
+            fileName = "ofmx_" + region[0][0:2] + "/isolated/ofmx_" + region[0][0:2] + ".ofmx"
             zip_ref.extract(fileName)
             os.rename(fileName, "data.ofmx")
             # Delete leftover files
