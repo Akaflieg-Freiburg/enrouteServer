@@ -309,15 +309,13 @@ def readOpenAIP(fileName):
         features.append(feature)
 
 
-
-def readAIXM(fileName):
-    print('Read AIXM…')
+def readOFMX(fileName):
+    print('Read OFMX…')
     tree = ET.parse(fileName)
     root = tree.getroot()
 
-
     #
-    # Find all procedures
+    # Read all procedures
     #
     for prc in root.findall('./Prc'):
         PrcUid = prc.find('PrcUid')
@@ -327,17 +325,17 @@ def readAIXM(fileName):
         if prc.find('usageType') != None:
             if prc.find('usageType').text != "FIXED_WING":
                 continue;
-
+            
         # Feature dictionary, will be filled in here and included into JSON
         feature = {'type': 'Feature'}
 
         # Get geometry
         coordinates = []
-        if prc.find('beztrajectory') == None:
+        if prc.find('_beztrajectory') == None:
             continue;
-        if prc.find('beztrajectory').find('gmlPosList') == None:
+        if prc.find('_beztrajectory').find('gmlPosList') == None:
             continue;
-        for coordinatePair in prc.find('beztrajectory').find('gmlPosList').text.split():
+        for coordinatePair in prc.find('_beztrajectory').find('gmlPosList').text.split():
             x = coordinatePair.split(',')
             coordinates.append([round(float(x[0]), numCoordDigits), round(float(x[1]), numCoordDigits)])
         feature['geometry'] = {'type': 'LineString', 'coordinates': coordinates}
@@ -348,20 +346,13 @@ def readAIXM(fileName):
             properties['GAC'] = "red"
         else:
             properties['GAC'] = "blue"
-        feature['properties'] = properties        
+        feature['properties'] = properties
 
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
 
-
-def readOFMX(fileName):
-    print('Read OFMX…')
-    tree = ET.parse(fileName)
-    root = tree.getroot()
-
-
     #
-    # Interpret all reporting points
+    # Read all reporting points
     #
     for Dpn in root.findall('./Dpn'):
         if not Dpn.find("codeType").text in ["VFR-MRP", "VFR-RP"]:
@@ -560,8 +551,6 @@ for arg in [arg for arg in sys.argv[1:] if arg.endswith('.ofmx')]:
     readOFMX(arg)
     if not haveNav:
         readNavaidsFromOFMX(arg)    
-for arg in [arg for arg in sys.argv[1:] if arg.endswith('.aixm')]:
-    readAIXM(arg)
 for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
     print("Unknown file type {}".format(arg))
     exit(-1)

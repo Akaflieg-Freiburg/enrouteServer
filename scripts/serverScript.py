@@ -89,34 +89,11 @@ for region in regions:
 
     if region[0] != "":
         # Download and extract OFMX
-        print("  … downloading OFMX", end=' ')
+        print("  … downloading OFMX")
         urllib.request.urlretrieve(
-            "http://snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/ofmx_{2}.zip".format(airac, region[0], region[0][0:2]),
-            "ofmx.zip"
+            "https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}.xml".format(airac, region[0], region[0][0:2]),
+            "data.ofmx"
         )
-        print("  … extracting")
-        with zipfile.ZipFile("ofmx.zip", "r") as zip_ref:
-            fileName = "ofmx_" + region[0][0:2] + "/isolated/ofmx_" + region[0][0:2] + ".ofmx"
-            zip_ref.extract(fileName)
-            os.rename(fileName, "data.ofmx")
-            # Delete leftover files
-            os.remove("ofmx.zip")
-            shutil.rmtree("ofmx_" + region[0][0:2])
-
-        # Download and extract OFMX
-        print("  … downloading AIXM", end=' ')
-        urllib.request.urlretrieve(
-            "http://snapshots.openflightmaps.org/live/1912/aixm45/{}/latest/aixm_{}.zip".format(region[0], region[0][0:2]),
-            "aixm.zip"
-        )
-        print("  … extracting")
-        with zipfile.ZipFile("aixm.zip", "r") as zip_ref:
-            fileName = "aixm_" + region[0][0:2] + "/isolated/aixm_" + region[0][0:2] + ".xml"
-            zip_ref.extract(fileName)
-            os.rename(fileName, "data.aixm")
-            # Delete leftover files
-            os.remove("aixm.zip")
-            shutil.rmtree("aixm_" + region[0][0:2])
 
     print("  … downloading openAIP asp")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_asp.aip"
@@ -131,7 +108,7 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx {1}/data.aixm".format(sys.path[0], workingDir),
+            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx ".format(sys.path[0], workingDir),
             shell=True,
             check=True,
         )
