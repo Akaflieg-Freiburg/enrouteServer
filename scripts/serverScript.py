@@ -66,6 +66,11 @@ regions = [
     #
     ["",     "North America/Canada", "ca"],
     ["",     "North America/United States", "us"],
+    #
+    # South America
+    #
+    ["",     "South America/Argentina", "ar"],
+    ["",     "South America/Brazil", "br"],
 ]
 
 
@@ -126,8 +131,10 @@ for region in regions:
     ):
         print("GeoJSON file has not changed. Keeping old version.")
     else:
-        print("GeoJSON file has changed. Taking new version.")
+        print("GeoJSON file has changed. Taking new version, generating Zopfli compressed version.")
         os.rename("test.geojson", outputFile)
+        subprocess.run("rm -f '"+outputFile+".gz'", shell=True, check=True)
+        subprocess.run("zopfli --best '"+outputFile+"'", shell=True, check=True)
     print("\n")
 
 
@@ -153,7 +160,7 @@ if key == "y":
     subprocess.run(
         "rsync -e ssh -vaz --delete "
         + mapStorageDir
-        + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv001",
+        + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv002",
         shell=True,
         check=True,
     )
