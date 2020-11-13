@@ -319,7 +319,7 @@ def readOFMX(fileName):
     #
     for prc in root.findall('./Prc'):
         PrcUid = prc.find('PrcUid')
-
+        print(prc.find('codeType').text)
         if (prc.find('codeType').text != "TRAFFIC_CIRCUIT") and ("VFR" not in prc.find('codeType').text):
             continue;
         if prc.find('usageType') != None:
@@ -339,10 +339,32 @@ def readOFMX(fileName):
             x = coordinatePair.split(',')
             coordinates.append([round(float(x[0]), numCoordDigits), round(float(x[1]), numCoordDigits)])
         feature['geometry'] = {'type': 'LineString', 'coordinates': coordinates}
-
+      
+        # Get text name
         txtName = prc.find('txtName').text
+        print(" > " + txtName)
+
+        # Get TFC height
+        if (prc.find('codeType').text == "TRAFFIC_CIRCUIT") and (prc.find('codeDistVerTfc') != None) and (prc.find('uomDistVerTfc') != None) and (prc.find('valDistVerTfc') != None):
+            codeDistVerTfc = ""
+            if prc.find('codeDistVerTfc').text != None:
+                codeDistVerTfc = prc.find('codeDistVerTfc').text
+            uomDistVerTfc = ""
+            if prc.find('uomDistVerTfc').text != None:
+                uomDistVerTfc = prc.find('uomDistVerTfc').text
+            valDistVerTfc = ""
+            if prc.find('valDistVerTfc').text != None:
+                valDistVerTfc = prc.find('valDistVerTfc').text
+            
+            if (codeDistVerTfc == "ALT") and (uomDistVerTfc == "FT") and (valDistVerTfc != ""):
+                if txtName != "":
+                    txtName = txtName + " • "
+                txtName = txtName + valDistVerTfc + " ft MSL"
+                print(txtName)
+        
+        # Determine type
         properties = {'TYP': 'PRC', 'CAT': 'PRC', 'NAM': txtName}
-        if ("GLIDER" in txtName.upper()) or ("UL" in txtName.upper()):
+        if ("GLIDER" in txtName.upper()) or (re.search(r"\b" + re.escape('UL') + r"\b", txtName.upper())):
             properties['GAC'] = "red"
         else:
             properties['GAC'] = "blue"
