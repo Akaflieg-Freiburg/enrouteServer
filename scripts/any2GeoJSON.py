@@ -2,6 +2,7 @@
 
 import json
 import os.path
+import re
 import sys
 import xml.etree.ElementTree as ET
 
@@ -319,7 +320,6 @@ def readOFMX(fileName):
     #
     for prc in root.findall('./Prc'):
         PrcUid = prc.find('PrcUid')
-        print(prc.find('codeType').text)
         if (prc.find('codeType').text != "TRAFFIC_CIRCUIT") and ("VFR" not in prc.find('codeType').text):
             continue;
         if prc.find('usageType') != None:
@@ -342,7 +342,6 @@ def readOFMX(fileName):
       
         # Get text name
         txtName = prc.find('txtName').text
-        print(" > " + txtName)
 
         # Get TFC height
         if (prc.find('codeType').text == "TRAFFIC_CIRCUIT") and (prc.find('codeDistVerTfc') != None) and (prc.find('uomDistVerTfc') != None) and (prc.find('valDistVerTfc') != None):
@@ -360,11 +359,10 @@ def readOFMX(fileName):
                 if txtName != "":
                     txtName = txtName + " • "
                 txtName = txtName + valDistVerTfc + " ft MSL"
-                print(txtName)
         
         # Determine type
         properties = {'TYP': 'PRC', 'CAT': 'PRC', 'NAM': txtName}
-        if ("GLIDER" in txtName.upper()) or (re.search(r"\b" + re.escape('UL') + r"\b", txtName.upper())):
+        if ("GLIDER" in txtName.upper()) or (re.search(r"\bUL\b", txtName.upper())):
             properties['GAC'] = "red"
         else:
             properties['GAC'] = "blue"
