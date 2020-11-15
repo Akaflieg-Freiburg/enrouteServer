@@ -6,22 +6,22 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-# Dictionary representing the morse code chart 
-MORSE_CODE_DICT = { 'A':'•‒', 'B':'‒•••', 
-                    'C':'‒•‒•', 'D':'‒••', 'E':'•', 
-                    'F':'••‒•', 'G':'‒‒•', 'H':'••••', 
-                    'I':'••', 'J':'•‒‒‒', 'K':'‒•‒', 
-                    'L':'•‒••', 'M':'‒‒', 'N':'‒•', 
-                    'O':'‒‒‒', 'P':'•‒‒•', 'Q':'‒‒•‒', 
-                    'R':'•‒•', 'S':'•••', 'T':'‒', 
-                    'U':'••‒', 'V':'•••‒', 'W':'•‒‒', 
-                    'X':'‒••‒', 'Y':'‒•‒‒', 'Z':'‒‒••', 
-                    '1':'•‒‒‒‒', '2':'••‒‒‒', '3':'•••‒‒', 
-                    '4':'••••‒', '5':'•••••', '6':'‒••••', 
-                    '7':'‒‒•••', '8':'‒‒‒••', '9':'‒‒‒‒•', 
-                    '0':'‒‒‒‒‒', ', ':'‒‒••‒‒', '•':'•‒•‒•‒', 
-                    '?':'••‒‒••', '/':'‒••‒•', '‒':'‒••••‒', 
-                    '(':'‒•‒‒•', ')':'‒•‒‒•‒'} 
+# Dictionary representing the morse code chart
+MORSE_CODE_DICT = { 'A':'•‒', 'B':'‒•••',
+                    'C':'‒•‒•', 'D':'‒••', 'E':'•',
+                    'F':'••‒•', 'G':'‒‒•', 'H':'••••',
+                    'I':'••', 'J':'•‒‒‒', 'K':'‒•‒',
+                    'L':'•‒••', 'M':'‒‒', 'N':'‒•',
+                    'O':'‒‒‒', 'P':'•‒‒•', 'Q':'‒‒•‒',
+                    'R':'•‒•', 'S':'•••', 'T':'‒',
+                    'U':'••‒', 'V':'•••‒', 'W':'•‒‒',
+                    'X':'‒••‒', 'Y':'‒•‒‒', 'Z':'‒‒••',
+                    '1':'•‒‒‒‒', '2':'••‒‒‒', '3':'•••‒‒',
+                    '4':'••••‒', '5':'•••••', '6':'‒••••',
+                    '7':'‒‒•••', '8':'‒‒‒••', '9':'‒‒‒‒•',
+                    '0':'‒‒‒‒‒', ', ':'‒‒••‒‒', '•':'•‒•‒•‒',
+                    '?':'••‒‒••', '/':'‒••‒•', '‒':'‒••••‒',
+                    '(':'‒•‒‒•', ')':'‒•‒‒•‒'}
 
 def morse(string):
     result = ""
@@ -42,13 +42,13 @@ def getCoordinate(xmlNode):
         long = longText[-100:-1]
     if longText[-1] == 'W':
         long = "-" + longText[-100:-1]
-    
+
     latText = xmlNode.find('geoLat').text
     if latText[-1] == 'N':
         lat = latText[-100:-1]
     if latText[-1] == 'S':
         lat = "-" + latText[-100:-1]
-    
+
     return [round(float(long), numCoordDigits), round(float(lat), numCoordDigits)]
 
 
@@ -59,19 +59,19 @@ def interpretAltitudeLimit(limit):
     else:
         print("WARNING: Cannot interpret vertical airspace limit, assuming '0' as a default!")
         altText = "0"
-        
+
     if alt.get('UNIT') == "FL":
-        return "FL " + altText 
+        return "FL " + altText
     if alt.get('UNIT') != "F":
         print("Error")
         exit(-1)
-    
+
     if limit.get('REFERENCE') == "MSL":
         return altText
     if alt.text == "0":
         return "GND"
     return altText + " AGL"
-    
+
 # XXX
 
 def readOpenAIP(fileName):
@@ -79,7 +79,7 @@ def readOpenAIP(fileName):
     if os.path.getsize(fileName) == 0:
         print('File {} is empty! Ignoring file…'.format(fileName))
         return
-        
+
     print('Read openAIP file {}…'.format(fileName))
     tree = ET.parse(fileName)
     root = tree.getroot()
@@ -88,11 +88,11 @@ def readOpenAIP(fileName):
     # Read airfields
     #
     for airport in root.findall('./WAYPOINTS/AIRPORT'):
-        
+
         # Ignore the following airfields
         if airport.get('TYPE') in ["HELI_CIVIL", "HELI_MIL", ""]:
             continue
-        
+
         # Get properties
         properties = {}
         if airport.get('TYPE') == 'AD_CLOSED':
@@ -122,7 +122,7 @@ def readOpenAIP(fileName):
         for radio in airport.findall('RADIO'):
             if radio.find('FREQUENCY').text == None:
                 continue
-            
+
             if radio.get('CATEGORY') == 'INFORMATION':
                 if radio.find('DESCRIPTION') != None:
                     INF += radio.find('DESCRIPTION').text
@@ -155,7 +155,7 @@ def readOpenAIP(fileName):
 
         if INF != "":
             properties['INF'] = INF[0:-1]
-        if COMs != []:            
+        if COMs != []:
             # Need to sort frequencies: TWR first, then GROUND, then APRON, then all others
             COMsSorted = sorted([com for com in COMs if ('TWR' in com.upper() or 'TOWER' in com.upper())])
             COMs = [ com for com in COMs if com not in COMsSorted]
@@ -181,7 +181,7 @@ def readOpenAIP(fileName):
             descr += rwy.find('DIRECTION').get('TC') + "°"
             RWYs.append(descr)
             RWYsIsPaved = rwy.find('SFC').text in ["ASPH", "CONC"]
-            
+
             if RWYsIsPaved and not bestRWY_isPaved:
                 bestRWY_isPaved = RWYsIsPaved
                 bestRWY_dir     = float(rwy.find('DIRECTION').get('TC'))
@@ -200,11 +200,11 @@ def readOpenAIP(fileName):
                     properties['CAT'] = properties['CAT']+'-PAVED'
                 else:
                     properties['CAT'] = properties['CAT']+'-GRASS'
-                    
+
         if RWYs != []:
             properties['RWY'] = '\n'.join(RWYs)
             properties['ORI'] = bestRWY_dir
-            
+
         # Get geometry
         lat = airport.find('GEOLOCATION').find('LAT').text
         lon = airport.find('GEOLOCATION').find('LON').text
@@ -215,8 +215,8 @@ def readOpenAIP(fileName):
         feature['geometry'] = {'type': 'Point', 'coordinates': coordinate}
         feature['properties'] = properties
         features.append(feature)
-        
-    
+
+
     #
     # Read navaids
     #
@@ -230,7 +230,7 @@ def readOpenAIP(fileName):
         if navaid.find('RADIO').find('FREQUENCY').text == None:
             print("WARNING: Navaid " + navaid.find('NAME').text + " without frequency!")
             continue
-        
+
         # Get properties
         properties = {}
         properties['CAT'] = navaid.get('TYPE')
@@ -269,7 +269,7 @@ def readOpenAIP(fileName):
         if verbose:
             print('')
             print(': -- Airspace')
-            ET.dump(airspace)       
+            ET.dump(airspace)
         # Ignore the following airspaces
         if airspace.get('CATEGORY') in ["E", "F", "FIR", "GLIDING", "G", "OTH", "UIR", "WAVE"]:
             continue
@@ -283,7 +283,7 @@ def readOpenAIP(fileName):
             cooPairArray = cooPair.split()
             coordinate = [ round(float(cooPairArray[0]), numCoordDigits), round(float(cooPairArray[1]), numCoordDigits) ]
             coordinates.append(coordinate)
-        
+
         # Get properties
         properties = {}
         properties['BOT'] = interpretAltitudeLimit(airspace.find('ALTLIMIT_BOTTOM'))
@@ -309,12 +309,76 @@ def readOpenAIP(fileName):
         feature['properties'] = properties
         features.append(feature)
 
+# OFMX Tools
 
-def readOFMX(fileName):
-    print('Read OFMX…')
-    tree = ET.parse(fileName)
-    root = tree.getroot()
+def readOFMXHeight(xmlNode, ending):
+    """Read height information
 
+    In OFMX, height information for X in an xmlNode is usually specified by
+    three subnodes, called "codeDistVerX", "uomDistVerX" and "valDistVerX".
+    This method looks for these subnodes and interprets their content. If ALL
+    goes well, it returns a string such as "100 FT GND", "2300 FT MSL" or
+    "FL 95". If the data is not found or cannot be interpreted, an empty string
+    is returned.
+    """
+
+    # Code - this is STD (=flight level), HEI (=height over ground), ALT (=height over MSL)
+    if xmlNode.find('codeDistVer'+ending) == None:
+        return "";
+    codeDistVer = xmlNode.find('codeDistVer'+ending).text
+    if codeDistVer == None:
+        return "";
+    if (codeDistVer != 'STD') and (codeDistVer != 'HEI') and (codeDistVer != 'ALT'):
+        print("Error in readOFMXHeight codeDistVer is " + codeDistVer)
+        exit(-1)
+
+    # Read units of measurement - this is FL (=flight level), FT (=feet), M (=meters)
+    if xmlNode.find('uomDistVer'+ending) == None:
+        return "";
+    uomDistVer = xmlNode.find('uomDistVer'+ending).text
+    if uomDistVer == None:
+        return "";
+    if (uomDistVer != 'FL') and (uomDistVer != 'FT') and (uomDistVer != 'M'):
+        print("Error in readOFMXHeight uomDistVer is " + uomDistVer)
+        exit(-1)
+
+    if xmlNode.find('valDistVer'+ending) == None:
+        return "";
+    valDistVer = xmlNode.find('valDistVer'+ending).text
+    if valDistVer == None:
+        return "";
+    if valDistVer == '':
+        return "";
+    valDistVerINT = int(valDistVer)
+
+    result = ""
+    if uomDistVer == 'FL':
+        result = "FL " + valDistVer
+    else:
+        result = valDistVer + " " + uomDistVer
+        if codeDistVer == "HEI":
+            result = result + " GND"
+        if codeDistVer == "ALT":
+            result = result + " MSL"
+    if (codeDistVer == "HEI") and (valDistVer == "0"):
+        return "GND"
+    return result
+
+def readOFMXMinMaxHeight(xmlNode, minEnding, maxEnding):
+    lower = readOFMXHeight(xmlNode, 'Lower')
+    upper = readOFMXHeight(xmlNode, 'Upper')
+    if lower == upper:
+        return lower
+    result = ''
+    if lower != "":
+        result = result + "MIN. " + lower
+    if upper != "":
+        if result != "":
+            result = result + " · "
+        result = result + "MAX. " + upper
+    return result
+
+def readOFMXProcedures(root):
     #
     # Read all procedures
     #
@@ -325,7 +389,7 @@ def readOFMX(fileName):
         if prc.find('usageType') != None:
             if prc.find('usageType').text != "FIXED_WING":
                 continue;
-            
+
         # Feature dictionary, will be filled in here and included into JSON
         feature = {'type': 'Feature'}
 
@@ -339,27 +403,33 @@ def readOFMX(fileName):
             x = coordinatePair.split(',')
             coordinates.append([round(float(x[0]), numCoordDigits), round(float(x[1]), numCoordDigits)])
         feature['geometry'] = {'type': 'LineString', 'coordinates': coordinates}
-      
+
         # Get text name
         txtName = prc.find('txtName').text
 
-        # Get TFC height
-        if (prc.find('codeType').text == "TRAFFIC_CIRCUIT") and (prc.find('codeDistVerTfc') != None) and (prc.find('uomDistVerTfc') != None) and (prc.find('valDistVerTfc') != None):
-            codeDistVerTfc = ""
-            if prc.find('codeDistVerTfc').text != None:
-                codeDistVerTfc = prc.find('codeDistVerTfc').text
-            uomDistVerTfc = ""
-            if prc.find('uomDistVerTfc').text != None:
-                uomDistVerTfc = prc.find('uomDistVerTfc').text
-            valDistVerTfc = ""
-            if prc.find('valDistVerTfc').text != None:
-                valDistVerTfc = prc.find('valDistVerTfc').text
-            
-            if (codeDistVerTfc == "ALT") and (uomDistVerTfc == "FT") and (valDistVerTfc != ""):
+        # Get height - if procedure is TFC
+        if prc.find('codeType').text == "TRAFFIC_CIRCUIT":
+            heightString = readOFMXHeight(prc, 'Tfc')
+            if heightString != "":
                 if txtName != "":
                     txtName = txtName + " • "
-                txtName = txtName + valDistVerTfc + " ft MSL"
-        
+                txtName = txtName + heightString
+        else:
+            heightBands = set()
+            for leg in prc.findall('Leg'):
+                band = readOFMXMinMaxHeight(leg.find('entry'), 'Lower', 'Upper')
+                heightBands.add(band)
+                band = readOFMXMinMaxHeight(leg.find('exit'), 'Lower', 'Upper')
+                heightBands.add(band)
+            if (len(heightBands) == 1) and not "" in heightBands:
+                if txtName != "":
+                    txtName = txtName + " • "
+                txtName = txtName + band
+                print(txtName)
+                if "TFC" in txtName:
+                    print(prc.find("PrcUid").attrib)
+                    exit(-1)
+
         # Determine type
         properties = {'TYP': 'PRC', 'CAT': 'PRC', 'NAM': txtName}
         if ("GLIDER" in txtName.upper()) or (re.search(r"\bUL\b", txtName.upper())):
@@ -370,6 +440,15 @@ def readOFMX(fileName):
 
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
+
+
+def readOFMX(fileName):
+    print('Read OFMX…')
+    tree = ET.parse(fileName)
+    root = tree.getroot()
+
+    # Read readOFMXProcedures
+    readOFMXProcedures(root)
 
     #
     # Read all reporting points
@@ -386,7 +465,7 @@ def readOFMX(fileName):
 
         if DpnUid.find('codeId').text != None:
             WPcodeId = DpnUid.find('codeId').text
-        
+
         if Dpn.find('AhpUidAssoc') != None:
             if Dpn.find('AhpUidAssoc').find('codeId') != None:
                 if Dpn.find('AhpUidAssoc').find('codeId').text != None:
@@ -402,16 +481,16 @@ def readOFMX(fileName):
 
         if WPcodeId == "" and txtName != "":
             WPcodeId = txtName
-            
+
         # Feature dictionary, will be filled in here and included into JSON
         feature = {'type': 'Feature'}
-       
+
         # Position
         feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(DpnUid)}
-        
+
         #
         # Properties
-        # 
+        #
         properties = {'TYP': 'WP'}
         properties['MID'] = DpnUid.get('mid')
         if Dpn.find("codeType").text == "VFR-MRP":
@@ -467,17 +546,17 @@ def readOFMX(fileName):
             properties['NAM']  = txtName
 
         # Property: SCO - required for CAT == MRP and CAT == RP
-        #    
+        #
         # Short description of the waypoint, such as "S1".  The **enroute** app
         # uses this property for the display name of the point on the moving
         # map.
-        
+
         properties['SCO'] = WPcodeId
 
         # Done with properties
-        
+
         feature['properties'] = properties
-        
+
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
 
@@ -570,12 +649,12 @@ for arg in [arg for arg in sys.argv[1:] if arg.endswith('.aip')]:
 for arg in [arg for arg in sys.argv[1:] if arg.endswith('.ofmx')]:
     readOFMX(arg)
     if not haveNav:
-        readNavaidsFromOFMX(arg)    
+        readNavaidsFromOFMX(arg)
 for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
     print("Unknown file type {}".format(arg))
     exit(-1)
 
-    
+
 # Generate Feature Collection
 featureCollection = {'type': 'FeatureCollection', 'features': features}
 
