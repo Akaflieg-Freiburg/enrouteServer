@@ -349,7 +349,11 @@ def readOFMXHeight(xmlNode, ending):
         return "";
     if valDistVer == '':
         return "";
-    valDistVerINT = int(valDistVer)
+
+    try:
+        valDistVerINT = int(valDistVer)
+    except:
+        print("Warning: Cannot interpret number '{}' in {}".format(valDistVer, xmlNode.find('PrcUid').attrib))
 
     result = ""
     if uomDistVer == 'FL':
@@ -365,6 +369,17 @@ def readOFMXHeight(xmlNode, ending):
     return result
 
 def readOFMXMinMaxHeight(xmlNode, minEnding, maxEnding):
+    """Read height information - height bands
+
+    In OFMX, height bands for VFR procedure for X in usually specified by
+    six subnodes, called "codeDistVerXLower", "uomDistVerXLower",
+    "valDistVerXLower", "codeDistVerXUpper", "uomDistVerXUpprt" and
+    "valDistVerXUpper". This method looks for these subnodes and interprets
+    their content. If ALL goes well, it returns a string such as
+    "MIN. 100 FT GND", "MIN. 2500 FT MSL · MAX 4500 FT MSL". If the data is not
+    found or cannot be interpreted, an empty string is returned.
+    """
+
     lower = readOFMXHeight(xmlNode, 'Lower')
     upper = readOFMXHeight(xmlNode, 'Upper')
     if lower == upper:
@@ -407,14 +422,23 @@ def readOFMXProcedures(root):
         # Get text name
         txtName = prc.find('txtName').text
 
-        # Get height - if procedure is TFC
+        # Check if height information is available. The information is pretty
+        # hidden in OFMX, and the data extraction method varies, depending on
+        # whether this is a traffic circuit or a vfr arrival, departure or
+        # transit route.
         if prc.find('codeType').text == "TRAFFIC_CIRCUIT":
+            # Get height - if procedure is TFC
             heightString = readOFMXHeight(prc, 'Tfc')
             if heightString != "":
                 if txtName != "":
                     txtName = txtName + " • "
                 txtName = txtName + heightString
         else:
+            # Get height - if prodecude is not TFC. In this case, the procedure
+            # is subdivided into a number of legs, each with an entry and exit
+            # location, and each location with a height band. This is WAY too
+            # complicated for us. We show the height band only if all bands
+            # for all locations of all legs agree. Otherwise, we show nothing.
             heightBands = set()
             for leg in prc.findall('Leg'):
                 band = readOFMXMinMaxHeight(leg.find('entry'), 'Lower', 'Upper')
@@ -425,10 +449,6 @@ def readOFMXProcedures(root):
                 if txtName != "":
                     txtName = txtName + " • "
                 txtName = txtName + band
-                print(txtName)
-                if "TFC" in txtName:
-                    print(prc.find("PrcUid").attrib)
-                    exit(-1)
 
         # Determine type
         properties = {'TYP': 'PRC', 'CAT': 'PRC', 'NAM': txtName}
