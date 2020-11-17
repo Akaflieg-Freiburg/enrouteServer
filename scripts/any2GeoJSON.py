@@ -461,7 +461,6 @@ def readOFMXProcedures(root):
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
 
-
 def readOFMX(fileName):
     print('Read OFMX…')
     tree = ET.parse(fileName)
