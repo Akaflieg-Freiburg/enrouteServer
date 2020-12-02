@@ -77,9 +77,26 @@ regions = [
 workingDir = "/home/kebekus/experiment/enroute_working"
 mapStorageDir = "/home/kebekus/Austausch/aviation_maps"
 serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv001"
-airac = ("%04d" % datetime.date.today().year)[2:4] + (
-    "%02d" % datetime.date.today().month
-)
+
+#
+# Compute current airac cycle
+#
+airac_number = 1
+airac_year   = 2020
+airac_date   = datetime.date.fromisoformat('2020-01-02')
+airac_delta  = datetime.timedelta(days=28)
+
+while airac_date+airac_delta < datetime.date.today():
+    airac_date += airac_delta
+
+    if airac_date.year > airac_year:
+        airac_year = airac_date.year
+        airac_number = 1
+    else:
+        airac_number += 1
+airac = "{:02}{:02}".format(airac_year%100, airac_number)
+print("Info: Current AIRAC cycle is {}\n".format(airac))
+
 
 opener = urllib.request.build_opener()
 opener.addheaders = [("User-agent", "Mozilla/5.0")]
