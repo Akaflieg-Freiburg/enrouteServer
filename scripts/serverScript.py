@@ -116,6 +116,11 @@ for region in regions:
             "https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}.xml".format(airac, region[0], region[0][0:2]),
             "data.ofmx"
         )
+        print("  … downloading OFMX Shape Extension")
+        urllib.request.urlretrieve(
+            "https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}_ofmShapeExtension.xml".format(airac, region[0], region[0][0:2]),
+            "data.shape.ofmx"
+        )
 
     print("  … downloading openAIP asp")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_asp.aip"
@@ -130,7 +135,7 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx ".format(sys.path[0], workingDir),
+            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir),
             shell=True,
             check=True,
         )
