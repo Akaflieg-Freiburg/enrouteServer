@@ -489,7 +489,7 @@ def readOFMXProcedures(root):
                     txtName = txtName + " • "
                 txtName = txtName + heightString
         else:
-            # Get height - if prodecude is not TFC. In this case, the procedure
+            # Get height - if procedure is not TFC. In this case, the procedure
             # is subdivided into a number of legs, each with an entry and exit
             # location, and each location with a height band. This is WAY too
             # complicated for us. We show the height band only if all bands
@@ -505,12 +505,32 @@ def readOFMXProcedures(root):
                     txtName = txtName + " • "
                 txtName = txtName + band
 
-        # Determine type
+        # Setup properties
         properties = {'TYP': 'PRC', 'CAT': 'PRC', 'NAM': txtName}
-        if ("GLIDER" in txtName.upper()) or (re.search(r"\bUL\b", txtName.upper())):
-            properties['GAC'] = "red"
-        else:
+
+        # Set properties depending on use case
+        if prc.find('codeType').text == "TRAFFIC_CIRCUIT":
+            if ("GLIDER" in txtName.upper()) or (re.search(r"\bUL\b", txtName.upper())):
+                properties['GAC'] = "red"
+            else:
+                properties['GAC'] = "blue"
+            properties['USE'] = "TFC"
+        elif prc.find('codeType').text == "VFR_ARR":
             properties['GAC'] = "blue"
+            properties['USE'] = "ARR"
+        elif prc.find('codeType').text == "VFR_DEP":
+            properties['GAC'] = "blue"
+            properties['USE'] = "DEP"
+        elif prc.find('codeType').text == "VFR_HOLD":
+            properties['GAC'] = "blue"
+            properties['USE'] = "HLD"
+        elif prc.find('codeType').text == "VFR_TRANS":
+            properties['GAC'] = "blue"
+            properties['USE'] = "TRA"
+        else
+            print("Unknown code type in procedure: {}".format(prc.find('codeType').text))
+            exit(-1)
+
         feature['properties'] = properties
 
         # Feature is now complete. Add it to the 'features' array

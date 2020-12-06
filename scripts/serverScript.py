@@ -15,6 +15,7 @@ regions = [
     #
     # Africa
     #
+    ["lf",   "Europe/France", "fr"],
     ["fa",   "Africa/South Africa", "za"],
     ["fywh", "Africa/Namibia", "na"],
     #
