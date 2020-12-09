@@ -527,7 +527,7 @@ def readOFMXProcedures(root):
         elif prc.find('codeType').text == "VFR_TRANS":
             properties['GAC'] = "blue"
             properties['USE'] = "TRA"
-        else
+        else:
             print("Unknown code type in procedure: {}".format(prc.find('codeType').text))
             exit(-1)
 
