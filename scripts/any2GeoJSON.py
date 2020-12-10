@@ -83,6 +83,7 @@ def readOpenAIP(fileName):
     print('Read openAIP file {}…'.format(fileName))
     tree = ET.parse(fileName)
     root = tree.getroot()
+    sources.add("openAIP {} database version {}".format(root.find('*').tag, root.attrib['VERSION']))
 
     #
     # Read airfields
@@ -567,14 +568,18 @@ def readOFMXNRA(root, shapeRoot):
         feature['properties'] = properties
         features.append(feature)
 
-
 def readOFMX(fileName, shapeFileName):
     print('Read OFMX…')
     tree = ET.parse(fileName)
     root = tree.getroot()
 
+    sources.add("open flightmaps data for region {}, created {}".format(root.find('Ppa').find('PpaUid').attrib['region'], root.attrib['created']))
+
     shapeTree = ET.parse(shapeFileName)
     shapeRoot = shapeTree.getroot()
+
+    sources.add("open flightmaps shape extension data for region {}, created {}".format(root.find('Ppa').find('PpaUid').attrib['region'], shapeRoot.attrib['created']))
+
 
     # Read procedures
     readOFMXProcedures(root)
@@ -767,6 +772,7 @@ numCoordDigits = 5
 verbose = False
 
 features = []
+sources = set() # Info about the maps used
 
 ADNames       = {}
 ADFrequencies = {}
@@ -786,9 +792,15 @@ for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.
     print("Unknown file type {}".format(arg))
     exit(-1)
 
-
-# Generate Feature Collection
-featureCollection = {'type': 'FeatureCollection', 'features': features}
+# Generare Info string
+infoString = "<p>Map data compiled from the following sources.</p>"
+infoString += "<ul>"
+for source in sources:
+    infoString += "<li>"+source+"</li>"
+infoString += "</ul>"
+    
+# Generate Feature Collection   
+featureCollection = {'type': 'FeatureCollection', 'info': infoString, 'features': features}
 
 # Generate GeoJSON and write it to a file
 geojson = json.dumps(featureCollection, sort_keys=True, separators=(',', ':'))

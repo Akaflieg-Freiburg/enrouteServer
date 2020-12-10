@@ -15,7 +15,6 @@ regions = [
     #
     # Africa
     #
-    ["lf",   "Europe/France", "fr"],
     ["fa",   "Africa/South Africa", "za"],
     ["fywh", "Africa/Namibia", "na"],
     #
@@ -35,7 +34,7 @@ regions = [
     ["ekdk", "Europe/Denmark", "dk"],
     ["",     "Europe/Estonia", "ee"],
     ["efin", "Europe/Finland", "fi"],
-    ["",     "Europe/France", "fr"],
+    ["lf",   "Europe/France", "fr"],
     ["ed",   "Europe/Germany", "de"],
     ["lggg", "Europe/Greece", "gr"],
     ["lhcc", "Europe/Hungary", "hu"],
