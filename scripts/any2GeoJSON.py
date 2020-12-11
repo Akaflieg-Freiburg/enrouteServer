@@ -793,13 +793,12 @@ for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.
     exit(-1)
 
 # Generare Info string
-infoString = "<p>Map data compiled from the following sources.</p>"
-infoString += "<ul>"
+infoString = ""
 for source in sources:
-    infoString += "<li>"+source+"</li>"
-infoString += "</ul>"
-    
-# Generate Feature Collection   
+    infoString += source+";"
+infoString = infoString[0:-1]
+
+# Generate Feature Collection
 featureCollection = {'type': 'FeatureCollection', 'info': infoString, 'features': features}
 
 # Generate GeoJSON and write it to a file
