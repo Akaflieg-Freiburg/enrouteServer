@@ -568,6 +568,101 @@ def readOFMXNRA(root, shapeRoot):
         feature['properties'] = properties
         features.append(feature)
 
+def readNavaidsFromOFMX(fileName):
+    print('Read OFMX for navaids…')
+    tree = ET.parse(fileName)
+    root = tree.getroot()
+
+    #
+    # Interpret all VOR Nodes
+    #
+    for vor in root.findall('./Vor'):
+        VorUid = vor.find('VorUid')
+
+        # Feature dictionary, will be filled in here and included into JSON
+        feature = {'type': 'Feature'}
+
+        # Find all associated DMEs
+        dmes = root.findall("./Dme/VorUid[@mid='"+VorUid.get('mid')+"']")
+
+        # Position
+        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(VorUid)}
+
+        # Properties
+        properties = {'TYP': 'NAV'}
+        if dmes == []:
+            properties['CAT'] = 'VOR'
+        else:
+            properties['CAT'] = 'VOR-DME'
+        properties['MID'] = VorUid.get('mid')
+        if VorUid.find('txtName') != None and VorUid.find('txtName').text != None:
+            properties['NAM'] = VorUid.find('txtName').text
+        else:
+            properties['NAM'] = VorUid.find('codeId').text
+        properties['COD'] = VorUid.find('codeId').text
+        properties['MOR'] = morse(VorUid.find('codeId').text)
+        properties['NAV'] = vor.find('valFreq').text + " " + vor.find('uomFreq').text
+        feature['properties'] = properties
+
+        # Feature is now complete. Add it to the 'features' array
+        features.append(feature)
+
+
+    #
+    # Interpret all NDB Nodes
+    #
+
+    for ndb in root.findall('./Ndb'):
+        NdbUid = ndb.find('NdbUid')
+
+        # Feature dictionary, will be filled in here and included into JSON
+        feature = {'type': 'Feature'}
+
+        # Position
+        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(NdbUid)}
+
+        # Properties
+        properties = {'TYP': 'NAV', 'CAT': 'NDB'}
+        properties['MID'] = ndb.get('mid')
+        if ndb.find('txtName') != None and ndb.find('txtName').text != None:
+            properties['NAM'] = ndb.find('txtName').text
+        else:
+            properties['NAM'] = NdbUid.find('codeId').text
+        properties['COD'] = NdbUid.find('codeId').text
+        properties['MOR'] = morse(NdbUid.find('codeId').text)
+        properties['NAV'] = ndb.find('valFreq').text + " " + ndb.find('uomFreq').text
+
+        # Feature is now complete. Add it to the 'features' array
+        features.append(feature)
+
+def readFISSectors(root):
+    print("Read FIS Sectors")
+    for Ase in root.findall("./Ase/AseUid[codeType='SECTOR']/.."):
+        AseUid = Ase.find('AseUid')
+        AseMid = AseUid.get('mid')
+
+        # Get service in airspace (SAE)
+        Sae = root.find("./Sae/SaeUid/AseUid[@mid='{}']/../..".format(AseMid))
+        if Sae == None:
+            continue
+        SerMid = Sae.find('SaeUid').find('SerUid').get('mid')
+
+        # Get service
+        Ser = root.find("./Ser/SerUid[@mid='{}']/..".format(SerMid))
+        print(Ser.find('SerUid').find('codeType').text)
+
+        # Get frequency
+        Fqy = root.find("./Fqy/FqyUid/SerUid[@mid='{}']/../..".format(SerMid))
+
+        callSign  = Fqy.find('Cdl').find('txtCallSign').text
+        frequency = Fqy.find('FqyUid').find('valFreqTrans').text + " " + Fqy.find('uomFreq').text
+
+        print(AseUid.find('codeId').text)
+        print(callSign + " " + frequency)
+        print('')
+
+    exit(-1)
+
 def readOFMX(fileName, shapeFileName):
     print('Read OFMX…')
     tree = ET.parse(fileName)
@@ -580,6 +675,9 @@ def readOFMX(fileName, shapeFileName):
 
     sources.add("open flightmaps shape extension data for region {}, created {}".format(root.find('Ppa').find('PpaUid').attrib['region'], shapeRoot.attrib['created']))
 
+
+    # Read FIS sectors
+    readFISSectors(root)
 
     # Read procedures
     readOFMXProcedures(root)
@@ -693,73 +791,6 @@ def readOFMX(fileName, shapeFileName):
         # Done with properties
 
         feature['properties'] = properties
-
-        # Feature is now complete. Add it to the 'features' array
-        features.append(feature)
-
-def readNavaidsFromOFMX(fileName):
-    print('Read OFMX for navaids…')
-    tree = ET.parse(fileName)
-    root = tree.getroot()
-
-    #
-    # Interpret all VOR Nodes
-    #
-    for vor in root.findall('./Vor'):
-        VorUid = vor.find('VorUid')
-
-        # Feature dictionary, will be filled in here and included into JSON
-        feature = {'type': 'Feature'}
-
-        # Find all associated DMEs
-        dmes = root.findall("./Dme/VorUid[@mid='"+VorUid.get('mid')+"']")
-
-        # Position
-        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(VorUid)}
-
-        # Properties
-        properties = {'TYP': 'NAV'}
-        if dmes == []:
-            properties['CAT'] = 'VOR'
-        else:
-            properties['CAT'] = 'VOR-DME'
-        properties['MID'] = VorUid.get('mid')
-        if VorUid.find('txtName') != None and VorUid.find('txtName').text != None:
-            properties['NAM'] = VorUid.find('txtName').text
-        else:
-            properties['NAM'] = VorUid.find('codeId').text
-        properties['COD'] = VorUid.find('codeId').text
-        properties['MOR'] = morse(VorUid.find('codeId').text)
-        properties['NAV'] = vor.find('valFreq').text + " " + vor.find('uomFreq').text
-        feature['properties'] = properties
-
-        # Feature is now complete. Add it to the 'features' array
-        features.append(feature)
-
-
-    #
-    # Interpret all NDB Nodes
-    #
-
-    for ndb in root.findall('./Ndb'):
-        NdbUid = ndb.find('NdbUid')
-
-        # Feature dictionary, will be filled in here and included into JSON
-        feature = {'type': 'Feature'}
-
-        # Position
-        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(NdbUid)}
-
-        # Properties
-        properties = {'TYP': 'NAV', 'CAT': 'NDB'}
-        properties['MID'] = ndb.get('mid')
-        if ndb.find('txtName') != None and ndb.find('txtName').text != None:
-            properties['NAM'] = ndb.find('txtName').text
-        else:
-            properties['NAM'] = NdbUid.find('codeId').text
-        properties['COD'] = NdbUid.find('codeId').text
-        properties['MOR'] = morse(NdbUid.find('codeId').text)
-        properties['NAV'] = ndb.find('valFreq').text + " " + ndb.find('uomFreq').text
 
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
