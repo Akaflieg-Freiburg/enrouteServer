@@ -635,33 +635,61 @@ def readNavaidsFromOFMX(fileName):
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
 
-def readFISSectors(root):
+def readFISSectors(root, shapeRoot):
     print("Read FIS Sectors")
     for Ase in root.findall("./Ase/AseUid[codeType='SECTOR']/.."):
         AseUid = Ase.find('AseUid')
         AseMid = AseUid.get('mid')
+        codeId = AseUid.find('codeId').text
 
         # Get service in airspace (SAE)
         Sae = root.find("./Sae/SaeUid/AseUid[@mid='{}']/../..".format(AseMid))
         if Sae == None:
+            xxxx
             continue
         SerMid = Sae.find('SaeUid').find('SerUid').get('mid')
 
         # Get service
-        Ser = root.find("./Ser/SerUid[@mid='{}']/..".format(SerMid))
-        print(Ser.find('SerUid').find('codeType').text)
+#        Ser = root.find("./Ser/SerUid[@mid='{}']/..".format(SerMid))
+#        print(Ser.find('SerUid').find('codeType').text)
 
         # Get frequency
+        label = ""
         Fqy = root.find("./Fqy/FqyUid/SerUid[@mid='{}']/../..".format(SerMid))
+        if Fqy == None:
+            print("WARNING: No Frequency found for Ase {}, Sae {}".format(codeId, SerMid))
+            label = codeId
+        else:
+            callSign  = Fqy.find('Cdl').find('txtCallSign').text
+            frequency = Fqy.find('FqyUid').find('valFreqTrans').text + " " + Fqy.find('uomFreq').text
+            label = callSign + " " + frequency
 
-        callSign  = Fqy.find('Cdl').find('txtCallSign').text
-        frequency = Fqy.find('FqyUid').find('valFreqTrans').text + " " + Fqy.find('uomFreq').text
+        # Get geometry
+        coordinates = []
+        gmlPosList = shapeRoot.find("./Ase/AseUid[@mid='{}']/../gmlPosList".format(AseMid)).text
+        for coordinateTripleString in gmlPosList.split():
+            coordinateTriple = coordinateTripleString.split(",")
+            coordinate = [ round(float(coordinateTriple[0]), numCoordDigits), round(float(coordinateTriple[1]), numCoordDigits) ]
+            coordinates.append(coordinate)
+        # Make sure the polygon closes
+        if coordinates[0] != coordinates[-1]:
+            coordinates.append(coordinates[0])
 
-        print(AseUid.find('codeId').text)
-        print(callSign + " " + frequency)
-        print('')
+        # Get properties
+        properties = {}
+        properties['BOT'] = readOFMXHeight4GeoJSON(Ase, 'Lower')
+        properties['CAT'] = 'FIS'
+        properties['ID']  = AseMid
+        properties['NAM'] = callSign + " " + frequency
+        properties['TOP'] = readOFMXHeight4GeoJSON(Ase, 'Upper')
+        properties['TYP'] = "AS"
 
-    exit(-1)
+        # Generate feature
+        feature = {'type': 'Feature'}
+        feature['geometry'] = {'type': 'Polygon', 'coordinates': [coordinates]}
+        feature['properties'] = properties
+        features.append(feature)
+
 
 def readOFMX(fileName, shapeFileName):
     print('Read OFMX…')
@@ -677,7 +705,7 @@ def readOFMX(fileName, shapeFileName):
 
 
     # Read FIS sectors
-    readFISSectors(root)
+    readFISSectors(root, shapeRoot)
 
     # Read procedures
     readOFMXProcedures(root)
