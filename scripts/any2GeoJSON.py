@@ -645,7 +645,6 @@ def readFISSectors(root, shapeRoot):
         # Get service in airspace (SAE)
         Sae = root.find("./Sae/SaeUid/AseUid[@mid='{}']/../..".format(AseMid))
         if Sae == None:
-            xxxx
             continue
         SerMid = Sae.find('SaeUid').find('SerUid').get('mid')
 
