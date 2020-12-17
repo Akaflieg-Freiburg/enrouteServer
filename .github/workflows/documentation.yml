@@ -11,9 +11,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: Install Additional Software
-      run: |
-        sudo apt install sphinx
     - name: Generate Documentation
       run: |
         ./buildscript-documentation
