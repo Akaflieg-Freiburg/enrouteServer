@@ -1,0 +1,26 @@
+name: Generate documentation for python modules
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Additional Software
+      run: |
+        sudo apt install sphinx
+    - name: Generate Documentation
+      run: |
+        ./buildscript-documentation
+    - name: Publish Documentation
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        BRANCH: gh-pages
+        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        FOLDER: docs
+        TARGET_FOLDER: .

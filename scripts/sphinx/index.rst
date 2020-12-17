@@ -1,8 +1,8 @@
 
-Welcome to enrouteServer's documentation!
+enrouteServer documentation
 =========================================
 
-.. automodule:: ofmx
+.. automodule:: OFMX
     :members:
 
 .. toctree::
