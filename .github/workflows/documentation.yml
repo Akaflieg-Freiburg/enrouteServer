@@ -11,6 +11,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
+    - name: Install Additional Software
+      run: |
+        sudo apt install python3-sphinx
     - name: Generate Documentation
       run: |
         ./buildscript-documentation.sh
