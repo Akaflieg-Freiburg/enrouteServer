@@ -11,9 +11,15 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: Install Additional Software
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install dependencies
       run: |
-        sudo apt install python3-sphinx
+        sudo apt install pandoc
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
     - name: Generate Documentation
       run: |
         ./buildscript-documentation.sh

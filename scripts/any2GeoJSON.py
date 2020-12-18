@@ -314,31 +314,6 @@ def readOpenAIP(fileName):
 
 # OFMX Tools
 
-def readOFMXMinMaxHeight(xmlNode, minEnding, maxEnding):
-    """Read height information - height bands
-
-    In OFMX, height bands for VFR procedure for X in usually specified by
-    six subnodes, called "codeDistVerXLower", "uomDistVerXLower",
-    "valDistVerXLower", "codeDistVerXUpper", "uomDistVerXUpprt" and
-    "valDistVerXUpper". This method looks for these subnodes and interprets
-    their content. If ALL goes well, it returns a string such as
-    "MIN. 100 FT GND", "MIN. 2500 FT MSL · MAX 4500 FT MSL". If the data is not
-    found or cannot be interpreted, an empty string is returned.
-    """
-
-    lower = OFMX.readHeight(xmlNode, 'Lower')
-    upper = OFMX.readHeight(xmlNode, 'Upper')
-    if lower == upper:
-        return lower
-    result = ''
-    if lower != "":
-        result = result + "MIN. " + lower
-    if upper != "":
-        if result != "":
-            result = result + " · "
-        result = result + "MAX. " + upper
-    return result
-
 def readOFMXProcedures(root):
     #
     # Read all procedures
@@ -387,9 +362,9 @@ def readOFMXProcedures(root):
             # for all locations of all legs agree. Otherwise, we show nothing.
             heightBands = set()
             for leg in prc.findall('Leg'):
-                band = readOFMXMinMaxHeight(leg.find('entry'), 'Lower', 'Upper')
+                band = OFMX.readMinMaxHeight(leg.find('entry'))
                 heightBands.add(band)
-                band = readOFMXMinMaxHeight(leg.find('exit'), 'Lower', 'Upper')
+                band = OFMX.readMinMaxHeight(leg.find('exit'))
                 heightBands.add(band)
             if (len(heightBands) == 1) and not "" in heightBands:
                 if txtName != "":
@@ -445,11 +420,11 @@ def readOFMXNRA(root, shapeRoot):
 
         # Get properties
         properties = {}
-        properties['BOT'] = OFMX.readHeight4GeoJSON(nra, 'Lower')
+        properties['BOT'] = OFMX.readHeight(nra, 'Lower', short=True)
         properties['CAT'] = 'NRA'
         properties['ID']  = mid
         properties['NAM'] = nra.find('txtName').text
-        properties['TOP'] = OFMX.readHeight4GeoJSON(nra, 'Upper')
+        properties['TOP'] = OFMX.readHeight(nra, 'Upper', short=True)
         properties['TYP'] = "AS"
 
         # Generate feature
@@ -566,11 +541,11 @@ def readFISSectors(root, shapeRoot):
 
         # Get properties
         properties = {}
-        properties['BOT'] = OFMX.readHeight4GeoJSON(Ase, 'Lower')
+        properties['BOT'] = OFMX.readHeight(Ase, 'Lower', short=True)
         properties['CAT'] = 'FIS'
         properties['ID']  = AseMid
         properties['NAM'] = callSign + " " + frequency
-        properties['TOP'] = OFMS.readHeight4GeoJSON(Ase, 'Upper')
+        properties['TOP'] = OFMS.readHeight(Ase, 'Upper', short=True)
         properties['TYP'] = "AS"
 
         # Generate feature
