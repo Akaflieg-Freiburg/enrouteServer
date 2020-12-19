@@ -19,7 +19,7 @@ jobs:
 
     - name: Generate Documentation
       run: |
-        ./buildscript-documentation.sh
+        PATH=$PATH:~/.local/bin ./buildscript-documentation.sh
 
     - name: Publish Documentation
       uses: JamesIves/github-pages-deploy-action@releases/v3
