@@ -25,6 +25,7 @@ MORSE_CODE_DICT = { 'A':'•‒', 'B':'‒•••',
                     '?':'••‒‒••', '/':'‒••‒•', '‒':'‒••••‒',
                     '(':'‒•‒‒•', ')':'‒•‒‒•‒'}
 
+
 def morse(string):
     result = ""
     for letter in string.upper():
@@ -402,39 +403,16 @@ def readOFMXProcedures(root):
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
 
+
 def readOFMXNRA(root, shapeRoot):
+    print("… Nature Reserve Areas")
     for nra in root.findall("./Ase/AseUid[codeType='NRA']/.."):
-        NraUid   = nra.find('AseUid')
-        mid      = NraUid.get('mid')
-
-        # Get geometry
-        coordinates = []
-        gmlPosList = shapeRoot.find("./Ase/AseUid[@mid='{}']/../gmlPosList".format(mid)).text
-        for coordinateTripleString in gmlPosList.split():
-            coordinateTriple = coordinateTripleString.split(",")
-            coordinate = [ round(float(coordinateTriple[0]), numCoordDigits), round(float(coordinateTriple[1]), numCoordDigits) ]
-            coordinates.append(coordinate)
-        # Make sure the polygon closes
-        if coordinates[0] != coordinates[-1]:
-            coordinates.append(coordinates[0])
-
-        # Get properties
-        properties = {}
-        properties['BOT'] = OFMX.readHeight(nra, 'Lower', short=True)
-        properties['CAT'] = 'NRA'
-        properties['ID']  = mid
-        properties['NAM'] = nra.find('txtName').text
-        properties['TOP'] = OFMX.readHeight(nra, 'Upper', short=True)
-        properties['TYP'] = "AS"
-
-        # Generate feature
-        feature = {'type': 'Feature'}
-        feature['geometry'] = {'type': 'Polygon', 'coordinates': [coordinates]}
-        feature['properties'] = properties
+        feature = OFMX.readAirspace(nra, shapeRoot, 'NRA', nra.find('txtName').text, numCoordDigits)
         features.append(feature)
 
+
 def readNavaidsFromOFMX(fileName):
-    print('Read OFMX for navaids…')
+    print('… Navaids')
     tree = ET.parse(fileName)
     root = tree.getroot()
 
@@ -500,8 +478,9 @@ def readNavaidsFromOFMX(fileName):
         # Feature is now complete. Add it to the 'features' array
         features.append(feature)
 
+
 def readFISSectors(root, shapeRoot):
-    print("Read FIS Sectors")
+    print("… FIS Sectors")
     for Ase in root.findall("./Ase/AseUid[codeType='SECTOR']/.."):
         AseUid = Ase.find('AseUid')
         AseMid = AseUid.get('mid')
@@ -512,10 +491,6 @@ def readFISSectors(root, shapeRoot):
         if Sae == None:
             continue
         SerMid = Sae.find('SaeUid').find('SerUid').get('mid')
-
-        # Get service
-#        Ser = root.find("./Ser/SerUid[@mid='{}']/..".format(SerMid))
-#        print(Ser.find('SerUid').find('codeType').text)
 
         # Get frequency
         label = ""
@@ -528,31 +503,9 @@ def readFISSectors(root, shapeRoot):
             frequency = Fqy.find('FqyUid').find('valFreqTrans').text + " " + Fqy.find('uomFreq').text
             label = callSign + " " + frequency
 
-        # Get geometry
-        coordinates = []
-        gmlPosList = shapeRoot.find("./Ase/AseUid[@mid='{}']/../gmlPosList".format(AseMid)).text
-        for coordinateTripleString in gmlPosList.split():
-            coordinateTriple = coordinateTripleString.split(",")
-            coordinate = [ round(float(coordinateTriple[0]), numCoordDigits), round(float(coordinateTriple[1]), numCoordDigits) ]
-            coordinates.append(coordinate)
-        # Make sure the polygon closes
-        if coordinates[0] != coordinates[-1]:
-            coordinates.append(coordinates[0])
-
-        # Get properties
-        properties = {}
-        properties['BOT'] = OFMX.readHeight(Ase, 'Lower', short=True)
-        properties['CAT'] = 'FIS'
-        properties['ID']  = AseMid
-        properties['NAM'] = callSign + " " + frequency
-        properties['TOP'] = OFMS.readHeight(Ase, 'Upper', short=True)
-        properties['TYP'] = "AS"
-
-        # Generate feature
-        feature = {'type': 'Feature'}
-        feature['geometry'] = {'type': 'Polygon', 'coordinates': [coordinates]}
-        feature['properties'] = properties
+        feature = OFMX.readAirspace(Ase, shapeRoot, 'FIS', label, numCoordDigits)
         features.append(feature)
+
 
 
 def readOFMX(fileName, shapeFileName):

@@ -5,6 +5,57 @@ Tools to interpret ofmx files
 """
 
 
+def readAirspace(aseNode, shapeRoot, cat, nam, numCoordDigits):
+    """Generate GeoJSON for airspace
+
+    This method reads information about a given airspace from aseNode, finds
+    the approriate geometry in the shape file and generates a GeoJSON feature.
+
+    :param aseNode: An ElementTree xml node pointing to an airspace 'Ase' node
+
+    :param shapeRoot: Root of the xml shape file
+
+    :param cat: Category of the airspace, for inclusion in the GeoJSON 'CAT'
+        field
+
+    :param nam: Name of the airspace, for inclusion in the GeoJSON 'NAM' field.
+
+    :param numCoordDigits: Numer of digits for coordinate pairs
+
+    :returns: A feature dictionary, ready for inclusion in GeoJSON
+
+    """
+
+    aseUid = aseNode.find('AseUid')
+    mid = aseUid.get('mid')
+
+    # Get geometry
+    coordinates = []
+    gmlPosList = shapeRoot.find("./Ase/AseUid[@mid='{}']/../gmlPosList".format(mid)).text
+    for coordinateTripleString in gmlPosList.split():
+        coordinateTriple = coordinateTripleString.split(",")
+        coordinate = [round(float(coordinateTriple[0]), numCoordDigits), round(float(coordinateTriple[1]), numCoordDigits)]
+        coordinates.append(coordinate)
+    # Make sure the polygon closes
+    if coordinates[0] != coordinates[-1]:
+        coordinates.append(coordinates[0])
+
+    # Get properties
+    properties = {}
+    properties['BOT'] = readHeight(aseNode, 'Lower', short=True)
+    properties['CAT'] = cat
+    properties['ID'] = mid
+    properties['NAM'] = nam
+    properties['TOP'] = readHeight(aseNode, 'Upper', short=True)
+    properties['TYP'] = "AS"
+
+    # Generate feature
+    feature = {'type': 'Feature'}
+    feature['geometry'] = {'type': 'Polygon', 'coordinates': [coordinates]}
+    feature['properties'] = properties
+    return feature
+
+
 def readHeight(xmlNode, ending, short=False):
     """Read height information from XML Node and return as human-readable string
 
@@ -79,6 +130,7 @@ def readHeight(xmlNode, ending, short=False):
         return valDistVer + " " + uomDistVer + " MSL"
 
     return ""
+
 
 def readMinMaxHeight(xmlNode):
     """Read height information - height bands

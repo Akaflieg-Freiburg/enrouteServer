@@ -8,14 +8,18 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v2
 
-    - uses: ammaraskar/sphinx-action@master
-      with:
-        docs-folder: "scripts/sphinx/"
-        build-command: ./buildscript-documentation.sh
+    - name: Install Additional Software
+      run: |
+        pip install Sphinx
+
+
+    - name: Generate Documentation
+      run: |
+        ./buildscript-documentation.sh
 
     - name: Publish Documentation
       uses: JamesIves/github-pages-deploy-action@releases/v3
