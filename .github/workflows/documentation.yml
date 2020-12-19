@@ -15,7 +15,7 @@ jobs:
     - name: Install Additional Software
       run: |
         pip3 install Sphinx
-
+        pip3 install sphinx-rtd-theme
 
     - name: Generate Documentation
       run: |
