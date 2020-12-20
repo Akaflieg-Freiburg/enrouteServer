@@ -183,6 +183,26 @@ field</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt id="OFMX.readFeatures_FISSectors">
+<code class="sig-prename descclassname">OFMX.</code><code class="sig-name descname">readFeatures_FISSectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span></em>, <em class="sig-param"><span class="n">shapeRoot</span></em>, <em class="sig-param"><span class="n">numCoordDigits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_FISSectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate GeoJSON for airspaces: Flight Information Sectors</p>
+<p>This method reads information about FIS-airspaces from an OFMX file, finds
+the approriate geometries in the shape file and generates GeoJSON features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> – Root of the OFMX file</p></li>
+<li><p><strong>shapeRoot</strong> – Root of the OFMX shape file</p></li>
+<li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="OFMX.readFeatures_NRA">
 <code class="sig-prename descclassname">OFMX.</code><code class="sig-name descname">readFeatures_NRA</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span></em>, <em class="sig-param"><span class="n">shapeRoot</span></em>, <em class="sig-param"><span class="n">numCoordDigits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_NRA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate GeoJSON for airspaces: Nature Reserve Areas</p>
@@ -193,6 +213,25 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – Root of the OFMX file</p></li>
 <li><p><strong>shapeRoot</strong> – Root of the OFMX shape file</p></li>
+<li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="OFMX.readFeatures_Procedures">
+<code class="sig-prename descclassname">OFMX.</code><code class="sig-name descname">readFeatures_Procedures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span></em>, <em class="sig-param"><span class="n">numCoordDigits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_Procedures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate GeoJSON for airspaces: Procedures</p>
+<p>This method reads information about procedures from an OFMX file, and
+generates GeoJSON features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> – Root of the OFMX file</p></li>
 <li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
 </ul>
 </dd>
