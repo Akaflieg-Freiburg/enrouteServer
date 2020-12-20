@@ -315,95 +315,6 @@ def readOpenAIP(fileName):
 
 # OFMX Tools
 
-def readOFMXProcedures(root):
-    #
-    # Read all procedures
-    #
-    for prc in root.findall('./Prc'):
-        PrcUid = prc.find('PrcUid')
-        if (prc.find('codeType').text != "TRAFFIC_CIRCUIT") and ("VFR" not in prc.find('codeType').text):
-            continue;
-        if prc.find('usageType') != None:
-            if prc.find('usageType').text != "FIXED_WING":
-                continue;
-
-        # Feature dictionary, will be filled in here and included into JSON
-        feature = {'type': 'Feature'}
-
-        # Get geometry
-        coordinates = []
-        if prc.find('_beztrajectory') == None:
-            continue;
-        if prc.find('_beztrajectory').find('gmlPosList') == None:
-            continue;
-        for coordinatePair in prc.find('_beztrajectory').find('gmlPosList').text.split():
-            x = coordinatePair.split(',')
-            coordinates.append([round(float(x[0]), numCoordDigits), round(float(x[1]), numCoordDigits)])
-        feature['geometry'] = {'type': 'LineString', 'coordinates': coordinates}
-
-        # Get text name
-        txtName = prc.find('txtName').text
-
-        # Check if height information is available. The information is pretty
-        # hidden in OFMX, and the data extraction method varies, depending on
-        # whether this is a traffic circuit or a vfr arrival, departure or
-        # transit route.
-        if prc.find('codeType').text == "TRAFFIC_CIRCUIT":
-            # Get height - if procedure is TFC
-            heightString = OFMX.readHeight(prc, 'Tfc')
-            if heightString != "":
-                if txtName != "":
-                    txtName = txtName + " • "
-                txtName = txtName + heightString
-        else:
-            # Get height - if procedure is not TFC. In this case, the procedure
-            # is subdivided into a number of legs, each with an entry and exit
-            # location, and each location with a height band. This is WAY too
-            # complicated for us. We show the height band only if all bands
-            # for all locations of all legs agree. Otherwise, we show nothing.
-            heightBands = set()
-            for leg in prc.findall('Leg'):
-                band = OFMX.readMinMaxHeight(leg.find('entry'))
-                heightBands.add(band)
-                band = OFMX.readMinMaxHeight(leg.find('exit'))
-                heightBands.add(band)
-            if (len(heightBands) == 1) and not "" in heightBands:
-                if txtName != "":
-                    txtName = txtName + " • "
-                txtName = txtName + band
-
-        # Setup properties
-        properties = {'TYP': 'PRC', 'CAT': 'PRC', 'NAM': txtName}
-
-        # Set properties depending on use case
-        if prc.find('codeType').text == "TRAFFIC_CIRCUIT":
-            if ("GLIDER" in txtName.upper()) or (re.search(r"\bUL\b", txtName.upper())):
-                properties['GAC'] = "red"
-            else:
-                properties['GAC'] = "blue"
-            properties['USE'] = "TFC"
-        elif prc.find('codeType').text == "VFR_ARR":
-            properties['GAC'] = "blue"
-            properties['USE'] = "ARR"
-        elif prc.find('codeType').text == "VFR_DEP":
-            properties['GAC'] = "blue"
-            properties['USE'] = "DEP"
-        elif prc.find('codeType').text == "VFR_HOLD":
-            properties['GAC'] = "blue"
-            properties['USE'] = "HLD"
-        elif prc.find('codeType').text == "VFR_TRANS":
-            properties['GAC'] = "blue"
-            properties['USE'] = "TRA"
-        else:
-            print("Unknown code type in procedure: {}".format(prc.find('codeType').text))
-            exit(-1)
-
-        feature['properties'] = properties
-
-        # Feature is now complete. Add it to the 'features' array
-        features.append(feature)
-
-
 def readNavaidsFromOFMX(fileName):
     print('… Navaids')
     tree = ET.parse(fileName)
@@ -472,58 +383,29 @@ def readNavaidsFromOFMX(fileName):
         features.append(feature)
 
 
-def readFISSectors(root, shapeRoot):
-    print("… FIS Sectors")
-    for Ase in root.findall("./Ase/AseUid[codeType='SECTOR']/.."):
-        AseUid = Ase.find('AseUid')
-        AseMid = AseUid.get('mid')
-        codeId = AseUid.find('codeId').text
-
-        # Get service in airspace (SAE)
-        Sae = root.find("./Sae/SaeUid/AseUid[@mid='{}']/../..".format(AseMid))
-        if Sae == None:
-            continue
-        SerMid = Sae.find('SaeUid').find('SerUid').get('mid')
-
-        # Get frequency
-        label = ""
-        Fqy = root.find("./Fqy/FqyUid/SerUid[@mid='{}']/../..".format(SerMid))
-        if Fqy == None:
-            print("WARNING: No Frequency found for Ase {}, Sae {}".format(codeId, SerMid))
-            label = codeId
-        else:
-            callSign  = Fqy.find('Cdl').find('txtCallSign').text
-            frequency = Fqy.find('FqyUid').find('valFreqTrans').text + " " + Fqy.find('uomFreq').text
-            label = callSign + " " + frequency
-
-        feature = OFMX.readAirspace(Ase, shapeRoot, 'FIS', label, numCoordDigits)
-        features.append(feature)
-
-
-
 def readOFMX(fileName, shapeFileName):
     global features
 
-    print('Read OFMX…')
+    print('Read and Interpret OFMX …')
+
+    # Read XML of OFMX file
     tree = ET.parse(fileName)
     root = tree.getroot()
-
     sources.add("open flightmaps data for region {}, created {}".format(root.find('Ppa').find('PpaUid').attrib['region'], root.attrib['created']))
 
+    # Read XML of OFMX shape file
     shapeTree = ET.parse(shapeFileName)
     shapeRoot = shapeTree.getroot()
-
     sources.add("open flightmaps shape extension data for region {}, created {}".format(root.find('Ppa').find('PpaUid').attrib['region'], shapeRoot.attrib['created']))
 
+    # Read FIS Sectors
+    features += OFMX.readFeatures_FISSectors(root, shapeRoot, numCoordDigits)
 
-    # Read FIS sectors
-    readFISSectors(root, shapeRoot)
-
-    # Read procedures
-    readOFMXProcedures(root)
-
-    # Read nature reserve areas
+    # Read Nature Reserve Areas
     features += OFMX.readFeatures_NRA(root, shapeRoot, numCoordDigits)
+
+    # Read Procedures
+    features += OFMX.readFeatures_Procedures(root, numCoordDigits)
 
 
     #
