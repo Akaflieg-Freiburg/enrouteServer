@@ -404,13 +404,6 @@ def readOFMXProcedures(root):
         features.append(feature)
 
 
-def readOFMXNRA(root, shapeRoot):
-    print("… Nature Reserve Areas")
-    for nra in root.findall("./Ase/AseUid[codeType='NRA']/.."):
-        feature = OFMX.readAirspace(nra, shapeRoot, 'NRA', nra.find('txtName').text, numCoordDigits)
-        features.append(feature)
-
-
 def readNavaidsFromOFMX(fileName):
     print('… Navaids')
     tree = ET.parse(fileName)
@@ -509,6 +502,8 @@ def readFISSectors(root, shapeRoot):
 
 
 def readOFMX(fileName, shapeFileName):
+    global features
+
     print('Read OFMX…')
     tree = ET.parse(fileName)
     root = tree.getroot()
@@ -528,7 +523,8 @@ def readOFMX(fileName, shapeFileName):
     readOFMXProcedures(root)
 
     # Read nature reserve areas
-    readOFMXNRA(root, shapeRoot)
+    features += OFMX.readFeatures_NRA(root, shapeRoot, numCoordDigits)
+
 
     #
     # Read all reporting points

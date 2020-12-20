@@ -10,6 +10,8 @@ def readAirspace(aseNode, shapeRoot, cat, nam, numCoordDigits):
 
     This method reads information about a given airspace from aseNode, finds
     the approriate geometry in the shape file and generates a GeoJSON feature.
+    This is a generic method that is used by the more specialized methods
+    readFeature_*.
 
     :param aseNode: An ElementTree xml node pointing to an airspace 'Ase' node
 
@@ -54,6 +56,30 @@ def readAirspace(aseNode, shapeRoot, cat, nam, numCoordDigits):
     feature['geometry'] = {'type': 'Polygon', 'coordinates': [coordinates]}
     feature['properties'] = properties
     return feature
+
+
+def readFeatures_NRA(root, shapeRoot, numCoordDigits):
+    """Generate GeoJSON for airspaces: Nature Reserve Areas
+
+    This method reads information about NRA-airspaces from an OFMX file, finds
+    the approriate geometries in the shape file and generates GeoJSON features.
+
+    :param root: Root of the OFMX file
+
+    :param shapeRoot: Root of the OFMX shape file
+
+    :param numCoordDigits: Numer of digits for coordinate pairs
+
+    :returns: An array of feature dictionaries, ready for inclusion in GeoJSON
+
+    """
+
+    print("… Nature Reserve Areas")
+    NRAfeatures = []
+    for nra in root.findall("./Ase/AseUid[codeType='NRA']/.."):
+        NRAfeature = readAirspace(nra, shapeRoot, 'NRA', nra.find('txtName').text, numCoordDigits)
+        NRAfeatures.append(NRAfeature)
+    return NRAfeatures
 
 
 def readHeight(xmlNode, ending, short=False):
