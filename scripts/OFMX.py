@@ -59,6 +59,38 @@ def readAirspace(aseNode, shapeRoot, cat, nam, numCoordDigits):
     return feature
 
 
+def readCoordinate(xmlNode, numCoordDigits):
+    """Read coordinate from children of the given XML Node
+
+    Takes an XML node, looks for children with name 'geoLat' and 'geoLong',
+    reads and interprets coordinates, rounds them to the number of decimal
+    places and returns an array with latitude and longitude as floats
+
+    In case of error, this method will fail siliently and return undefined
+    results.
+
+    :param xmlNode: An ElementTree xml node
+
+    :returns: A float with two elements, containing latitude and longitude
+        as floats.
+
+    """
+
+    longText = xmlNode.find('geoLong').text
+    if longText[-1] == 'E':
+        long = longText[-100:-1]
+    if longText[-1] == 'W':
+        long = "-" + longText[-100:-1]
+
+    latText = xmlNode.find('geoLat').text
+    if latText[-1] == 'N':
+        lat = latText[-100:-1]
+    if latText[-1] == 'S':
+        lat = "-" + latText[-100:-1]
+
+    return [round(float(long), numCoordDigits), round(float(lat), numCoordDigits)]
+
+
 def readFeatures_FISSectors(root, shapeRoot, numCoordDigits):
     """Generate GeoJSON for airspaces: Flight Information Sectors
 

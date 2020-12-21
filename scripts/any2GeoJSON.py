@@ -34,27 +34,6 @@ def morse(string):
     return result
 
 
-
-# Takes an XML node, looks for children with name 'geoLat' and 'geoLong', reads
-# an interprets coordinates and returns array with latitude and longitude as
-# floats
-
-def getCoordinate(xmlNode):
-    longText = xmlNode.find('geoLong').text
-    if longText[-1] == 'E':
-        long = longText[-100:-1]
-    if longText[-1] == 'W':
-        long = "-" + longText[-100:-1]
-
-    latText = xmlNode.find('geoLat').text
-    if latText[-1] == 'N':
-        lat = latText[-100:-1]
-    if latText[-1] == 'S':
-        lat = "-" + latText[-100:-1]
-
-    return [round(float(long), numCoordDigits), round(float(lat), numCoordDigits)]
-
-
 def interpretAltitudeLimit(limit):
     alt   = limit.find('ALT')
     if alt.text != None:
@@ -315,10 +294,8 @@ def readOpenAIP(fileName):
 
 # OFMX Tools
 
-def readNavaidsFromOFMX(fileName):
+def readNavaidsFromOFMX(root, numCoordDigits):
     print('… Navaids')
-    tree = ET.parse(fileName)
-    root = tree.getroot()
 
     #
     # Interpret all VOR Nodes
@@ -333,7 +310,7 @@ def readNavaidsFromOFMX(fileName):
         dmes = root.findall("./Dme/VorUid[@mid='"+VorUid.get('mid')+"']")
 
         # Position
-        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(VorUid)}
+        feature['geometry'] = {'type': 'Point', 'coordinates': OFMX.readCoordinate(VorUid, numCoordDigits)}
 
         # Properties
         properties = {'TYP': 'NAV'}
@@ -366,7 +343,7 @@ def readNavaidsFromOFMX(fileName):
         feature = {'type': 'Feature'}
 
         # Position
-        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(NdbUid)}
+        feature['geometry'] = {'type': 'Point', 'coordinates': OFMX.readCoordinate(NdbUid, numCoordDigits)}
 
         # Properties
         properties = {'TYP': 'NAV', 'CAT': 'NDB'}
@@ -383,7 +360,7 @@ def readNavaidsFromOFMX(fileName):
         features.append(feature)
 
 
-def readOFMX(fileName, shapeFileName):
+def readOFMX(fileName, shapeFileName, includeNavaids=False):
     global features
 
     print('Read and Interpret OFMX …')
@@ -403,6 +380,10 @@ def readOFMX(fileName, shapeFileName):
 
     # Read Nature Reserve Areas
     features += OFMX.readFeatures_NRA(root, shapeRoot, numCoordDigits)
+
+    # Read Navaids
+    if includeNavaids:
+        readNavaidsFromOFMX(root, numCoordDigits)
 
     # Read Procedures
     features += OFMX.readFeatures_Procedures(root, numCoordDigits)
@@ -444,7 +425,7 @@ def readOFMX(fileName, shapeFileName):
         feature = {'type': 'Feature'}
 
         # Position
-        feature['geometry'] = {'type': 'Point', 'coordinates': getCoordinate(DpnUid)}
+        feature['geometry'] = {'type': 'Point', 'coordinates': OFMX.readCoordinate(DpnUid, numCoordDigits)}
 
         #
         # Properties
@@ -539,9 +520,7 @@ for arg in [arg for arg in sys.argv[1:] if arg.endswith('.aip')]:
     readOpenAIP(arg)
 for arg in [arg for arg in sys.argv[1:] if arg.endswith('.ofmx') and not arg.endswith('shape.ofmx')]:
     shapeFile = arg.replace(".ofmx", ".shape.ofmx")
-    readOFMX(arg, shapeFile)
-    if not haveNav:
-        readNavaidsFromOFMX(arg)
+    readOFMX(arg, shapeFile, not haveNav)
 for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
     print("Unknown file type {}".format(arg))
     exit(-1)
