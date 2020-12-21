@@ -29,7 +29,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -178,6 +177,26 @@ field</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A feature dictionary, ready for inclusion in GeoJSON</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="OFMX.readCoordinate">
+<code class="sig-prename descclassname">OFMX.</code><code class="sig-name descname">readCoordinate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xmlNode</span></em>, <em class="sig-param"><span class="n">numCoordDigits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readCoordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read coordinate from children of the given XML Node</p>
+<p>Takes an XML node, looks for children with name ‘geoLat’ and ‘geoLong’,
+reads and interprets coordinates, rounds them to the number of decimal
+places and returns an array with latitude and longitude as floats</p>
+<p>In case of error, this method will fail siliently and return undefined
+results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xmlNode</strong> – An ElementTree xml node</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A float with two elements, containing latitude and longitude
+as floats.</p>
 </dd>
 </dl>
 </dd></dl>
