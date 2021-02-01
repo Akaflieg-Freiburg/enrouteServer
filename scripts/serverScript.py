@@ -76,7 +76,7 @@ regions = [
 
 workingDir = "/home/kebekus/experiment/enroute_working"
 mapStorageDir = "/home/kebekus/Austausch/aviation_maps"
-serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv001"
+serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv002"
 
 #
 # Compute current airac cycle
