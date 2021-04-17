@@ -118,13 +118,13 @@ def readFeatures_FISSectors(root, shapeRoot, numCoordDigits):
         Sae = root.find("./Sae/SaeUid/AseUid[@mid='{}']/../..".format(AseMid))
         if Sae == None:
             continue
-        SerMid = Sae.find('SaeUid').find('SerUid').get('mid')
+        UniMid = Sae.find('SaeUid').find('SerUid').find('UniUid').get('mid')
 
         # Get frequency
         label = ""
-        Fqy = root.find("./Fqy/FqyUid/SerUid[@mid='{}']/../..".format(SerMid))
+        Fqy = root.find("./Fqy/FqyUid/SerUid/UniUid[@mid='{}']/../../..".format(UniMid))
         if Fqy == None:
-            print("WARNING: No Frequency found for Ase {}, Sae {}".format(codeId, SerMid))
+            print("WARNING: No Frequency found for Ase {}, Uni {}".format(codeId, UniMid))
             label = codeId
         else:
             callSign  = Fqy.find('Cdl').find('txtCallSign').text
