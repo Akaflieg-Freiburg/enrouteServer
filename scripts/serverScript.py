@@ -18,6 +18,10 @@ regions = [
     ["fa",   "Africa/South Africa", "za"],
     ["fywh", "Africa/Namibia", "na"],
     #
+    # Asia
+    #
+    ["",     "Asia/Japan", "jp"],
+    #
     # Australia Oceanica
     #
     ["",     "Australia Oceanica/Australia", "au"],
