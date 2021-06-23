@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -162,8 +165,8 @@
 <h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this headline">¶</a></h2>
 <p>Tools to interpret ofmx files</p>
 <dl class="py function">
-<dt id="OFMX.readAirspace">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readAirspace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aseNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readAirspace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readAirspace">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readAirspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aseNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readAirspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate GeoJSON for airspace</p>
 <p>This method reads information about a given airspace from aseNode, finds
 the approriate geometry in the shape file and generates a GeoJSON feature.
@@ -187,8 +190,8 @@ field</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="OFMX.readCoordinate">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readCoordinate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readCoordinate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readCoordinate">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readCoordinate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read coordinate from children of the given XML Node</p>
 <p>Takes an XML node, looks for children with name ‘geoLat’ and ‘geoLong’,
 reads and interprets coordinates, rounds them to the number of decimal
@@ -207,8 +210,8 @@ as floats.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="OFMX.readFeatures_FISSectors">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readFeatures_FISSectors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_FISSectors" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readFeatures_FISSectors">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_FISSectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_FISSectors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate GeoJSON for airspaces: Flight Information Sectors</p>
 <p>This method reads information about FIS-airspaces from an OFMX file, finds
 the approriate geometries in the shape file and generates GeoJSON features.</p>
@@ -227,8 +230,8 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="OFMX.readFeatures_NRA">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readFeatures_NRA</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_NRA" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readFeatures_NRA">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_NRA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_NRA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate GeoJSON for airspaces: Nature Reserve Areas</p>
 <p>This method reads information about NRA-airspaces from an OFMX file, finds
 the approriate geometries in the shape file and generates GeoJSON features.</p>
@@ -247,8 +250,8 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="OFMX.readFeatures_Procedures">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readFeatures_Procedures</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_Procedures" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readFeatures_Procedures">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_Procedures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_Procedures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate GeoJSON for airspaces: Procedures</p>
 <p>This method reads information about procedures from an OFMX file, and
 generates GeoJSON features.</p>
@@ -266,8 +269,8 @@ generates GeoJSON features.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="OFMX.readHeight">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readHeight</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ending</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readHeight" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readHeight">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ending</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readHeight" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read height information from XML Node and return as human-readable string</p>
 <p>In OFMX, height information for property X in an xmlNode is usually
 specified by three subnodes that are named as follows.</p>
@@ -295,8 +298,8 @@ this method fails silently and an empty string is returned.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="OFMX.readMinMaxHeight">
-<code class="sig-prename descclassname"><span class="pre">OFMX.</span></code><code class="sig-name descname"><span class="pre">readMinMaxHeight</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readMinMaxHeight" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="OFMX.readMinMaxHeight">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readMinMaxHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readMinMaxHeight" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read height information - height bands</p>
 <p>In OFMX, height bands for VFR procedure for X in usually specified by six
 subnodes, called “codeDistVerLower”, “uomDistVerLower”, “valDistVerLower”,
