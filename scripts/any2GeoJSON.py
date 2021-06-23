@@ -254,7 +254,7 @@ def readOpenAIP(fileName):
             print(': -- Airspace')
             ET.dump(airspace)
         # Ignore the following airspaces
-        if airspace.get('CATEGORY') in ["E", "F", "FIR", "GLIDING", "G", "OTH", "UIR", "WAVE"]:
+        if airspace.get('CATEGORY') in ["E", "F", "FIR", "G", "OTH", "UIR"]:
             continue
         if airspace.get('CATEGORY') in ["TMA"]:
             print("TMA")
@@ -275,6 +275,8 @@ def readOpenAIP(fileName):
                 properties['CAT'] = 'PJE'
             else:
                 properties['CAT'] = 'DNG'
+        elif (airspace.get('CATEGORY') == 'GLIDING') or (airspace.get('CATEGORY') == 'WAVE'):
+            properties['CAT'] = 'GLD'
         elif airspace.get('CATEGORY') == 'PROHIBITED':
             properties['CAT'] = 'P'
         elif airspace.get('CATEGORY') == 'RESTRICTED':
