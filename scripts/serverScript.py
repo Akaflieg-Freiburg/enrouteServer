@@ -11,6 +11,8 @@ import urllib.request
 import sys
 import zipfile
 
+import flarmDB
+
 regions = [
     #
     # Africa
@@ -163,10 +165,22 @@ for region in regions:
         subprocess.run("zopfli --best '"+outputFile+"'", shell=True, check=True)
     print("\n")
 
+#
+# Download and parse Flarmnet data
+#
+print("\nWorking on Flarmnet data")
+outputFile = mapStorageDir+"/FlarmnetDB.txt"
+urllib.request.urlretrieve("https://www.flarmnet.org/static/files/wfn/data.fln","data.fln")
+flarmDB.readFlarmDB("data.fln", outputFile)
+subprocess.run("rm -f '"+outputFile+".gz'", shell=True, check=True)
+subprocess.run("zopfli --best '"+outputFile+"'", shell=True, check=True)
 
-print("Generate maps.json")
+#
+# Generate maps.json
+#
+print("\nGenerate maps.json")
 maps = []
-for file in glob.glob(mapStorageDir + "/**/*.geojson", recursive=True)+glob.glob(mapStorageDir + "/**/*.mbtiles", recursive=True):
+for file in glob.glob(mapStorageDir + "/**/*.geojson", recursive=True)+glob.glob(mapStorageDir + "/**/*.mbtiles", recursive=True)+glob.glob(mapStorageDir + "/**/*.txt", recursive=True):
     map = {}
     map['path']  = file.replace(mapStorageDir + "/", "")
     t = os.path.getmtime(file)
