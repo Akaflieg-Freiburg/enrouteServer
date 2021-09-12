@@ -24,7 +24,13 @@ The script accepts any number of files. If competing data is found in openAIP an
 
 The output file is always called **test.geojson**. Existing files with that name will be overwritten.
 
-### 1.2 shrinkTiles.py
+
+### 1.2 flarmDB.py
+
+This script takes a Flarmnet database in FLN format, as downloaded from [this URL](https://www.flarmnet.org/static/files/wfn/data.fln) on [this page](https://www.flarmnet.org/flarmnet/downloads/). The FLN is also used by LXNavigation / XCSoar, WinPilot, LK8000 and ClearNav.  It removes a lot of data and produces a much shorter file in the format described [here](https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/Flarmnet-data-format).
+
+
+### 1.3 shrinkTiles.py
 
 This script takes a geographic map file in MBTiles format and modifies the file in-place. It simply removes all tiles with zoom > 10 and adjusts the meta-data accordingly. This will usually reduce the file size dramatically.
 
