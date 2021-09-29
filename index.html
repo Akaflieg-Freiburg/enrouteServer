@@ -38,6 +38,7 @@
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">enrouteServer documentation</a><ul>
+<li><a class="reference internal" href="#flarmdb">flarmDB</a></li>
 <li><a class="reference internal" href="#ofmx">OFMX</a></li>
 </ul>
 </li>
@@ -68,9 +69,83 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-OFMX">
-<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Permalink to this headline"></a></h1>
-<section id="ofmx">
+  <section id="module-flarmDB">
+<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-flarmDB" title="Permalink to this headline"></a></h1>
+<section id="flarmdb">
+<h2>flarmDB<a class="headerlink" href="#flarmdb" title="Permalink to this headline"></a></h2>
+<p>Tools to compactify a Flarmnet database downloaded from
+<a class="reference external" href="https://www.flarmnet.org/static/files/wfn/data.fln">https://www.flarmnet.org/static/files/wfn/data.fln</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="flarmDB.readFlarmDB">
+<span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readFlarmDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flarmnetFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ognFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outFileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readFlarmDB" title="Permalink to this definition"></a></dt>
+<dd><p>Read a Flarmnet database in fln format (as also used by
+LXNavigation/XCSoar, WinPilot, LK8000, ClearNav) and write a plain text file
+in ISO-8859-1 encoding (“Latin1”). The first line is a short description of
+the content. Every following line is exactly 24 bytes long.</p>
+<ul class="simple">
+<li><p>Bytes  0 -  5 of the line contain the Flarm ID</p></li>
+<li><p>Bytes  7 - 22 of the line contain the aircraft callsign, left justified
+and filled with space</p></li>
+</ul>
+<p>The lines in the output file are sorted alphabetically by Flarm ID.</p>
+<p>This function will raise an exception on error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flarmnetFileName</strong> – Name of input file</p></li>
+<li><p><strong>ognFileName</strong> – Name of input file</p></li>
+<li><p><strong>outFileName</strong> – Name of output file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flarmDB.readFlarmnetDB">
+<span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readFlarmnetDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readFlarmnetDB" title="Permalink to this definition"></a></dt>
+<dd><p>Read a Flarmnet database in fln format (as also used by
+LXNavigation/XCSoar, WinPilot, LK8000, ClearNav).  Files of this form can be
+downloaded from Flarmnet, at this url:
+<a class="reference external" href="https://www.flarmnet.org/static/files/wfn/data.fln">https://www.flarmnet.org/static/files/wfn/data.fln</a> The method fills a
+dicitionary that maps Flarm IDs to aircraft callsigns. Input data where the
+‘callsign’ field is not obviously a well-defined callsign are ignored. This
+function will raise an exception on error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inFileName</strong> – Name of input file</p></li>
+<li><p><strong>dictionary</strong> – Dictionary to which the results will be appended</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String that describes the input file version</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flarmDB.readOGNDB">
+<span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readOGNDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readOGNDB" title="Permalink to this definition"></a></dt>
+<dd><p>Read a Open Glider Network database.  Files of this form can be
+downloaded at this url: <a class="reference external" href="http://ddb.glidernet.org/download">http://ddb.glidernet.org/download</a>
+The method fills a dicitionary that maps Flarm IDs to aircraft callsigns.
+Input data where the ‘callsign’ field is not obviously a well-defined
+callsign are ignored. This function will raise an exception on error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inFileName</strong> – Name of input file</p></li>
+<li><p><strong>dictionary</strong> – Dictionary to which the results will be appended</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String that describes the input file version</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<span class="target" id="module-OFMX"></span><section id="ofmx">
 <h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this headline"></a></h2>
 <p>Tools to interpret ofmx files</p>
 <dl class="py function">
