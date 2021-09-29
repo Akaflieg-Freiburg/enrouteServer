@@ -169,7 +169,7 @@ for region in regions:
 # Download and parse Flarmnet data
 #
 print("\nWorking on Flarmnet data")
-outputFile = mapStorageDir+"/Flarmnet Database.txt"
+outputFile = mapStorageDir+"/Flarm Database.txt"
 urllib.request.urlretrieve("https://www.flarmnet.org/static/files/wfn/data.fln","data.fln")
 flarmDB.readFlarmDB("data.fln", outputFile)
 subprocess.run("rm -f '"+outputFile+".gz'", shell=True, check=True)
