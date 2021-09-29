@@ -171,7 +171,8 @@ for region in regions:
 print("\nWorking on Flarmnet data")
 outputFile = mapStorageDir+"/Flarm Database.txt"
 urllib.request.urlretrieve("https://www.flarmnet.org/static/files/wfn/data.fln","data.fln")
-flarmDB.readFlarmDB("data.fln", outputFile)
+urllib.request.urlretrieve("http://ddb.glidernet.org/download","ogn.data")
+flarmDB.readFlarmDB("data.fln", "ogn.data", outputFile)
 subprocess.run("rm -f '"+outputFile+".gz'", shell=True, check=True)
 subprocess.run("zopfli --best '"+outputFile+"'", shell=True, check=True)
 
