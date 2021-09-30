@@ -73,15 +73,14 @@
 <span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-flarmDB" title="Permalink to this headline"></a></h1>
 <section id="flarmdb">
 <h2>flarmDB<a class="headerlink" href="#flarmdb" title="Permalink to this headline"></a></h2>
-<p>Tools to compactify a Flarmnet database downloaded from
-<a class="reference external" href="https://www.flarmnet.org/static/files/wfn/data.fln">https://www.flarmnet.org/static/files/wfn/data.fln</a></p>
+<p>Toolset to create a compact database the maps Flarm IDs to aircraft callsigns.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="flarmDB.readFlarmDB">
 <span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readFlarmDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flarmnetFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ognFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outFileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readFlarmDB" title="Permalink to this definition"></a></dt>
-<dd><p>Read a Flarmnet database in fln format (as also used by
-LXNavigation/XCSoar, WinPilot, LK8000, ClearNav) and write a plain text file
-in ISO-8859-1 encoding (“Latin1”). The first line is a short description of
-the content. Every following line is exactly 24 bytes long.</p>
+<dd><p>Read a Flarmnet and an OGN database and combines the data. The method
+writes a plain text file in ISO-8859-1 encoding (“Latin1”). The first line
+is a short description of the content. Every following line is exactly 24
+bytes long.</p>
 <ul class="simple">
 <li><p>Bytes  0 -  5 of the line contain the Flarm ID</p></li>
 <li><p>Bytes  7 - 22 of the line contain the aircraft callsign, left justified
