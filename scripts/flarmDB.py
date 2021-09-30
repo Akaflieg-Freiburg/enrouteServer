@@ -3,8 +3,7 @@
 """
 flarmDB
 ====================================
-Tools to compactify a Flarmnet database downloaded from
-https://www.flarmnet.org/static/files/wfn/data.fln
+Toolset to create a compact database the maps Flarm IDs to aircraft callsigns.
 """
 
 from datetime import date
@@ -87,10 +86,10 @@ def readOGNDB(inFileName, dictionary):
 
 
 def readFlarmDB(flarmnetFileName, ognFileName, outFileName):
-    """Read a Flarmnet database in fln format (as also used by
-    LXNavigation/XCSoar, WinPilot, LK8000, ClearNav) and write a plain text file
-    in ISO-8859-1 encoding ("Latin1"). The first line is a short description of
-    the content. Every following line is exactly 24 bytes long.
+    """Read a Flarmnet and an OGN database and combines the data. The method
+    writes a plain text file in ISO-8859-1 encoding ("Latin1"). The first line
+    is a short description of the content. Every following line is exactly 24
+    bytes long.
 
     - Bytes  0 -  5 of the line contain the Flarm ID
     - Bytes  7 - 22 of the line contain the aircraft callsign, left justified
