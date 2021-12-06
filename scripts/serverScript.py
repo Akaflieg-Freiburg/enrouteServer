@@ -13,6 +13,7 @@ import zipfile
 
 import flarmDB
 
+
 regions = [
     #
     # Africa
@@ -131,9 +132,6 @@ for region in regions:
     print("  … downloading openAIP asp")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_asp.aip"
     urllib.request.urlretrieve( urlText, "asp.aip" )
-    print("  … downloading openAIP nav")
-    urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_nav.aip"
-    urllib.request.urlretrieve( urlText, "nav.aip" )
     print("  … downloading openAIP wpt")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_wpt.aip"
     urllib.request.urlretrieve( urlText, "wpt.aip" )
@@ -141,13 +139,13 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir),
+            "{0}/any2GeoJSON.py {2} {1}/asp.aip {1}/wpt.aip {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir, region[2]),
             shell=True,
             check=True,
         )
     else:
         subprocess.run(
-            "{0}/any2GeoJSON.py {1}/asp.aip {1}/nav.aip {1}/wpt.aip".format(sys.path[0], workingDir),
+            "{0}/any2GeoJSON.py {2} {1}/asp.aip {1}/wpt.aip".format(sys.path[0], workingDir, region[2]),
             shell=True,
             check=True,
         )

@@ -37,10 +37,12 @@ def morse(string):
             result = result + MORSE_CODE_DICT[letter] + " "
     return result
 
-def readOpenAIPData(typeName):
+def readOpenAIPData(typeName, country):
     """Read data from the openAIP2 API.
 
     :param typeName: Name data ("navaids")
+
+    :param country: two-letter country code, such as 'DE' or 'de'
 
     :returns: dictionary with data
 
@@ -48,7 +50,7 @@ def readOpenAIPData(typeName):
 
     my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
     try:
-        response = requests.get("https://api.core.openaip.net/api/navaids", headers=my_headers, params={'country': 'DE', 'limit': 10000} )
+        response = requests.get("https://api.core.openaip.net/api/navaids", headers=my_headers, params={'country': country.upper(), 'limit': 10000} )
         response.raise_for_status()
         # Code here will only run if the request is successful
     except requests.exceptions.HTTPError as errh:
@@ -70,15 +72,18 @@ def readOpenAIPData(typeName):
         exit(-1)
     return parsedResponse
 
-def readOpenAIPNavaids():
+
+def readOpenAIPNavaids(country):
     """Read navaids from the openAIP2 API.
+
+    :param country: Country code, such as 'DE'
 
     :returns: GeoJSON feature array, in the format described here:
     https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
-    parsedResponse = readOpenAIPData('navaids')
+    parsedResponse = readOpenAIPData('navaids', country)
     features = []
     for item in parsedResponse['items']:
         #
@@ -138,4 +143,4 @@ def readOpenAIPNavaids():
 # Main program starts here
 #
 
-print(readOpenAIPNavaids())
+#print(readOpenAIPNavaids())

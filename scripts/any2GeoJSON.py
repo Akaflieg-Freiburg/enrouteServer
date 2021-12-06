@@ -7,6 +7,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 import OFMX
+import openAIP2
 
 # Dictionary representing the morse code chart
 MORSE_CODE_DICT = { 'A':'•‒', 'B':'‒•••',
@@ -515,15 +516,17 @@ ADNames       = {}
 ADFrequencies = {}
 haveNav       = False
 
-for arg in [arg for arg in sys.argv[1:] if arg.endswith('.aip')]:
-    if arg.endswith('nav.aip'):
-        if os.path.getsize(arg) != 0:
-            haveNav = True
+openAIPNavaids = openAIP2.readOpenAIPNavaids(sys.argv[1])
+if openAIPNavaids:
+    features = openAIPNavaids
+    haveNav = True
+
+for arg in [arg for arg in sys.argv[2:] if arg.endswith('.aip')]:
     readOpenAIP(arg)
-for arg in [arg for arg in sys.argv[1:] if arg.endswith('.ofmx') and not arg.endswith('shape.ofmx')]:
+for arg in [arg for arg in sys.argv[2:] if arg.endswith('.ofmx') and not arg.endswith('shape.ofmx')]:
     shapeFile = arg.replace(".ofmx", ".shape.ofmx")
     readOFMX(arg, shapeFile, not haveNav)
-for arg in [arg for arg in sys.argv[1:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
+for arg in [arg for arg in sys.argv[2:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
     print("Unknown file type {}".format(arg))
     exit(-1)
 
