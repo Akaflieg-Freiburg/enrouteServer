@@ -50,7 +50,7 @@ def readOpenAIPData(typeName, country):
 
     my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
     try:
-        response = requests.get("https://api.core.openaip.net/api/navaids", headers=my_headers, params={'country': country.upper(), 'limit': 10000} )
+        response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'country': country.upper(), 'limit': 10000} )
         response.raise_for_status()
         # Code here will only run if the request is successful
     except requests.exceptions.HTTPError as errh:
@@ -71,6 +71,110 @@ def readOpenAIPData(typeName, country):
         print('Limit exceeded')
         exit(-1)
     return parsedResponse
+
+
+def readOpenAIPAirspaces(country):
+    """Read airspaces from the openAIP2 API.
+
+    :param country: Country code, such as 'DE'
+
+    :returns: GeoJSON feature array, in the format described here:
+    https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+
+    """
+
+    parsedResponse = readOpenAIPData('airspaces', country)
+    features = []
+    for item in parsedResponse['items']:
+        properties = {}
+
+        print(item)
+
+        # Look at the various types of airspace
+        #
+        # 0: Other
+        if item['type'] == 1: # Restricted
+            properties['CAT'] = 'R'
+        if item['type'] == 2: # Danger
+            properties['CAT'] = 'DNG'
+        if item['type'] == 3: # Prohibited
+            properties['CAT'] = 'P'
+        if item['type'] == 4: # Controlled Tower Region (CTR)
+            properties['CAT'] = 'CTR'
+        if item['type'] == 5: # Transponder Mandatory Zone (TMZ)
+            properties['CAT'] = 'TMZ'
+        if item['type'] == 6: # Radio Mandatory Zone (RMZ)
+            properties['CAT'] = 'RMZ'
+        # 7: Terminal Maneuvering Area (TMA)
+        # 8: Temporary Reserved Area (TRA)
+        # 9: Temporary Segregated Area (TSA)
+        # 10: Flight Information Region (FIR)
+        # 11: Upper Flight Information Region (UIR)
+        # 12: Air Defense Identification Zone (ADIZ)
+        # 13: Airport Traffic Zone (ATZ)
+        # 14: Military Airport Traffic Zone (MATZ)
+        # 15: Airway
+        # 16: Military Training Route (MTR)
+        # 17: Alert Area
+        # 18: Warning Area
+        # 19: Protected Area
+        # 20: Helicopter Traffic Zone (HTZ)
+        if item['type'] == 21: # Gliding Sector
+            properties['CAT'] = 'GLD'
+        # 22: Transponder Setting (TRP)
+        # 23: Traffic Information Zone (TIZ)
+        # 24: Traffic Information Area (TIA)
+        # 25: Military Training Area (MTA)
+
+        #
+        # If CAT has not yet been assigned, look at the ICAO class of the airspaceq
+        # 
+        if not 'CAT' in properties:
+            if item['icaoClass'] == 0: # A
+                properties['CAT'] = 'A'
+            if item['icaoClass'] == 1: # B
+                properties['CAT'] = 'B'
+            if item['icaoClass'] == 2: # C
+                properties['CAT'] = 'C'
+            if item['icaoClass'] == 3: # D
+                properties['CAT'] = 'C'
+
+        #
+        # If CAT has still not yet been assigned, ignore this airspace
+        # 
+        if not 'CAT' in properties:
+            continue
+
+        # Get properties
+        #properties = {}
+        #properties['BOT'] = interpretAltitudeLimit(airspace.find('ALTLIMIT_BOTTOM'))
+        #if airspace.get('CATEGORY') == 'DANGER':
+        #    if airspace.find('NAME').text.startswith('PARA'):
+        #        properties['CAT'] = 'PJE'
+        #    else:
+        #        properties['CAT'] = 'DNG'
+        #elif (airspace.get('CATEGORY') == 'GLIDING') or (airspace.get('CATEGORY') == 'WAVE'):
+        #    properties['CAT'] = 'GLD'
+        #elif airspace.get('CATEGORY') == 'PROHIBITED':
+        #    properties['CAT'] = 'P'
+        #elif airspace.get('CATEGORY') == 'RESTRICTED':
+        #    properties['CAT'] = 'R'
+        #else:
+        #    properties['CAT'] = airspace.get('CATEGORY')
+        properties['NAM'] = item['name']
+        properties['TYP'] = "AS"
+        properties['BOT'] = '5000'
+        properties['TOP'] = 'FL 95'
+        
+        #
+        # Generate feature
+        #
+        feature = {'type': 'Feature'}
+        feature['geometry'] = item['geometry']
+        feature['properties'] = properties
+        features.append(feature)
+    return features
+
 
 
 def readOpenAIPNavaids(country):
@@ -143,4 +247,4 @@ def readOpenAIPNavaids(country):
 # Main program starts here
 #
 
-#print(readOpenAIPNavaids())
+#print(readOpenAIPAirspaces('DE'))

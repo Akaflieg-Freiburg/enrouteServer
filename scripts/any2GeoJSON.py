@@ -201,100 +201,6 @@ def readOpenAIP(fileName):
         features.append(feature)
 
 
-    #
-    # Read navaids
-    #
-    for navaid in root.findall('./NAVAIDS/NAVAID'):
-
-        # Ignore the following navaids
-        if navaid.get('TYPE') in ["DME", "TACAN"]:
-            continue
-
-        # Warning
-        if navaid.find('RADIO').find('FREQUENCY').text == None:
-            print("WARNING: Navaid " + navaid.find('NAME').text + " without frequency!")
-            continue
-
-        # Get properties
-        properties = {}
-        properties['CAT'] = navaid.get('TYPE')
-        properties['COD'] = navaid.find('ID').text
-        properties['ELE'] = round(float(navaid.find('GEOLOCATION').find('ELEV').text))
-        properties['NAM'] = navaid.find('NAME').text
-        properties['MOR'] = morse(navaid.find('ID').text)
-        freq = navaid.find('RADIO').find('FREQUENCY').text
-        if navaid.get('TYPE') == "NDB":
-            freq += " kHz"
-        else:
-            freq += " MHz"
-        if navaid.find('RADIO').find('CHANNEL') != None:
-            freq += " • " + navaid.find('RADIO').find('CHANNEL').text
-        properties['NAV'] = freq
-        properties['TYP'] = 'NAV'
-
-        # Get geometry
-        lat =  navaid.find('GEOLOCATION').find('LAT').text
-        lon =  navaid.find('GEOLOCATION').find('LON').text
-        coordinate = [ round(float(lon), numCoordDigits), round(float(lat), numCoordDigits) ]
-
-        # Generate feature
-        feature = {'type': 'Feature'}
-        feature['geometry'] = {'type': 'Point', 'coordinates': coordinate}
-        feature['properties'] = properties
-        features.append(feature)
-
-
-    #
-    # Read airspaces
-    #
-    if verbose:
-        print(': Read airspaces')
-    for airspace in root.findall('./AIRSPACES/ASP'):
-        if verbose:
-            print('')
-            print(': -- Airspace')
-            ET.dump(airspace)
-        # Ignore the following airspaces
-        if airspace.get('CATEGORY') in ["E", "F", "FIR", "G", "OTH", "UIR"]:
-            continue
-        if airspace.get('CATEGORY') in ["TMA"]:
-            print("TMA")
-            exit(-1)
-
-        # Get geometry
-        coordinates = []
-        for cooPair in airspace.find('GEOMETRY').find('POLYGON').text.split(','):
-            cooPairArray = cooPair.split()
-            coordinate = [ round(float(cooPairArray[0]), numCoordDigits), round(float(cooPairArray[1]), numCoordDigits) ]
-            coordinates.append(coordinate)
-
-        # Get properties
-        properties = {}
-        properties['BOT'] = interpretAltitudeLimit(airspace.find('ALTLIMIT_BOTTOM'))
-        if airspace.get('CATEGORY') == 'DANGER':
-            if airspace.find('NAME').text.startswith('PARA'):
-                properties['CAT'] = 'PJE'
-            else:
-                properties['CAT'] = 'DNG'
-        elif (airspace.get('CATEGORY') == 'GLIDING') or (airspace.get('CATEGORY') == 'WAVE'):
-            properties['CAT'] = 'GLD'
-        elif airspace.get('CATEGORY') == 'PROHIBITED':
-            properties['CAT'] = 'P'
-        elif airspace.get('CATEGORY') == 'RESTRICTED':
-            properties['CAT'] = 'R'
-        else:
-            properties['CAT'] = airspace.get('CATEGORY')
-        properties['ID']  =  airspace.find('ID').text
-        properties['NAM'] = airspace.find('NAME').text
-        properties['TOP'] = interpretAltitudeLimit(airspace.find('ALTLIMIT_TOP'))
-        properties['TYP'] = "AS"
-
-        # Generate feature
-        feature = {'type': 'Feature'}
-        feature['geometry'] = {'type': 'Polygon', 'coordinates': [coordinates]}
-        feature['properties'] = properties
-        features.append(feature)
-
 # OFMX Tools
 
 def readNavaidsFromOFMX(root, numCoordDigits):
@@ -516,10 +422,16 @@ ADNames       = {}
 ADFrequencies = {}
 haveNav       = False
 
+# Read navaids
 openAIPNavaids = openAIP2.readOpenAIPNavaids(sys.argv[1])
 if openAIPNavaids:
     features = openAIPNavaids
     haveNav = True
+
+# Read airspaces
+openAIPAirspaces = openAIP2.readOpenAIPAirspaces(sys.argv[1])
+if openAIPAirspaces:
+    features += openAIPAirspaces
 
 for arg in [arg for arg in sys.argv[2:] if arg.endswith('.aip')]:
     readOpenAIP(arg)

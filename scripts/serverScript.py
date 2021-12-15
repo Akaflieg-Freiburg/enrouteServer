@@ -80,6 +80,10 @@ regions = [
     ["",     "South America/Brazil", "br"],
 ]
 
+testRegions = [
+    ["ed",   "Europe/Germany", "de"]
+]
+
 
 workingDir = "/home/kebekus/experiment/enroute_working"
 mapStorageDir = "/home/kebekus/Austausch/aviation_maps"
@@ -113,7 +117,7 @@ shutil.rmtree(workingDir, ignore_errors=True)
 os.makedirs(workingDir, exist_ok=True)
 os.chdir(workingDir)
 
-for region in regions:
+for region in testRegions:
     print("Working on region " + region[1])
 
     if region[0] != "":
@@ -129,9 +133,6 @@ for region in regions:
             "data.shape.ofmx"
         )
 
-    print("  … downloading openAIP asp")
-    urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_asp.aip"
-    urllib.request.urlretrieve( urlText, "asp.aip" )
     print("  … downloading openAIP wpt")
     urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_wpt.aip"
     urllib.request.urlretrieve( urlText, "wpt.aip" )
@@ -139,13 +140,13 @@ for region in regions:
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "{0}/any2GeoJSON.py {2} {1}/asp.aip {1}/wpt.aip {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir, region[2]),
+            "{0}/any2GeoJSON.py {2} {1}/wpt.aip {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir, region[2]),
             shell=True,
             check=True,
         )
     else:
         subprocess.run(
-            "{0}/any2GeoJSON.py {2} {1}/asp.aip {1}/wpt.aip".format(sys.path[0], workingDir, region[2]),
+            "{0}/any2GeoJSON.py {2} {1}/wpt.aip".format(sys.path[0], workingDir, region[2]),
             shell=True,
             check=True,
         )
