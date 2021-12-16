@@ -78,6 +78,7 @@ regions = [
     #
     ["",     "South America/Argentina", "ar"],
     ["",     "South America/Brazil", "br"],
+    ["",     "South America/Falkland Islands", "fk"],
 ]
 
 testRegions = [
