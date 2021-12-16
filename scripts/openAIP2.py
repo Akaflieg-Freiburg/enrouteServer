@@ -88,15 +88,17 @@ def readOpenAIPAirspaces(country):
     for item in parsedResponse['items']:
         properties = {}
 
-        print(item)
-
+        #
         # Look at the various types of airspace
         #
         # 0: Other
         if item['type'] == 1: # Restricted
             properties['CAT'] = 'R'
         if item['type'] == 2: # Danger
-            properties['CAT'] = 'DNG'
+            if 'PARA' in item['name']:
+                properties['CAT'] = 'PJE'
+            else:
+                properties['CAT'] = 'DNG'
         if item['type'] == 3: # Prohibited
             properties['CAT'] = 'P'
         if item['type'] == 4: # Controlled Tower Region (CTR)
