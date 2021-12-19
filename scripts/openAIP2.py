@@ -37,6 +37,25 @@ def morse(string):
             result = result + MORSE_CODE_DICT[letter] + " "
     return result
 
+def interpretLimit(limit, item):
+    if limit['unit'] == 0:
+        return 'FL ' + limit['value']
+    value = 0
+    if limit['unit'] == 1:
+        value = round(limit['value']*3.2808)
+    if limit['unit'] == 6:
+        value = limit['value']
+    if limit['referenceDatum'] == 0:
+        if value == 0:
+            return 'GND'
+        return value + ' AGL'
+    if limit['referenceDatum'] == 1:
+        return value
+    print('Invalid airspace limit')
+    print(item)
+    print(limit)
+    exit(-1)
+
 def readOpenAIPData(typeName, country):
     """Read data from the openAIP2 API.
 
@@ -165,8 +184,8 @@ def readOpenAIPAirspaces(country):
         #    properties['CAT'] = airspace.get('CATEGORY')
         properties['NAM'] = item['name']
         properties['TYP'] = "AS"
-        properties['BOT'] = '5000'
-        properties['TOP'] = 'FL 95'
+        properties['BOT'] = interpretLimit(item['lowerLimit'], item)
+        properties['TOP'] = interpretLimit(item['upperLimit'], item)
         
         #
         # Generate feature
