@@ -192,6 +192,7 @@ for file in glob.glob(mapStorageDir + "/**/*.geojson", recursive=True)+glob.glob
 
 top = {'maps': maps}
 top['url'] = serverURL
+top['whatsNew'] = 'If you ever move to the south Atlantic, you will be delighted to learn that aviation maps for the <strong>Falkland Islands</strong> are now available.'
 file = open(mapStorageDir + '/maps.json', 'w')
 file.write(json.dumps(top, sort_keys=True, indent=4))
 file.close()
