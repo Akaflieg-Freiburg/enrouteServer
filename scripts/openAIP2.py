@@ -1,8 +1,9 @@
 #!/bin/python
 
 """
-opeenAIP2
+openAIP2
 =======================================================================================================
+
 Toolset to read aviation data from the openAIP2 web site and to transform the
 data into the GeoJSON format described here:
 https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
@@ -98,7 +99,7 @@ def readOpenAIPAirspaces(country):
     :param country: Country code, such as 'DE'
 
     :returns: GeoJSON feature array, in the format described here:
-    https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
@@ -204,7 +205,7 @@ def readOpenAIPNavaids(country):
     :param country: Country code, such as 'DE'
 
     :returns: GeoJSON feature array, in the format described here:
-    https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
