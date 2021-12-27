@@ -82,7 +82,7 @@ regions = [
 ]
 
 testRegions = [
-    ["ed",   "Europe/Germany", "de"]
+    ["",   "Europe/Germany", "de"],
 ]
 
 
@@ -134,20 +134,16 @@ for region in testRegions:
             "data.shape.ofmx"
         )
 
-    print("  … downloading openAIP wpt")
-    urlText = "http://www.openaip.net/customer_export_asdkjb1iufbiqbciggb34ogg/" + region[2] + "_wpt.aip"
-    urllib.request.urlretrieve( urlText, "wpt.aip" )
-
     print("  … generate GeoJSON")
     if region[0] != "":
         subprocess.run(
-            "{0}/any2GeoJSON.py {2} {1}/wpt.aip {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir, region[2]),
+            "{0}/any2GeoJSON.py {2} {1}/data.ofmx {1}/shape.ofmx".format(sys.path[0], workingDir, region[2]),
             shell=True,
             check=True,
         )
     else:
         subprocess.run(
-            "{0}/any2GeoJSON.py {2} {1}/wpt.aip".format(sys.path[0], workingDir, region[2]),
+            "{0}/any2GeoJSON.py {2}".format(sys.path[0], workingDir, region[2]),
             shell=True,
             check=True,
         )

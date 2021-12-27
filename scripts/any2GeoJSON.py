@@ -433,12 +433,15 @@ openAIPAirspaces = openAIP2.readOpenAIPAirspaces(sys.argv[1])
 if openAIPAirspaces:
     features += openAIPAirspaces
 
-for arg in [arg for arg in sys.argv[2:] if arg.endswith('.aip')]:
-    readOpenAIP(arg)
+# Read airports
+openAIPAirports = openAIP2.readOpenAIPAirports(sys.argv[1])
+if openAIPAirports:
+    features += openAIPAirports
+
 for arg in [arg for arg in sys.argv[2:] if arg.endswith('.ofmx') and not arg.endswith('shape.ofmx')]:
     shapeFile = arg.replace(".ofmx", ".shape.ofmx")
     readOFMX(arg, shapeFile, not haveNav)
-for arg in [arg for arg in sys.argv[2:] if not arg.endswith(".aip") and not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
+for arg in [arg for arg in sys.argv[2:] if not arg.endswith(".ofmx") and not arg.endswith(".aixm")]:
     print("Unknown file type {}".format(arg))
     exit(-1)
 
