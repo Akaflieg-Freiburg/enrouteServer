@@ -112,9 +112,6 @@ def readOpenAIPAirports(country):
 
     features = []
     for item in parsedResponse['items']:
-        if item['name'] == 'REISELFINGEN':
-            print(item)
-
         properties = {}
 
         #
@@ -160,154 +157,192 @@ def readOpenAIPAirports(country):
         properties['NAM'] = item['name']
         properties['TYP'] = 'AD'
 
-        """
-        for frequency in item['frequencies']:
-            name = ''
-            if frequency['type'] == 0: # 0: Approach
-                name = 'Approach ' + frequency['value']
-            if frequency['type'] == 1: # 1: APRON
-                name = 'Apron ' + frequency['value']
-            if frequency['type'] == 2: # 2: Arrival
-                name = 'Arrival ' + frequency['value']
-            if frequency['type'] == 3: # 3: Center
-                name = 'Center ' + frequency['value']
-            if frequency['type'] == 4: # 4: CTAF
-                name = 'CTAF ' + frequency['value']
-            if frequency['type'] == 5: # 5: Delivery
-                name = 'Delivery ' + frequency['value']
-            if frequency['type'] == 6: # 6: Departure
-                name = 'Departure ' + frequency['value']
-            if frequency['type'] == 7: # 7: FIS
-                name = 'FIS ' + frequency['value']
-            if frequency['type'] == 8: # 8: Gliding
-                name = 'Gliding ' + frequency['value']
-            if frequency['type'] == 9: # 9: Ground
-                name = 'Ground ' + frequency['value']
-            if frequency['type'] == 10: # 10: Info
-                name = 'Info ' + frequency['value']
-            if frequency['type'] == 11: # 11: Multicom
-                name = 'Multicom ' + frequency['value']
-            if frequency['type'] == 12: # 12: Unicom
-                name = 'Unicom ' + frequency['value']
-            if frequency['type'] == 13: # 13: Radar
-                name = 'Radar ' + frequency['value']
-            if frequency['type'] == 14: # 14: Tower
-                name = 'Tower ' + frequency['value']
-            if frequency['type'] == 15: # 15: ATIS
-                name = 'ATIS ' + frequency['value']
-            if frequency['type'] == 16: # 16: Radio
-                name = 'Radio ' + frequency['value']
-            if frequency['type'] == 17: # 17: AIRMET
-                name = 'AIRMET ' + frequency['value']
-            if frequency['type'] == 18: # 18: AWOS
-                name = 'AWOS ' + frequency['value']
-            if frequency['type'] == 19: # 19: Lights
-                name = 'Lights ' + frequency['value']
-            if frequency['type'] == 20: # 20: VOLMET
-                name = 'VOLMET ' + frequency['value']
+        if 'frequencies' in item:
+            INF = ""
+            COMs = []
+            NAV = ""
+            OTH = ""
+            for frequency in item['frequencies']:
+                name = ''
+                type = ''
+                if frequency['type'] == 0: # 0: Approach
+                    name = 'Approach'
+                    type = 'COM'
+                if frequency['type'] == 1: # 1: APRON
+                    name = 'Apron'
+                    type = 'COM'
+                if frequency['type'] == 2: # 2: Arrival
+                    name = 'Arrival'
+                    type = 'COM'
+                if frequency['type'] == 3: # 3: Center
+                    name = 'Center'
+                    type = 'COM'
+                if frequency['type'] == 4: # 4: CTAF
+                    name = 'CTAF'
+                    type = 'COM'
+                if frequency['type'] == 5: # 5: Delivery
+                    name = 'Delivery'
+                    type = 'COM'
+                if frequency['type'] == 6: # 6: Departure
+                    name = 'Departure'
+                    type = 'COM'
+                if frequency['type'] == 7: # 7: FIS
+                    name = 'FIS'
+                    type = 'COM'
+                if frequency['type'] == 8: # 8: Gliding
+                    name = 'Gliding'
+                    type = 'COM'
+                if frequency['type'] == 9: # 9: Ground
+                    name = 'Ground'
+                    type = 'COM'
+                if frequency['type'] == 10: # 10: Info
+                    name = 'Info'
+                    type = 'COM'
+                if frequency['type'] == 11: # 11: Multicom
+                    name = 'Multicom'
+                    type = 'COM'
+                if frequency['type'] == 12: # 12: Unicom
+                    name = 'Unicom'
+                    type = 'COM'
+                if frequency['type'] == 13: # 13: Radar
+                    name = 'Radar'
+                    type = 'COM'
+                if frequency['type'] == 14: # 14: Tower
+                    name = 'Tower'
+                    type = 'COM'
+                if frequency['type'] == 15: # 15: ATIS
+                    name = 'ATIS'
+                    type = 'INFO'
+                if frequency['type'] == 16: # 16: Radio
+                    name = 'Radio'
+                    type = 'COM'
+                if frequency['type'] == 17: # 17: AIRMET
+                    name = 'AIRMET'
+                    type = 'INFO'
+                if frequency['type'] == 18: # 18: AWOS
+                    name = 'AWOS'
+                    type = 'INFO'
+                if frequency['type'] == 19: # 19: Lights
+                    name = 'Lights'
+                    type = 'OTH'
+                if frequency['type'] == 20: # 20: VOLMET
+                    name = 'VOLMET'
+                    type = 'INFO'
 
-            if 'name' in frequency:
-                print(frequency['name'])
-            print(frequency['value'])
-        print(properties)
-        exit(-1)
+                if 'name' in frequency:
+                    name = frequency['name']
+                if not frequency['value'] in name:
+                    name = name + ' ' + frequency['value'] + ' MHz'
 
-        INF = ""
-        COMs = []
-        NAV = ""
-        OTH = ""
-        for radio in airport.findall('RADIO'):
-            if radio.find('FREQUENCY').text == None:
-                continue
+                if type == 'COM':
+                    COMs.append(name)
+                if type == 'INFO':
+                    INF += name + '\n'
+                if type == 'OTH':
+                    OTH += name + '\n'
 
-            if radio.get('CATEGORY') == 'INFORMATION':
-                if radio.find('DESCRIPTION') != None:
-                    INF += radio.find('DESCRIPTION').text
-                else:
-                    INF += radio.find('TYPE').text
-                INF += " " + radio.find('FREQUENCY').text + " MHz\n"
-            if radio.get('CATEGORY') == 'COMMUNICATION':
-                COM = ""
-                if radio.find('DESCRIPTION') != None:
-                    COM += radio.find('DESCRIPTION').text
-                else:
-                    COM += radio.find('TYPE').text
-                COM += " " + radio.find('FREQUENCY').text + " MHz"
-                COMs.append(COM)
-                if (airport.find('ICAO') != None) and (airport.find('ICAO').text not in ADFrequencies) and ('TWR' in COM.upper() or 'TOWER' in COM.upper()):
-                    ADFrequencies[airport.find('ICAO').text] = COM
-            if radio.get('CATEGORY') == 'NAVIGATION':
-                if radio.find('DESCRIPTION') != None:
-                    NAV += radio.find('DESCRIPTION').text
-                else:
-                    NAV += radio.find('TYPE').text
-                NAV += " " + radio.find('FREQUENCY').text + " MHz\n"
-            if radio.get('CATEGORY') == 'OTHER':
-                if radio.find('DESCRIPTION') != None:
-                    OTH += radio.find('DESCRIPTION').text
-                else:
-                    OTH += radio.find('TYPE').text
-                OTH += " " + radio.find('FREQUENCY').text + " MHz\n"
+            if COMs != []:
+                # Need to sort frequencies: TWR first, then GROUND, then APRON, then all others
+                COMsSorted = sorted([com for com in COMs if ('TWR' in com.upper() or 'TOWER' in com.upper())])
+                COMs = [ com for com in COMs if com not in COMsSorted]
+                COMsSorted += sorted([ com for com in COMs if 'GND' in com.upper() or 'GROUND' in com.upper()])
+                COMs = [ com for com in COMs if com not in COMsSorted]
+                COMsSorted += sorted(COMs)
+                properties['COM'] = '\n'.join(COMsSorted)
+            if INF != "":
+                properties['INF'] = INF[0:-1]
+            if NAV != "":
+                properties['NAV'] = NAV[0:-1]
+            if OTH != "":
+                properties['OTH'] = OTH[0:-1]
 
+        if 'runways' in item:
+            RWYs = []
+            bestRWY_isPaved = False
+            bestRWY_dir     = 0.0
+            bestRWY_found   = False
+            bestRWY_len     = 0.0
 
-        if INF != "":
-            properties['INF'] = INF[0:-1]
-        if COMs != []:
-            # Need to sort frequencies: TWR first, then GROUND, then APRON, then all others
-            COMsSorted = sorted([com for com in COMs if ('TWR' in com.upper() or 'TOWER' in com.upper())])
-            COMs = [ com for com in COMs if com not in COMsSorted]
-            COMsSorted += sorted([ com for com in COMs if 'GND' in com.upper() or 'GROUND' in com.upper()])
-            COMs = [ com for com in COMs if com not in COMsSorted]
-            COMsSorted += sorted(COMs)
-            properties['COM'] = '\n'.join(COMsSorted)
-        if NAV != "":
-            properties['NAV'] = NAV[0:-1]
-        if OTH != "":
-            properties['OTH'] = OTH[0:-1]
+            for runway in item['runways']:
+                description = runway['designator']
+                description += ' • ' + str(runway['dimension']['length']['value']) + '×' + str(runway['dimension']['width']['value']) + 'm'
+                if runway['operations'] == 1:
+                    description += ' • temporarily closed'
+                if runway['operations'] == 2:
+                    description += ' • closed'
+                if 'condition' in  runway['surface']:
+                    if runway['surface']['condition'] == 2:
+                        description += ' • poor condition'
+                    if runway['surface']['condition'] == 3:
+                        description += ' • unsafe condition'
+                    if runway['surface']['condition'] == 4:
+                        description += ' • deformed'
+                paved = False
+                if 'mainComposite' in runway['surface']:
+                    if runway['surface']['mainComposite'] == 0:
+                        description += ' • ASPH'
+                        paved = True
+                    if runway['surface']['mainComposite'] == 1:
+                        description += ' • CONC'
+                        paved = True
+                    if runway['surface']['mainComposite'] == 2:
+                        description += ' • GRASS'
+                    if runway['surface']['mainComposite'] == 3:
+                        description += ' • SAND'
+                    if runway['surface']['mainComposite'] == 4:
+                        description += ' • WATER'
+                    if runway['surface']['mainComposite'] == 5:
+                        description += ' • TAR'
+                    if runway['surface']['mainComposite'] == 6:
+                        description += ' • BRICK'
+                    if runway['surface']['mainComposite'] == 7:
+                        description += ' • MACAM'
+                    if runway['surface']['mainComposite'] == 8:
+                        description += ' • STONE'
+                    if runway['surface']['mainComposite'] == 9:
+                        description += ' • CORAL'
+                    if runway['surface']['mainComposite'] == 10:
+                        description += ' • CLAY'
+                    if runway['surface']['mainComposite'] == 11:
+                        description += ' • LATERITE'
+                    if runway['surface']['mainComposite'] == 12:
+                        description += ' • GRAVEL'
+                    if runway['surface']['mainComposite'] == 13:
+                        description += ' • EARTH'
+                    if runway['surface']['mainComposite'] == 14:
+                        description += ' • ICE'
+                    if runway['surface']['mainComposite'] == 15:
+                        description += ' • SNOW'
+                    if runway['surface']['mainComposite'] == 16:
+                        description += ' • RUBBER'
+                    if runway['surface']['mainComposite'] == 17:
+                        description += ' • METAL'
+                    if runway['surface']['mainComposite'] == 19:
+                        description += ' • STEEL'
+                    if runway['surface']['mainComposite'] == 20:
+                        description += ' • WOOD'
+                description += ' • ' + str(runway['trueHeading']) + '°'
+                RWYs.append(description)
+                if paved and not bestRWY_isPaved:
+                    bestRWY_isPaved = True
+                    bestRWY_dir     = runway['trueHeading']
+                    bestRWY_found   = True
+                    bestRWY_len     = runway['dimension']['length']['value']
+                if (paved == bestRWY_isPaved) and (runway['dimension']['length']['value'] > bestRWY_len):
+                    bestRWY_isPaved = paved
+                    bestRWY_dir     = runway['trueHeading']
+                    bestRWY_found   = True
+                    bestRWY_len     = runway['dimension']['length']['value']
 
-        # Get runways
-        RWYs = []
-        bestRWY_isPaved = False
-        bestRWY_dir     = 0.0
-        bestRWY_found   = False
-        bestRWY_len     = 0.0
-        for rwy in airport.findall("./RWY[@OPERATIONS='ACTIVE']"):
-            descr = rwy.find('NAME').text + ", " + str(round(float(rwy.find('LENGTH').text))) + "×" + str(round(float(rwy.find('WIDTH').text))) + "m, "
-            if rwy.find('SFC').text != None:
-                descr += rwy.find('SFC').text + ", "
-            descr += rwy.find('DIRECTION').get('TC') + "°"
-            RWYs.append(descr)
-            RWYsIsPaved = rwy.find('SFC').text in ["ASPH", "CONC"]
-
-            if RWYsIsPaved and not bestRWY_isPaved:
-                bestRWY_isPaved = RWYsIsPaved
-                bestRWY_dir     = float(rwy.find('DIRECTION').get('TC'))
-                bestRWY_found   = True
-                bestRWY_len     = float(rwy.find('LENGTH').text)
-
-            if (RWYsIsPaved == bestRWY_isPaved) and (float(rwy.find('LENGTH').text) > bestRWY_len):
-                bestRWY_isPaved = RWYsIsPaved
-                bestRWY_dir     = float(rwy.find('DIRECTION').get('TC'))
-                bestRWY_found   = True
-                bestRWY_len     = float(rwy.find('LENGTH').text)
-
-        if bestRWY_found:
-            if properties['CAT'] in ['AD', 'AD-MIL']:
-                if bestRWY_isPaved:
-                    properties['CAT'] = properties['CAT']+'-PAVED'
-                else:
-                    properties['CAT'] = properties['CAT']+'-GRASS'
-
-        if RWYs != []:
-            properties['RWY'] = '\n'.join(RWYs)
-            properties['ORI'] = bestRWY_dir
-
-        # Get geometry
-        lat = airport.find('GEOLOCATION').find('LAT').text
-        lon = airport.find('GEOLOCATION').find('LON').text
-        coordinate = [ round(float(lon), numCoordDigits), round(float(lat), numCoordDigits) ]
-        """
-
+            if RWYs != []:
+                properties['ORI'] = bestRWY_dir
+                properties['RWY'] = '\n'.join(RWYs)
+                if properties['CAT'] in ['AD', 'AD-MIL']:
+                    if bestRWY_isPaved:
+                        properties['CAT'] = properties['CAT']+'-PAVED'
+                    else:
+                        properties['CAT'] = properties['CAT']+'-GRASS'
+           
         # Get further properties
         properties['TYP'] = 'AD'
         
