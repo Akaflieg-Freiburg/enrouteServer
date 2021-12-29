@@ -10,6 +10,7 @@ https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-en
 """
 
 import json
+import math
 import requests
 import os
 
@@ -59,40 +60,46 @@ def interpretLimit(limit, item):
     exit(-1)
 
 
-def readOpenAIPData(typeName, country):
+def downloadOpenAIPData(typeName, country):
     """Read data from the openAIP2 API.
 
     :param typeName: Name data ("navaids")
 
     :param country: two-letter country code, such as 'DE' or 'de'
 
-    :returns: dictionary with data
+    :returns: array with data items
 
     """
 
-    my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
-    try:
-        response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'country': country.upper(), 'limit': 10000} )
-        response.raise_for_status()
-        # Code here will only run if the request is successful
-    except requests.exceptions.HTTPError as errh:
-        print(errh)
-        exit(-1)
-    except requests.exceptions.ConnectionError as errc:
-        print(errc)
-        exit(-1)
-    except requests.exceptions.Timeout as errt:
-        print(errt)
-        exit(-1)
-    except requests.exceptions.RequestException as err:
-        print(err)
-        exit(-1)
+    page = 1
+    totalPages = 1.0
+    items = []
+    while page <= math.ceil(totalPages):
+        print(page, totalPages)
+        my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
+        try:
+            response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'country': country.upper(), 'limit': 1000, 'page': page} )
+            response.raise_for_status()
+            # Code here will only run if the request is successful
+        except requests.exceptions.HTTPError as errh:
+            print(errh)
+            exit(-1)
+        except requests.exceptions.ConnectionError as errc:
+            print(errc)
+            exit(-1)
+        except requests.exceptions.Timeout as errt:
+            print(errt)
+            exit(-1)
+        except requests.exceptions.RequestException as err:
+            print(err)
+            exit(-1)
 
-    parsedResponse = response.json()
-    if parsedResponse['totalPages'] > 1:
-        print('Limit exceeded')
-        exit(-1)
-    return parsedResponse
+        parsedResponse = response.json()
+        items.extend(parsedResponse['items'])
+        totalPages = float(parsedResponse['totalCount'])/float(parsedResponse['limit'])
+        page = page + 1
+
+    return items
 
 
 def readOpenAIPAirports(country):
@@ -105,13 +112,10 @@ def readOpenAIPAirports(country):
 
     """
 
-    parsedResponse = readOpenAIPData('airports', country)
-
-    with open('filename.txt', 'w') as f:
-        print(parsedResponse, file=f)
+    items = downloadOpenAIPData('airports', country)
 
     features = []
-    for item in parsedResponse['items']:
+    for item in items:
         properties = {}
 
         #
@@ -367,9 +371,9 @@ def readOpenAIPAirspaces(country):
 
     """
 
-    parsedResponse = readOpenAIPData('airspaces', country)
+    items = downloadOpenAIPData('airspaces', country)
     features = []
-    for item in parsedResponse['items']:
+    for item in items:
 
         properties = {}
 
@@ -458,9 +462,10 @@ def readOpenAIPNavaids(country):
 
     """
 
-    parsedResponse = readOpenAIPData('navaids', country)
+    items = downloadOpenAIPData('navaids', country)
+
     features = []
-    for item in parsedResponse['items']:
+    for item in items:
         #
         # Ignore the following navaids
         #
