@@ -255,7 +255,7 @@ def readOpenAIP(fileName):
             print(': -- Airspace')
             ET.dump(airspace)
         # Ignore the following airspaces
-        if airspace.get('CATEGORY') in ["E", "F", "FIR", "G", "OTH", "UIR"]:
+        if airspace.get('CATEGORY') in ["FIR", "OTH", "UIR"]:
             continue
         if airspace.get('CATEGORY') in ["TMA"]:
             print("TMA")
