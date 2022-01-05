@@ -75,7 +75,6 @@ def downloadOpenAIPData(typeName, country):
     totalPages = 1.0
     items = []
     while page <= math.ceil(totalPages):
-        print(page, totalPages)
         my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
         try:
             response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'country': country.upper(), 'limit': 1000, 'page': page} )
@@ -428,7 +427,13 @@ def readOpenAIPAirspaces(country):
             if item['icaoClass'] == 2: # C
                 properties['CAT'] = 'C'
             if item['icaoClass'] == 3: # D
-                properties['CAT'] = 'C'
+                properties['CAT'] = 'D'
+            if item['icaoClass'] == 4: # E
+                properties['CAT'] = 'E'
+            if item['icaoClass'] == 5: # F
+                properties['CAT'] = 'F'
+            if item['icaoClass'] == 6: # G
+                properties['CAT'] = 'G'
 
         #
         # If CAT has still not yet been assigned, ignore this airspace

@@ -82,7 +82,9 @@ regions = [
 ]
 
 testRegions = [
-    ["",   "Europe/Germany", "de"],
+    ["ed",   "Europe/Germany", "de"],
+    ["esaa", "Europe/Sweden", "se"],
+    ["epww", "Europe/Poland", "pl"],
 ]
 
 
