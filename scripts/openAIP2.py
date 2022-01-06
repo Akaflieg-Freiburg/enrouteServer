@@ -153,9 +153,9 @@ def readOpenAIPAirports(country):
             continue
 
         # Get properties
-        if 'ICAO' in item:
-            properties['COD'] = item['ICAO']
-            ADNames[item['ICAO']] = item['NAME']
+        if 'icaoCode' in item:
+            properties['COD'] = item['icaoCode']
+# WARNING            ADNames[item['icaoCode']] = item['name']
         properties['ELE'] = item['elevation']['value']
         properties['NAM'] = item['name']
         properties['TYP'] = 'AD'
