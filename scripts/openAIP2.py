@@ -50,7 +50,7 @@ def readOpenAIPData(typeName, country):
 
     my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
     try:
-        response = requests.get("https://api.core.openaip.net/api/navaids", headers=my_headers, params={'country': country.upper(), 'limit': 10000} )
+        response = requests.get("https://api.core.openaip.net/api/navaids", headers=my_headers, params={'country': country.upper(), 'limit': 1000} )
         response.raise_for_status()
         # Code here will only run if the request is successful
     except requests.exceptions.HTTPError as errh:
