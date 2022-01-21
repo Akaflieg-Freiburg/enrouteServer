@@ -165,6 +165,9 @@ def readOpenAIPAirports(country):
             COMs = []
             NAV = ""
             OTH = ""
+
+// CHECK NEW DOCUMENTATION
+
             for frequency in item['frequencies']:
                 name = ''
                 type = ''
@@ -231,6 +234,9 @@ def readOpenAIPAirports(country):
                 if frequency['type'] == 20: # 20: VOLMET
                     name = 'VOLMET'
                     type = 'INFO'
+                if frequency['type'] == 21: # 21: Other
+                    name = 'Other'
+                    type = 'COM'
 
                 if 'name' in frequency:
                     name = frequency['name']
