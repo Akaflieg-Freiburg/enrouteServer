@@ -153,9 +153,6 @@ def readOpenAIPAirports(country):
             continue
 
         # Get properties
-        if 'icaoCode' in item:
-            properties['COD'] = item['icaoCode']
-# WARNING            ADNames[item['icaoCode']] = item['name']
         properties['ELE'] = item['elevation']['value']
         properties['NAM'] = item['name']
         properties['TYP'] = 'AD'
@@ -165,8 +162,6 @@ def readOpenAIPAirports(country):
             COMs = []
             NAV = ""
             OTH = ""
-
-// CHECK NEW DOCUMENTATION
 
             for frequency in item['frequencies']:
                 name = ''
@@ -222,21 +217,21 @@ def readOpenAIPAirports(country):
                 if frequency['type'] == 16: # 16: Radio
                     name = 'Radio'
                     type = 'COM'
-                if frequency['type'] == 17: # 17: AIRMET
-                    name = 'AIRMET'
-                    type = 'INFO'
-                if frequency['type'] == 18: # 18: AWOS
-                    name = 'AWOS'
-                    type = 'INFO'
-                if frequency['type'] == 19: # 19: Lights
-                    name = 'Lights'
-                    type = 'OTH'
-                if frequency['type'] == 20: # 20: VOLMET
-                    name = 'VOLMET'
-                    type = 'INFO'
-                if frequency['type'] == 21: # 21: Other
+                if frequency['type'] == 17: # 17: Other
                     name = 'Other'
                     type = 'COM'
+                if frequency['type'] == 18: # 18: AIRMET
+                    name = 'AIRMET'
+                    type = 'INFO'
+                if frequency['type'] == 19: # 19: AWOS
+                    name = 'AWOS'
+                    type = 'INFO'
+                if frequency['type'] == 20: # 20: Light
+                    name = 'Lights'
+                    type = 'OTH'
+                if frequency['type'] == 21: # 21: VOLMET
+                    name = 'VOLMET'
+                    type = 'INFO'
 
                 if 'name' in frequency:
                     name = frequency['name']
