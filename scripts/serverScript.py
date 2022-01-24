@@ -81,12 +81,6 @@ regions = [
     ["",     "South America/Falkland Islands", "fk"],
 ]
 
-testRegions = [
-    ["ed",   "Europe/Germany", "de"],
-    ["esaa", "Europe/Sweden", "se"],
-    ["epww", "Europe/Poland", "pl"],
-]
-
 
 workingDir = "/home/kebekus/experiment/enroute_working"
 mapStorageDir = "/home/kebekus/Austausch/aviation_maps"
@@ -120,7 +114,7 @@ shutil.rmtree(workingDir, ignore_errors=True)
 os.makedirs(workingDir, exist_ok=True)
 os.chdir(workingDir)
 
-for region in testRegions:
+for region in regions:
     print("Working on region " + region[1])
 
     if region[0] != "":

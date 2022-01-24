@@ -60,12 +60,10 @@ def interpretLimit(limit, item):
     exit(-1)
 
 
-def downloadOpenAIPData(typeName, country):
+def downloadOpenAIPData(typeName):
     """Read data from the openAIP2 API.
 
     :param typeName: Name data ("navaids")
-
-    :param country: two-letter country code, such as 'DE' or 'de'
 
     :returns: array with data items
 
@@ -77,7 +75,7 @@ def downloadOpenAIPData(typeName, country):
     while page <= math.ceil(totalPages):
         my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
         try:
-            response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'country': country.upper(), 'limit': 1000, 'page': page} )
+            response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'limit': 1000, 'page': page} )
             response.raise_for_status()
             # Code here will only run if the request is successful
         except requests.exceptions.HTTPError as errh:
@@ -94,6 +92,10 @@ def downloadOpenAIPData(typeName, country):
             exit(-1)
 
         parsedResponse = response.json()
+
+        if page == 1:
+            print("Reading openAIP " + typeName + ", " + str(parsedResponse['totalCount']) + " items")
+
         items.extend(parsedResponse['items'])
         totalPages = float(parsedResponse['totalCount'])/float(parsedResponse['limit'])
         page = page + 1
@@ -101,18 +103,16 @@ def downloadOpenAIPData(typeName, country):
     return items
 
 
-def readOpenAIPAirports(country):
+def readOpenAIPAirports():
     """Read airspaces from the openAIP2 API.
-
-    :param country: Country code, such as 'DE'
 
     :returns: GeoJSON feature array, in the format described here:
         https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
-    items = downloadOpenAIPData('airports', country)
-
+    items = downloadOpenAIPData('airports')
+    print("Interpreting airport data…")
     features = []
     for item in items:
         properties = {}
@@ -357,21 +357,19 @@ def readOpenAIPAirports(country):
         feature['geometry'] = item['geometry']
         feature['properties'] = properties
         features.append(feature)
-
     return features
 
 
-def readOpenAIPAirspaces(country):
+def readOpenAIPAirspaces():
     """Read airspaces from the openAIP2 API.
-
-    :param country: Country code, such as 'DE'
 
     :returns: GeoJSON feature array, in the format described here:
         https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
-    items = downloadOpenAIPData('airspaces', country)
+    items = downloadOpenAIPData('airspaces')
+    print("Interpreting airspace data…")
     features = []
     for item in items:
 
@@ -458,18 +456,16 @@ def readOpenAIPAirspaces(country):
     return features
 
 
-def readOpenAIPNavaids(country):
+def readOpenAIPNavaids():
     """Read navaids from the openAIP2 API.
-
-    :param country: Country code, such as 'DE'
 
     :returns: GeoJSON feature array, in the format described here:
         https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
-    items = downloadOpenAIPData('navaids', country)
-
+    items = downloadOpenAIPData('navaids')
+    print("Interpreting navaid data…")
     features = []
     for item in items:
         #
@@ -529,4 +525,13 @@ def readOpenAIPNavaids(country):
 # Main program starts here
 #
 
-#print(readOpenAIPAirspaces('DE'))
+countries = {
+    'Germany': [5.864417, 47.26543, 15.05078, 55.14777]
+}
+
+features = []
+
+features += readOpenAIPAirports()
+features += readOpenAIPAirspaces()
+features += readOpenAIPNavaids()
+
