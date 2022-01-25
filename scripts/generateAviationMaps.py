@@ -521,17 +521,17 @@ def readOpenAIPNavaids():
         features.append(feature)
     return features
 
+#
+# Main program starts here
+#
 
-def readOpenAIP():
-    """Read complete database from the openAIP2 API.
+countries = {
+    'Germany': [5.864417, 47.26543, 15.05078, 55.14777]
+}
 
-    :returns: GeoJSON feature array, in the format described here:
-        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+features = []
 
-    """
+features += readOpenAIPAirports()
+features += readOpenAIPAirspaces()
+features += readOpenAIPNavaids()
 
-    features = []
-    features += readOpenAIPAirports()
-    features += readOpenAIPAirspaces()
-    features += readOpenAIPNavaids()
-    return features

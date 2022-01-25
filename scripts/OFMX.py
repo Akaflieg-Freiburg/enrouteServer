@@ -1,10 +1,51 @@
+#!/bin/python3
+
 """
 OFMX
 ====================================
 Tools to interpret ofmx files
 """
 
+
+import datetime
 import re
+import requests
+import xml.etree.ElementTree as ET
+
+
+regions = [
+    #
+    # Africa
+    #
+    ["fa",   "Africa/South Africa", "za"],
+    ["fywh", "Africa/Namibia", "na"],
+    #
+    # Europe - EU27
+    #
+    ["lovv", "Europe/Austria", "at"],
+    ["ebbu", "Europe/Belgium", "be"],
+    ["lbsr", "Europe/Bulgaria", "bg"],
+    ["ldzo", "Europe/Croatia", "hr"],
+    ["lkaa", "Europe/Czech Republic", "cz"],
+    ["ekdk", "Europe/Denmark", "dk"],
+    ["efin", "Europe/Finland", "fi"],
+    ["lf",   "Europe/France", "fr"],
+    ["ed",   "Europe/Germany", "de"],
+    ["lggg", "Europe/Greece", "gr"],
+    ["lhcc", "Europe/Hungary", "hu"],
+    ["li",   "Europe/Italy", "it"],
+    ["ehaa", "Europe/Netherlands", "nl"],
+    ["epww", "Europe/Poland", "pl"],
+    ["lrbb", "Europe/Romania", "ro"],
+    ["lzbb", "Europe/Slovakia", "sk"],
+    ["ljla", "Europe/Slowenia", "si"],
+    ["esaa", "Europe/Sweden", "se"],
+    #
+    # Europe - other
+    #
+    ["lsas", "Europe/Switzerland", "ch"],
+]
+
 
 def readAirspace(aseNode, shapeRoot, cat, nam, numCoordDigits):
     """Generate GeoJSON for airspace
@@ -368,3 +409,56 @@ def readMinMaxHeight(xmlNode):
             result = result + " · "
         result = result + "MAX. " + upper
     return result
+
+
+def downloadXML(filename):
+    try:
+        response = requests.get(filename)
+        response.raise_for_status()
+        # Code here will only run if the request is successful
+    except requests.exceptions.HTTPError as errh:
+        print(errh)
+        exit(-1)
+    except requests.exceptions.ConnectionError as errc:
+        print(errc)
+        exit(-1)
+    except requests.exceptions.Timeout as errt:
+        print(errt)
+        exit(-1)
+    except requests.exceptions.RequestException as err:
+        print(err)
+        exit(-1)
+    response.encoding = 'utf-8'
+    return ET.fromstring(response.text)
+
+
+def readOFMX():
+    #
+    # Compute current airac cycle
+    #
+    airac_number = 1
+    airac_year   = 2020
+    airac_date   = datetime.date.fromisoformat('2020-01-02')
+    airac_delta  = datetime.timedelta(days=28)
+
+    while airac_date+airac_delta < datetime.date.today():
+        airac_date += airac_delta
+
+        if airac_date.year > airac_year:
+            airac_year = airac_date.year
+            airac_number = 1
+        else:
+            airac_number += 1
+    airac = "{:02}{:02}".format(airac_year%100, airac_number)
+    print("OFM: Current AIRAC cycle is {}\n".format(airac))
+
+    features = []
+    for region in regions:
+        print("OFM: Working on region " + region[1])
+        root = downloadXML("https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}.xml".format(airac, region[0], region[0][0:2]))
+        shapeRoot = downloadXML("https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}_ofmShapeExtension.xml".format(airac, region[0], region[0][0:2]))
+
+        features += readFeatures_FISSectors(root, shapeRoot, 5)
+        features += readFeatures_NRA(root, shapeRoot, 5)
+        features += readFeatures_Procedures(root, 5)
+    return features
