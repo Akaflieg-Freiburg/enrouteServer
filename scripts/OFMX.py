@@ -455,8 +455,8 @@ def readOFMX():
     features = []
     for region in regions:
         print("OFM: Working on region " + region[1])
-        root = downloadXML("https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}.xml".format(airac, region[0], region[0][0:2]))
-        shapeRoot = downloadXML("https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/isolated/ofmx_{2}_ofmShapeExtension.xml".format(airac, region[0], region[0][0:2]))
+        root = downloadXML("https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/embedded/ofmx_{2}.xml".format(airac, region[0], region[0][0:2]))
+        shapeRoot = downloadXML("https://storage.googleapis.com/snapshots.openflightmaps.org/live/{0}/ofmx/{1}/latest/embedded/ofmx_{2}_ofmShapeExtension.xml".format(airac, region[0], region[0][0:2]))
 
         features += readFeatures_FISSectors(root, shapeRoot, 5)
         features += readFeatures_NRA(root, shapeRoot, 5)
