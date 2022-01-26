@@ -14,7 +14,7 @@ features += openAIP2.readOpenAIP()
 features += OFMX.readOFMX()
 
 # Generate Feature Collection
-featureCollection = {'type': 'FeatureCollection', 'info': infoString, 'features': features}
+featureCollection = {'type': 'FeatureCollection', 'info': 'infoString', 'features': features}
 
 # Generate GeoJSON and write it to a file
 geojson = json.dumps(featureCollection, sort_keys=True, separators=(',', ':'))

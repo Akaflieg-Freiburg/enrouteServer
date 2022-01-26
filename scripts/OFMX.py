@@ -201,6 +201,112 @@ def readFeatures_NRA(root, shapeRoot, numCoordDigits):
     return NRAfeatures
 
 
+def readFeatures_RP(root, numCoordDigits):
+    """Generate GeoJSON for airspaces: Reporting Points
+
+    This method reads information about reporting points from an OFMX file,
+    finds the approriate geometries in the shape file and generates GeoJSON
+    features.
+
+    :param root: Root of the OFMX file
+
+    :param numCoordDigits: Numer of digits for coordinate pairs
+
+    :returns: An array of feature dictionaries, ready for inclusion in GeoJSON
+
+    """
+
+    print("… Reporting Points")
+    RPfeatures = []
+    for Dpn in root.findall('./Dpn'):
+        if not Dpn.find("codeType").text in ["VFR-MRP", "VFR-RP"]:
+            continue
+        DpnUid   = Dpn.find('DpnUid')
+
+        mid      = DpnUid.get('mid')
+        WPcodeId = ""
+        APcodeId = ""
+        txtName  = ""
+
+        if DpnUid.find('codeId').text != None:
+            WPcodeId = DpnUid.find('codeId').text
+
+        if Dpn.find('AhpUidAssoc') != None:
+            if Dpn.find('AhpUidAssoc').find('codeId') != None:
+                if Dpn.find('AhpUidAssoc').find('codeId').text != None:
+                    APcodeId = Dpn.find('AhpUidAssoc').find('codeId').text
+
+        if Dpn.find('txtName') != None:
+            if Dpn.find('txtName').text != None:
+                txtName = Dpn.find('txtName').text
+
+        if txtName == "":
+            print("Found Dpn without txtName. Exiting")
+            exit(-1)
+
+        if WPcodeId == "" and txtName != "":
+            WPcodeId = txtName
+
+        # Feature dictionary, will be filled in here and included into JSON
+        feature = {'type': 'Feature'}
+
+        # Position
+        feature['geometry'] = {'type': 'Point', 'coordinates': readCoordinate(DpnUid, numCoordDigits)}
+
+        #
+        # Properties
+        #
+        properties = {'TYP': 'WP'}
+        properties['MID'] = DpnUid.get('mid')
+        if Dpn.find("codeType").text == "VFR-MRP":
+            properties['CAT'] = 'MRP'
+        if Dpn.find("codeType").text == "VFR-RP":
+            properties['CAT'] = 'RP'
+
+        # Property: COD - required
+        #
+        # This property holds a code name of the waypoint, such as "EDDE-S1".
+        # The **enroute** app uses this property for the ID field on the
+        # waypoint description dialog.
+
+        if APcodeId != "":
+            properties['COD']  = APcodeId + "-" + WPcodeId
+        else:
+            properties['COD']  = WPcodeId
+
+        # Property: ICA - optional
+        #
+        # A string with the ICAO code of an associated airfield, such as "EDDE".
+
+        if APcodeId != "":
+            properties['ICA'] = APcodeId
+
+        # Property: NAM - required
+        properties['NAM']  = txtName
+
+        # Property: SCO - required for CAT == MRP and CAT == RP
+        #
+        # Short description of the waypoint, such as "S1".  The **enroute** app
+        # uses this property for the display name of the point on the moving
+        # map.
+
+        properties['SCO'] = WPcodeId
+
+        # Done with properties
+
+        feature['properties'] = properties
+
+        # Feature is now complete. Add it to the 'features' array
+        RPfeatures.append(feature)
+    return RPfeatures
+    
+
+    for nra in root.findall("./Ase/AseUid[codeType='NRA']/.."):
+        NRAfeature = readAirspace(nra, shapeRoot, 'NRA', nra.find('txtName').text, numCoordDigits)
+        NRAfeatures.append(NRAfeature)
+    return NRAfeatures
+
+
 def readFeatures_Procedures(root, numCoordDigits):
     """Generate GeoJSON for airspaces: Procedures
 
@@ -461,4 +567,5 @@ def readOFMX():
         features += readFeatures_FISSectors(root, shapeRoot, 5)
         features += readFeatures_NRA(root, shapeRoot, 5)
         features += readFeatures_Procedures(root, 5)
+        features += readFeatures_RP(root, 5)
     return features
