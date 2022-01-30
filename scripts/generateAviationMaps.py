@@ -12,8 +12,7 @@ import openAIP2
 def removeduplicate(it):
     seen = set()
     for x in it:
-#WRONG!!!!!
-        t = json.dumps(it)
+        t = json.dumps(x)
         if t not in seen:
             yield x
             seen.add(t)
