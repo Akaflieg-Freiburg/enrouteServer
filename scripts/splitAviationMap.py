@@ -4,6 +4,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import geopandas
+import json
 
 
 countries = [
@@ -63,17 +64,32 @@ countries = [
     ["United Kingdom", "South America_Falkland Islands"],
 ]
 
-worldGeoMap = geopandas.read_file( 'ne_10m_admin_0_countries.shp' )
+# Extract info string from world aviation map
+infoString = ''
+with open('worldAviationMap.geojson') as file:
+    worldAviationMapJson = json.load(file)
+    infoString = worldAviationMapJson['info']
+    print(infoString)
+print('Splitting world aviation map {}'.format(infoString))
+
+
+worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
 
 for country in countries:
     print('Generating map extract for ' + country[1] )
-    countryGDF = worldGeoMap[worldGeoMap.SOVEREIGNT == country[0]]
+    countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == country[0]]
     if countryGDF.size == 0:
         print('Country is empty: '+country)
         exit(-1)
 
     buffer = countryGDF.buffer(0.3)
     aviationMap = geopandas.read_file('worldAviationMap.geojson', mask=buffer)
+
+    # Generate json
     jsonString = aviationMap.to_json(na='drop')
+    jsonDict = json.loads(jsonString)
+    jsonDict['info'] = infoString
+    jsonString = json.dumps(jsonDict, sort_keys=True, separators=(',', ':'))
+
     file = open(country[1] + '.geojson', 'w')
     file.write(jsonString)
