@@ -73,7 +73,7 @@ for country in countries:
         exit(-1)
 
     buffer = countryGDF.buffer(0.3)
-    aviationMap = geopandas.read_file('world.geojson', mask=buffer)
+    aviationMap = geopandas.read_file('worldAviationMap.geojson', mask=buffer)
     jsonString = aviationMap.to_json(na='drop')
     file = open(country[1] + '.geojson', 'w')
     file.write(jsonString)

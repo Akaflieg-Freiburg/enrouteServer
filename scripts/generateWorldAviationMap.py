@@ -1,5 +1,7 @@
 #!/bin/python
 
+from datetime import date
+
 import json
 import OFMX
 import openAIP2
@@ -29,12 +31,11 @@ features += OFMX.readOFMX()
 # Remove duplicated entries
 features = list(removeduplicate(features))
 
-# Generate Feature Collection
-featureCollection = {'type': 'FeatureCollection', 'info': 'infoString', 'features': features}
+# Generate feature collection, set info string
+infoString = "Generated from openAIP and open flightmaps data, {}".format(date.today())
+featureCollection = {'type': 'FeatureCollection', 'info': infoString, 'features': features}
 
 # Generate GeoJSON and write it to a file
 geojson = json.dumps(featureCollection, sort_keys=True, separators=(',', ':'))
-file = open('world.geojson', 'w')
+file = open('worldAviationMap.geojson', 'w')
 file.write(geojson)
-
-
