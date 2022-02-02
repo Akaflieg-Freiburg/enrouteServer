@@ -2,63 +2,63 @@
 
 import geopandas
 import json
-
+import os
 
 countries = [
     # Africa
-    ["South Africa", "Africa_South Africa"],
-    ["Namibia", "Africa_Namibia"],
+    ["South Africa", "Africa/South Africa"],
+    ["Namibia", "Africa/Namibia"],
 
     # Asia
-    ["Japan", "Asia_Japan"],
+    ["Japan", "Asia/Japan"],
 
     # Oceania Australia
-    ["Australia", "Australia Oceanica_Australia"],
-    ["New Zealand", "Australia Oceanica_New Zealand"],
+    ["Australia", "Australia Oceanica/Australia"],
+    ["New Zealand", "Australia Oceanica/New Zealand"],
 
     # Europe
-    ["Austria", "Europe_Austria"],
-    ["Belgium", "Europe_Belgium"],
-    ["Bulgaria", "Europe_Bulgaria"],
-    ["Croatia", "Europe_Croatia"],
-    ["Cyprus", "Europe_Cyprus"],
-    ["Czechia", "Europe_Czech Republic"],
-    ["Denmark", "Europe_Denmark"],
-    ["Estonia", "Europe_Estonia"],
-    ["Finland", "Europe_Finland"],
-    ["France", "Europe_France"],
-    ["Germany", "Europe_Germany"],
-    ["Greece", "Europe_Greece"],
-    ["Hungary", "Europe_Hungary"],
-    ["Iceland", "Europe_Iceland"],
-    ["Ireland", "Europe_Ireland"],
-    ["Italy", "Europe_Italy"],
-    ["Latvia", "Europe_Latvia"],
-    ["Liechtenstein", "Europe_Liechtenstein"],
-    ["Lithuania", "Europe_Lithuania"],
-    ["Luxembourg", "Europe_Luxembourg"],
-    ["Malta", "Europe_Malta"],
-    ["Netherlands", "Europe_Netherlands"],
-    ["Norway", "Europe_Norway"],
-    ["Poland", "Europe_Poland"],
-    ["Portugal", "Europe_Portugal"],
-    ["Romania", "Europe_Romania"],
-    ["Republic of Serbia", "Europe_Serbia"],
-    ["Slovakia", "Europe_Slovakia"],
-    ["Slovenia", "Europe_Slowenia"],
-    ["Spain", "Europe_Spain"],
-    ["Sweden", "Europe_Sweden"],
-    ["Switzerland", "Europe_Switzerland"],
-    ["United Kingdom", "Europe_United Kingdom"],
+    ["Austria", "Europe/Austria"],
+    ["Belgium", "Europe/Belgium"],
+    ["Bulgaria", "Europe/Bulgaria"],
+    ["Croatia", "Europe/Croatia"],
+    ["Cyprus", "Europe/Cyprus"],
+    ["Czechia", "Europe/Czech Republic"],
+    ["Denmark", "Europe/Denmark"],
+    ["Estonia", "Europe/Estonia"],
+    ["Finland", "Europe/Finland"],
+    ["France", "Europe/France"],
+    ["Germany", "Europe/Germany"],
+    ["Greece", "Europe/Greece"],
+    ["Hungary", "Europe/Hungary"],
+    ["Iceland", "Europe/Iceland"],
+    ["Ireland", "Europe/Ireland"],
+    ["Italy", "Europe/Italy"],
+    ["Latvia", "Europe/Latvia"],
+    ["Liechtenstein", "Europe/Liechtenstein"],
+    ["Lithuania", "Europe/Lithuania"],
+    ["Luxembourg", "Europe/Luxembourg"],
+    ["Malta", "Europe/Malta"],
+    ["Netherlands", "Europe/Netherlands"],
+    ["Norway", "Europe/Norway"],
+    ["Poland", "Europe/Poland"],
+    ["Portugal", "Europe/Portugal"],
+    ["Romania", "Europe/Romania"],
+    ["Republic of Serbia", "Europe/Serbia"],
+    ["Slovakia", "Europe/Slovakia"],
+    ["Slovenia", "Europe/Slowenia"],
+    ["Spain", "Europe/Spain"],
+    ["Sweden", "Europe/Sweden"],
+    ["Switzerland", "Europe/Switzerland"],
+    ["United Kingdom", "Europe/United Kingdom"],
 
     # North America
-    ["Canada", "North America_Canada"],
-    ["United States of America", "North America_United States"],
+    ["Canada", "North America/Canada"],
+    ["United States of America", "North America/United States"],
 
     # South America
-    ["Argentina", "South America_Argentina"],
-    ["Brazil", "South America_Brazil"],
-    ["United Kingdom", "South America_Falkland Islands"],
+    ["Argentina", "South America/Argentina"],
+    ["Brazil", "South America/Brazil"],
+    ["United Kingdom", "South America/Falkland Islands"],
 ]
 
 # Extract info string from world aviation map
@@ -71,6 +71,13 @@ print('Splitting world aviation map {}'.format(infoString))
 
 
 worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
+os.makedirs('out/Africa', exist_ok=True)
+os.makedirs('out/Asia', exist_ok=True)
+os.makedirs('out/Australia Oceanica', exist_ok=True)
+os.makedirs('out/Europe', exist_ok=True)
+os.makedirs('out/North America', exist_ok=True)
+os.makedirs('out/South America', exist_ok=True)
+
 
 for country in countries:
     print('Generating map extract for ' + country[1] )
@@ -89,5 +96,5 @@ for country in countries:
     jsonDict['info'] = infoString
     jsonString = json.dumps(jsonDict, sort_keys=True, separators=(',', ':'))
 
-    file = open(country[1] + '.geojson', 'w')
+    file = open('out/' + country[1] + '.geojson', 'w')
     file.write(jsonString)

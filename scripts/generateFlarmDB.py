@@ -1,5 +1,7 @@
 #!/bin/python
 
+import os
+
 """
 flarmDB
 ====================================
@@ -159,4 +161,5 @@ def readFlarmDB(outFileName):
 #
 # Main function: run the methods of this module on test data
 #
-readFlarmDB('flarmDB.txt')
+os.makedirs('out', exist_ok=True)
+readFlarmDB('out/Flarm Database.txt')
