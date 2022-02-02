@@ -79,6 +79,7 @@ for country in countries:
         print('Country is empty: '+country)
         exit(-1)
 
+    countryGDF.set_crs("EPSG:4326")
     buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
     aviationMap = geopandas.read_file('worldAviationMap.geojson', mask=buffer)
 
