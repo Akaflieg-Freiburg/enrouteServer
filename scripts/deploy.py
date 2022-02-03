@@ -1,15 +1,11 @@
 #!/bin/python3
 
 import datetime
-import filecmp
 import glob
 import json
 import os
 import shutil
 import subprocess
-import urllib.request
-import sys
-import zipfile
 
 
 mapStorageDir = "/home/kebekus/Austausch/aviation_maps"
@@ -53,7 +49,7 @@ if key == "y":
     subprocess.run(
         "rsync -e ssh -vaz --delete "
         + mapStorageDir
-        + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv002",
+        + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003",
         shell=True,
         check=True,
     )
