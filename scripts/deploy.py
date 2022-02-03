@@ -9,7 +9,7 @@ import subprocess
 
 
 mapStorageDir = "/home/kebekus/Austausch/aviation_maps"
-serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv002"
+serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003"
 
 #
 # Copy files over to the mapStorageDir
