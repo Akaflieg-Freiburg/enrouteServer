@@ -153,6 +153,8 @@ def readOpenAIPAirports():
             continue
 
         # Get properties
+        if 'icaoCode' in item:
+            properties['COD'] = item['icaoCode']
         properties['ELE'] = item['elevation']['value']
         properties['NAM'] = item['name']
         properties['TYP'] = 'AD'
