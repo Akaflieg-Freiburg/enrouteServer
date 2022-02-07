@@ -1,6 +1,7 @@
 #!/bin/python3
 
 import datetime
+import filecmp
 import glob
 import json
 import os
@@ -16,11 +17,14 @@ serverURL = "https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003"
 #
 os.chdir('out')
 for file in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.txt", recursive=True):
-    print('Zopfli compress {}'.format(file))
-    subprocess.run("rm -f '" + file + ".gz'", shell=True, check=True)
-    subprocess.run("zopfli --best '" + file + "'", shell=True, check=True)
-    shutil.move(file, mapStorageDir+'/'+file)
-    shutil.move(file+'.gz', mapStorageDir+'/'+file+'.gz')
+    if filecmp.cmp(file, mapStorageDir+'/'+file, shallow=False):
+        print('Skipping over {}, which is unchanged'.format(file))
+    else:
+        print('Zopfli compress {} and move to staging dir'.format(file))
+        subprocess.run("rm -f '" + file + ".gz'", shell=True, check=True)
+        subprocess.run("zopfli --best '" + file + "'", shell=True, check=True)
+        shutil.move(file, mapStorageDir+'/'+file)
+        shutil.move(file+'.gz', mapStorageDir+'/'+file+'.gz')
 
 
 #
