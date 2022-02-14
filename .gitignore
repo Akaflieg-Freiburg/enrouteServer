@@ -1,5 +1,6 @@
 .vscode/
 docs/
 scripts/__pycache__
-scripts/worldAviationMap.geojson
 scripts/out
+scripts/staging
+scripts/worldAviationMap.geojson
