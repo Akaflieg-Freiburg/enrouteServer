@@ -13,14 +13,40 @@ stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
 whatsNewText = 'If you ever move to the south Atlantic, you will be delighted to learn that aviation maps for the <strong>Falkland Islands</strong> are now available.'
 
+# Go to output directory
+os.chdir('out')
+
+#
+# Sync the staging dir with the server
+#
+print('Sync the staging dir with the server')
+subprocess.run(
+    "rsync -e ssh -vaz --delete "
+    + "kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003/ " 
+    + stagingDir,
+    shell=True,
+    check=True,
+)
+
+
 #
 # Copy files over to the mapStorageDir
 #
-os.chdir('out')
 for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.txt", recursive=True):
     stagingFileName = stagingDir+'/'+fileName
     hasChanged = True
     
+    #
+    # If file sizes changes by more than 10%, then probably something is wrong.
+    # In that case, exit with an error.
+    #
+    Asize = os.path.getsize(fileName) 
+    Bsize = os.path.getsize(stagingFileName) 
+    if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
+        print('Size of file {} has changed by more than 10%'.format(fileName))
+        print('Human intervention is required.')
+        exit(-1)
+
     #
     # Check if files really did change
     #
@@ -52,11 +78,10 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
         print('Skipping over {}, which is unchanged'.format(fileName))
         os.remove(fileName)
 
-
 #
 # Generate maps.json
 #
-print("\nGenerate maps.json")
+print("\n\nGenerate maps.json")
 maps = []
 for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glob(stagingDir + "/**/*.mbtiles", recursive=True)+glob.glob(stagingDir + "/**/*.txt", recursive=True):
     map = {}
@@ -74,12 +99,14 @@ fileName = open(stagingDir + '/maps.json', 'w')
 fileName.write(json.dumps(top, sort_keys=True, indent=4))
 fileName.close()
 
-key = input("Upload maps (y/n)? ")
-if key == "y":
-    subprocess.run(
-        "rsync -e ssh -vaz --delete "
-        + stagingDir
-        + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003",
-        shell=True,
-        check=True,
-    )
+#
+# Sync the staging dir with the server
+#
+print('\n\nSync the staging dir with the server')
+subprocess.run(
+    "rsync -e ssh -vaz --delete "
+    + stagingDir
+    + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003",
+    shell=True,
+    check=True,
+)

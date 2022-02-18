@@ -91,7 +91,7 @@ for country in countries:
     aviationMap = geopandas.read_file('worldAviationMap.geojson', mask=buffer)
 
     # Generate json
-    jsonString = aviationMap.to_json(na='drop')
+    jsonString = aviationMap.to_json(na='drop', drop_id=True)
     jsonDict = json.loads(jsonString)
     jsonDict['info'] = infoString
     jsonString = json.dumps(jsonDict, sort_keys=True, separators=(',', ':'))
