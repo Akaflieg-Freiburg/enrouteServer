@@ -38,8 +38,8 @@
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">enrouteServer documentation</a><ul>
-<li><a class="reference internal" href="#flarmdb">flarmDB</a></li>
 <li><a class="reference internal" href="#ofmx">OFMX</a></li>
+<li><a class="reference internal" href="#openaip2">openAIP2</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -69,82 +69,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-flarmDB">
-<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-flarmDB" title="Permalink to this headline"></a></h1>
-<section id="flarmdb">
-<h2>flarmDB<a class="headerlink" href="#flarmdb" title="Permalink to this headline"></a></h2>
-<p>Toolset to create a compact database the maps Flarm IDs to aircraft callsigns.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="flarmDB.readFlarmDB">
-<span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readFlarmDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flarmnetFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ognFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outFileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readFlarmDB" title="Permalink to this definition"></a></dt>
-<dd><p>Read a Flarmnet and an OGN database and combines the data. The method
-writes a plain text file in ISO-8859-1 encoding (“Latin1”). The first line
-is a short description of the content. Every following line is exactly 24
-bytes long.</p>
-<ul class="simple">
-<li><p>Bytes  0 -  5 of the line contain the Flarm ID</p></li>
-<li><p>Bytes  7 - 22 of the line contain the aircraft callsign, left justified
-and filled with space</p></li>
-</ul>
-<p>The lines in the output file are sorted alphabetically by Flarm ID.</p>
-<p>This function will raise an exception on error</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>flarmnetFileName</strong> – Name of input file</p></li>
-<li><p><strong>ognFileName</strong> – Name of input file</p></li>
-<li><p><strong>outFileName</strong> – Name of output file</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flarmDB.readFlarmnetDB">
-<span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readFlarmnetDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readFlarmnetDB" title="Permalink to this definition"></a></dt>
-<dd><p>Read a Flarmnet database in fln format (as also used by
-LXNavigation/XCSoar, WinPilot, LK8000, ClearNav).  Files of this form can be
-downloaded from Flarmnet, at this url:
-<a class="reference external" href="https://www.flarmnet.org/static/files/wfn/data.fln">https://www.flarmnet.org/static/files/wfn/data.fln</a> The method fills a
-dicitionary that maps Flarm IDs to aircraft callsigns. Input data where the
-‘callsign’ field is not obviously a well-defined callsign are ignored. This
-function will raise an exception on error</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inFileName</strong> – Name of input file</p></li>
-<li><p><strong>dictionary</strong> – Dictionary to which the results will be appended</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>String that describes the input file version</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flarmDB.readOGNDB">
-<span class="sig-prename descclassname"><span class="pre">flarmDB.</span></span><span class="sig-name descname"><span class="pre">readOGNDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inFileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flarmDB.readOGNDB" title="Permalink to this definition"></a></dt>
-<dd><p>Read a Open Glider Network database.  Files of this form can be
-downloaded at this url: <a class="reference external" href="http://ddb.glidernet.org/download">http://ddb.glidernet.org/download</a>
-The method fills a dicitionary that maps Flarm IDs to aircraft callsigns.
-Input data where the ‘callsign’ field is not obviously a well-defined
-callsign are ignored. This function will raise an exception on error</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inFileName</strong> – Name of input file</p></li>
-<li><p><strong>dictionary</strong> – Dictionary to which the results will be appended</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>String that describes the input file version</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<span class="target" id="module-OFMX"></span><section id="ofmx">
+  <section id="module-OFMX">
+<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Permalink to this headline"></a></h1>
+<section id="ofmx">
 <h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this headline"></a></h2>
 <p>Tools to interpret ofmx files</p>
 <dl class="py function">
@@ -252,6 +179,26 @@ generates GeoJSON features.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="OFMX.readFeatures_RP">
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_RP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_RP" title="Permalink to this definition"></a></dt>
+<dd><p>Generate GeoJSON for airspaces: Reporting Points</p>
+<p>This method reads information about reporting points from an OFMX file,
+finds the approriate geometries in the shape file and generates GeoJSON
+features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> – Root of the OFMX file</p></li>
+<li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readHeight">
 <span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ending</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readHeight" title="Permalink to this definition"></a></dt>
 <dd><p>Read height information from XML Node and return as human-readable string</p>
@@ -297,6 +244,74 @@ returned.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A string describing minimal and maximal altitude, or an empty string in case of error</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<span class="target" id="module-openAIP2"></span><section id="openaip2">
+<h2>openAIP2<a class="headerlink" href="#openaip2" title="Permalink to this headline"></a></h2>
+<p>Toolset to read aviation data from the openAIP2 web site and to transform the
+data into the GeoJSON format described here:
+<a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="openAIP2.downloadOpenAIPData">
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">downloadOpenAIPData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.downloadOpenAIPData" title="Permalink to this definition"></a></dt>
+<dd><p>Read data from the openAIP2 API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>typeName</strong> – Name data (“navaids”)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array with data items</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="openAIP2.readOpenAIP">
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIP" title="Permalink to this definition"></a></dt>
+<dd><p>Read complete database from the openAIP2 API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GeoJSON feature array, in the format described here:
+<a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="openAIP2.readOpenAIPAirports">
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirports" title="Permalink to this definition"></a></dt>
+<dd><p>Read airspaces from the openAIP2 API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GeoJSON feature array, in the format described here:
+<a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="openAIP2.readOpenAIPAirspaces">
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirspaces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirspaces" title="Permalink to this definition"></a></dt>
+<dd><p>Read airspaces from the openAIP2 API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GeoJSON feature array, in the format described here:
+<a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="openAIP2.readOpenAIPNavaids">
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPNavaids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPNavaids" title="Permalink to this definition"></a></dt>
+<dd><p>Read navaids from the openAIP2 API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GeoJSON feature array, in the format described here:
+<a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
 </dl>
 </dd></dl>

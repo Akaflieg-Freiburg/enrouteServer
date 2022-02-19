@@ -6,6 +6,8 @@ enrouteServer documentation
     :members:
 .. automodule:: OFMX
     :members:
+.. automodule:: openAIP2
+    :members:
 
 .. toctree::
    :maxdepth: 2
