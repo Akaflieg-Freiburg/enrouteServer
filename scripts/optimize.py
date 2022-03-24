@@ -86,19 +86,27 @@ for row in c.execute('SELECT * FROM images'):
                             newFeature.tags.append(feature.tags[i])
                             newFeature.tags.append(feature.tags[i+1])
             # TODO: Need to remove unused TAGS
-            keysInUse = []
-            valuesInUse = []
-            for feature in newLayer.features:
-                for i in range(0, len(feature.tags), 2):
-                    key = newLayer.keys[feature.tags[i]]
-                    if not key in keysInUse:
-                        keysInUse.append(key)
-                    value = newLayer.values[feature.tags[i+1]]
-                    if not value in valuesInUse:
-                        valuesInUse.append(value)
-            print(keysInUse)
-            print(valuesInUse)
-            exit(-1)
+#            keysInUse = []
+#            valuesInUse = []
+#            for feature in newLayer.features:
+#                for i in range(0, len(feature.tags), 2):
+#                    key = newLayer.keys[feature.tags[i]]
+#                    if not key in keysInUse:
+#                        keysInUse.append(key)
+#                    feature.tags[i] = keysInUse.index(key)
+#                    value = newLayer.values[feature.tags[i+1]]
+#                    if not value in valuesInUse:
+#                        valuesInUse.append(value)
+#                    feature.tags[i+1] = valuesInUse.index(value)
+#            del newLayer.keys[:]
+#            newLayer.keys.extend(keysInUse)
+#            del newLayer.values[:]
+#            newLayer.values.extend(valuesInUse)
+
+            # TODO: Need to set new keys and values
+#            print(keysInUse)
+#            print(valuesInUse)
+#            exit(-1)
             continue
 
 
