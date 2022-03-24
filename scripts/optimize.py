@@ -7,6 +7,7 @@ import sys
 from numpy import delete
 import zopfli
 import vector_tile_pb2
+import vector_tile
 
 def deleteZoomLevels(c):
     # Find out what the maximal zoom value currently is
@@ -56,6 +57,8 @@ deleteZoomLevels(c)
 # Go through all remaining tiles
 #
 for row in c.execute('SELECT * FROM images'):
+    print("Working on tile {}".format(row[0]))
+
     blob = row[1]
     unzipp = gzip.decompress(blob)
     
@@ -73,40 +76,28 @@ for row in c.execute('SELECT * FROM images'):
             newLayer.CopyFrom(layer)
             newLayer.ClearField("features")
             for feature in layer.features:
-                metaData = {}                   
-                for i in range(0, len(feature.tags), 2):                 
-                    metaData[layer.keys[feature.tags[i]]] = layer.values[feature.tags[i+1]]
-                if metaData["class"].string_value in ["city", "town", "village"]:
-                    newFeature = newLayer.features.add()
-                    newFeature.CopyFrom(feature)
-                    # Delete tags
-                    newFeature.ClearField("tags")
-                    for i in range(0, len(feature.tags), 2):
-                        if layer.keys[feature.tags[i]] in ["class", "name", "name_en"]:
-                            newFeature.tags.append(feature.tags[i])
-                            newFeature.tags.append(feature.tags[i+1])
-            # TODO: Need to remove unused TAGS
-#            keysInUse = []
-#            valuesInUse = []
-#            for feature in newLayer.features:
-#                for i in range(0, len(feature.tags), 2):
-#                    key = newLayer.keys[feature.tags[i]]
-#                    if not key in keysInUse:
-#                        keysInUse.append(key)
-#                    feature.tags[i] = keysInUse.index(key)
-#                    value = newLayer.values[feature.tags[i+1]]
-#                    if not value in valuesInUse:
-#                        valuesInUse.append(value)
-#                    feature.tags[i+1] = valuesInUse.index(value)
-#            del newLayer.keys[:]
-#            newLayer.keys.extend(keysInUse)
-#            del newLayer.values[:]
-#            newLayer.values.extend(valuesInUse)
+                # We consider only cities, towns and villages
+                metaData = vector_tile.getMetaData(feature, layer)
+                if metaData["class"].string_value not in ["city", "town", "village"]:
+                    continue
 
-            # TODO: Need to set new keys and values
-#            print(keysInUse)
-#            print(valuesInUse)
-#            exit(-1)
+                newFeature = newLayer.features.add()
+                newFeature.CopyFrom(feature)
+
+                # Delete tags
+#                newFeature.ClearField("tags")
+                newTags = []
+                for i in range(0, len(feature.tags), 2):
+#                    if layer.keys[feature.tags[i]] in ["class", "name", "name_en"]:
+#                        newFeature.tags.append(feature.tags[i])
+#                        newFeature.tags.append(feature.tags[i+1])
+                    if layer.keys[feature.tags[i]] not in ["class", "name", "name_en"]:
+                        continue
+                    newTags.append(feature.tags[i])
+                    newTags.append(feature.tags[i+1])
+                del newFeature.tags[:]
+                newFeature.tags.extend(newTags)
+            vector_tile.optimizeLayer(newLayer)
             continue
 
 
