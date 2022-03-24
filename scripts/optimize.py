@@ -81,22 +81,16 @@ for row in c.execute('SELECT * FROM images'):
                 if metaData["class"].string_value not in ["city", "town", "village"]:
                     continue
 
-                newFeature = newLayer.features.add()
-                newFeature.CopyFrom(feature)
-
-                # Delete tags
-#                newFeature.ClearField("tags")
+                # Delete unused tags
                 newTags = []
                 for i in range(0, len(feature.tags), 2):
-#                    if layer.keys[feature.tags[i]] in ["class", "name", "name_en"]:
-#                        newFeature.tags.append(feature.tags[i])
-#                        newFeature.tags.append(feature.tags[i+1])
                     if layer.keys[feature.tags[i]] not in ["class", "name", "name_en"]:
                         continue
                     newTags.append(feature.tags[i])
                     newTags.append(feature.tags[i+1])
-                del newFeature.tags[:]
-                newFeature.tags.extend(newTags)
+                del feature.tags[:]
+                feature.tags.extend(newTags)
+
             vector_tile.optimizeLayer(newLayer)
             continue
 
