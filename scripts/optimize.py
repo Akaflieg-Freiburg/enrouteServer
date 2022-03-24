@@ -74,17 +74,21 @@ for row in c.execute('SELECT * FROM images'):
         if layer.name == "place":
             newLayer = newData.layers.add()
             newLayer.CopyFrom(layer)
+
+            # We consider only cities, towns and villages
             newLayer.ClearField("features")
             for feature in layer.features:
-                # We consider only cities, towns and villages
                 metaData = vector_tile.getMetaData(feature, layer)
-                if metaData["class"].string_value not in ["city", "town", "village"]:
+                if metaData["class"].string_value in ["city", "town", "village"]:
+                    newFeature = newLayer.features.add()
+                    newFeature.CopyFrom(feature)
                     continue
 
-                # Delete unused tags
+            # Delete unused tags
+            for feature in newLayer.features:
                 newTags = []
                 for i in range(0, len(feature.tags), 2):
-                    if layer.keys[feature.tags[i]] not in ["class", "name", "name_en"]:
+                    if newLayer.keys[feature.tags[i]] not in ["class", "name", "name_en"]:
                         continue
                     newTags.append(feature.tags[i])
                     newTags.append(feature.tags[i+1])
