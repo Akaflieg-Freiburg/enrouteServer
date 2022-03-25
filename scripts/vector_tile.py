@@ -8,6 +8,25 @@ Toolset to manipulate vector tiles, in the format described here:
 https://github.com/mapbox/vector-tile-spec/tree/master/2.1
 """
 
+
+def restrictTags(layer, list):
+    """Delete all tags from all features, except feature whose key names are contained in the list.
+
+    :param layer: Layer whose feature a
+
+    :param list: List of key names
+    """
+    for feature in layer.features:
+        newTags = []
+        for i in range(0, len(feature.tags), 2):
+            if layer.keys[feature.tags[i]] not in list:
+                continue
+            newTags.append(feature.tags[i])
+            newTags.append(feature.tags[i+1])
+        del feature.tags[:]
+        feature.tags.extend(newTags)
+
+
 def getMetaData(feature, layer):
     """Obtain meta data for a feature, as a convenient string-to-value dictionary
 

@@ -84,17 +84,7 @@ for row in c.execute('SELECT * FROM images'):
                     newFeature.CopyFrom(feature)
                     continue
 
-            # Delete unused tags
-            for feature in newLayer.features:
-                newTags = []
-                for i in range(0, len(feature.tags), 2):
-                    if newLayer.keys[feature.tags[i]] not in ["class", "name", "name_en"]:
-                        continue
-                    newTags.append(feature.tags[i])
-                    newTags.append(feature.tags[i+1])
-                del feature.tags[:]
-                feature.tags.extend(newTags)
-
+            vector_tile.restrictTags(newLayer, ["class", "name", "name_en"])
             vector_tile.optimizeLayer(newLayer)
             continue
 
