@@ -68,6 +68,9 @@ for row in c.execute('SELECT * FROM images'):
     vector_tile.removeLayers(data, ["boundary", "landuse", "mountain_peak", "park"])
 
     for layer in data.layers:
+        if layer.name == "aeroway":
+            continue
+
         if layer.name == "place":
             vector_tile.restrictFeatures(layer, "class", ["city", "town", "village"])
             vector_tile.restrictTags(layer, ["class", "name", "name_en"])
@@ -76,7 +79,7 @@ for row in c.execute('SELECT * FROM images'):
 
         
         # If unknown layer name, then raise an exception
-#        if layer.name in ["aeroway", "landcover", "landuse", "transportation", "transportation_name", "water", "water_name", "waterway"]:
+#        if layer.name in ["landcover", "landuse", "transportation", "transportation_name", "water", "water_name", "waterway"]:
             #newLayer = newData.layers.add()
             #newLayer.CopyFrom(layer)
             #continue
