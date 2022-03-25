@@ -65,38 +65,24 @@ for row in c.execute('SELECT * FROM images'):
     data = vector_tile_pb2.Tile()
     data.ParseFromString(unzipp)
 
-    newData = vector_tile_pb2.Tile()
+    vector_tile.removeLayers(data, ["boundary", "landuse", "mountain_peak", "park"])
 
     for layer in data.layers:
-        if layer.name in ["boundary", "mountain_peak", "park"]:
-            continue
-
         if layer.name == "place":
-            newLayer = newData.layers.add()
-            newLayer.CopyFrom(layer)
-
-            # We consider only cities, towns and villages
-            newLayer.ClearField("features")
-            for feature in layer.features:
-                metaData = vector_tile.getMetaData(feature, layer)
-                if metaData["class"].string_value in ["city", "town", "village"]:
-                    newFeature = newLayer.features.add()
-                    newFeature.CopyFrom(feature)
-                    continue
-
-            vector_tile.restrictTags(newLayer, ["class", "name", "name_en"])
-            vector_tile.optimizeLayer(newLayer)
+            vector_tile.restrictFeatures(layer, "class", ["city", "town", "village"])
+            vector_tile.restrictTags(layer, ["class", "name", "name_en"])
+            vector_tile.optimizeLayer(layer)
             continue
 
+        
+        # If unknown layer name, then raise an exception
+#        if layer.name in ["aeroway", "landcover", "landuse", "transportation", "transportation_name", "water", "water_name", "waterway"]:
+            #newLayer = newData.layers.add()
+            #newLayer.CopyFrom(layer)
+            #continue
 
-        if layer.name in ["aeroway", "landcover", "landuse", "transportation", "transportation_name", "water", "water_name", "waterway"]:
-            newLayer = newData.layers.add()
-            newLayer.CopyFrom(layer)
-            continue
 
-        print(layer.name)
-
-    newBlob = gzip.compress(newData.SerializeToString())
+    newBlob = gzip.compress(data.SerializeToString())
     localCursor = conn.cursor()
     localCursor.execute("UPDATE images SET tile_data=? WHERE tile_id=?", (newBlob, row[0]))
 
