@@ -3,13 +3,13 @@ set -e
 
 echo "Run Osmosis"
 osmosis \
-    --read-pbf-fast freiburg-regbez-latest.osm.pbf \
+    --read-pbf-fast $1 \
     --tf accept-nodes place=city,town,village \
     --tf reject-ways \
     --tf reject-relations \
     \
-    --read-pbf-fast freiburg-regbez-latest.osm.pbf \
-    --tf accept-ways highway=motorway,trunk,primary,secondary,motorway_link,trunk_link,primary_link landuse=* railway=* water=* waterway=*\
+    --read-pbf-fast $1 \
+    --tf accept-ways highway=motorway,trunk,primary,secondary,motorway_link,trunk_link landcover=* landuse=* railway=* water=* waterway=*\
     --tf reject-relations \
     --used-node \
     \
@@ -17,7 +17,13 @@ osmosis \
     --write-pbf out.pbf
 
 echo "Run tilemaker"
-tilemaker --verbose --input out.pbf --output ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
+tilemaker --input out.pbf --output ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
+
+echo "Optimize"
+./optimize.py ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
+
+
 rm -rf ~/.cache/QtLocation 
 ls -lah *.pbf
+ls -lah ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
 cd ~/Software/projects/enroute/build && ninja && ./src/enroute
