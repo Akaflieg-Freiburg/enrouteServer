@@ -15,7 +15,6 @@ echo \
     --merge \
     --write-pbf out.pbf
 
-#    n/place=city,town,village \
 
 osmium tags-filter \
     freiburg-regbez-latest.osm.pbf \
@@ -23,6 +22,7 @@ osmium tags-filter \
     /highway=motorway,trunk,primary,secondary,motorway_link \
     /landuse \
     /natural \
+    /place=city,town,village \
     /railway \
     /water \
     /waterway \
