@@ -56,7 +56,7 @@ def restrictFeatures(layer, keyName, list):
     newFeatures = []
     for feature in layer.features:
         metaData = getMetaData(feature, layer)
-        if metaData[keyName].string_value not in list:
+        if (metaData[keyName].string_value not in list) and (metaData[keyName].float_value not in list):
             continue
         newFeature = vector_tile_pb2.Tile.Feature()
         newFeature.CopyFrom(feature)
