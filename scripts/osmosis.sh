@@ -17,8 +17,8 @@ echo \
 
 
 osmium tags-filter \
-    freiburg-regbez-latest.osm.pbf \
-    w/admin_level \
+    $1 \
+    w/admin_level=2 \
     /highway=motorway,trunk,primary,secondary,motorway_link \
     /landuse \
     /natural \
