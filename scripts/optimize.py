@@ -46,9 +46,6 @@ for row in c.execute('SELECT * FROM tiles'):
             continue
 
         if layer.name == "landcover":
-            for feature in layer.features:
-                metaData = vector_tile.getMetaData(feature, layer)
-                landcoverNames.add(metaData["class"].string_value)
 
             vector_tile.restrictTags(layer, ["class"])
             vector_tile.optimizeLayer(layer)
@@ -61,7 +58,10 @@ for row in c.execute('SELECT * FROM tiles'):
             continue
 
         if layer.name == "transportation":
-            vector_tile.restrictFeatures(layer, "class", ["motorway", "trunk", "primary", "secondary", "rail"])
+            for feature in layer.features:
+                metaData = vector_tile.getMetaData(feature, layer)
+                landcoverNames.add(metaData["class"].string_value)
+            vector_tile.restrictFeatures(layer, "class", ["aerialway", "motorway", "trunk", "primary", "secondary", "rail"])
             vector_tile.restrictTags(layer, ["class", "subclass", "network"])
             vector_tile.optimizeLayer(layer)
             continue
