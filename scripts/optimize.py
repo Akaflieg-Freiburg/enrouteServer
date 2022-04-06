@@ -21,8 +21,6 @@ c = conn.cursor()
 #
 # Go through all remaining tiles
 #
-landcoverNames = set()
-
 for row in c.execute('SELECT * FROM tiles'):
     print("Working on tile {}/{}/{}".format(row[0],row[1],row[2]))
 
@@ -32,7 +30,7 @@ for row in c.execute('SELECT * FROM tiles'):
     data = vector_tile_pb2.Tile()
     data.ParseFromString(unzipp)
 
-    vector_tile.removeLayers(data, ["aerodrome_label", "building", "housenumber", "landuse", "mountain_peak", "park", "poi"])
+    vector_tile.removeLayers(data, ["aerodrome_label", "building", "housenumber", "landuse", "park", "poi"])
 
     for layer in data.layers:
         if layer.name == "aeroway":
@@ -46,8 +44,17 @@ for row in c.execute('SELECT * FROM tiles'):
             continue
 
         if layer.name == "landcover":
-
             vector_tile.restrictTags(layer, ["class"])
+            vector_tile.optimizeLayer(layer)
+            continue
+
+        if layer.name == "landuse":
+            vector_tile.restrictTags(layer, ["class"])
+            vector_tile.optimizeLayer(layer)
+            continue
+
+        if layer.name == "mountain_peak":
+            vector_tile.restrictTags(layer, ["class", "name_en"])
             vector_tile.optimizeLayer(layer)
             continue
 
@@ -58,9 +65,6 @@ for row in c.execute('SELECT * FROM tiles'):
             continue
 
         if layer.name == "transportation":
-            for feature in layer.features:
-                metaData = vector_tile.getMetaData(feature, layer)
-                landcoverNames.add(metaData["class"].string_value)
             vector_tile.restrictFeatures(layer, "class", ["aerialway", "motorway", "trunk", "primary", "secondary", "rail"])
             vector_tile.restrictTags(layer, ["class", "subclass", "network"])
             vector_tile.optimizeLayer(layer)
@@ -96,7 +100,6 @@ for row in c.execute('SELECT * FROM tiles'):
     localCursor = conn.cursor()
     localCursor.execute("UPDATE tiles SET tile_data=? WHERE zoom_level=? AND tile_column=? AND tile_row=?", (newBlob, row[0], row[1], row[2]))
 
-print(landcoverNames)
 print("Committing changes")
 conn.commit()
 
