@@ -22,7 +22,7 @@ c = conn.cursor()
 # Go through all remaining tiles
 #
 for row in c.execute('SELECT * FROM tiles'):
-    print("Working on tile {}/{}/{}".format(row[0],row[1],row[2]))
+#    print("Working on tile {}/{}/{}".format(row[0],row[1],row[2]))
 
     blob = row[3]
     unzipp = gzip.decompress(blob)
@@ -54,6 +54,31 @@ for row in c.execute('SELECT * FROM tiles'):
             continue
 
         if layer.name == "mountain_peak":
+            numPeaks = 8
+            if len(layer.features) > numPeaks:
+                elevations = []
+                for feature in layer.features:
+                    metaData = vector_tile.getMetaData(feature,layer)
+                    if "ele" in metaData:
+                        elevations.append(metaData["ele"].float_value)
+                    else:
+                        elevations.append(-1)
+                elevations.sort(reverse=True)
+
+                newFeatures = []
+                for feature in layer.features:
+                    metaData = vector_tile.getMetaData(feature, layer)
+                    if not "ele" in metaData:
+                        continue
+                    if metaData["ele"].float_value <= elevations[numPeaks]:
+                        continue
+                    newFeature = vector_tile_pb2.Tile.Feature()
+                    newFeature.CopyFrom(feature)
+                    newFeatures.append(newFeature)
+
+                del layer.features[:]
+                layer.features.extend(newFeatures)
+
             vector_tile.restrictTags(layer, ["class", "name_en"])
             vector_tile.optimizeLayer(layer)
             continue
