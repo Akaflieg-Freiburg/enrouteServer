@@ -106,3 +106,99 @@ def optimizeLayer(layer):
     del layer.values[:]
     layer.values.extend(valuesInUse)
 
+
+def optimizeTile(tile):
+    """Optimize a tile
+
+    This method optimizes a tile, by removing data this is irrelevant to enrouteFlightMap.
+    It also lowers the number of mountain peaks, removing all but the three highest peaks
+    from each tile.
+
+    :param layer: Tile that is to be optimized. The tile is modified in-place
+    """
+
+    removeLayers(tile, ["aerodrome_label", "building", "housenumber", "landuse", "park", "poi"])
+
+    for layer in tile.layers:
+        if layer.name == "aeroway":
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "boundary":
+            restrictFeatures(layer, "admin_level", [2.0])
+            restrictTags(layer, ["admin_level"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "landcover":
+            restrictTags(layer, ["class"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "landuse":
+            restrictTags(layer, ["class"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "mountain_peak":
+            numPeaks = 3
+            if len(layer.features) > numPeaks:
+
+                newFeatures = []
+                for feature in layer.features:
+                    newFeature = vector_tile_pb2.Tile.Feature()
+                    newFeature.CopyFrom(feature)
+                    newFeatures.append(newFeature)
+
+                def getElevation(feature):
+                    metaData = getMetaData(feature, layer)
+                    if "ele" in metaData:
+                        return metaData["ele"].float_value
+                    return -1
+
+                newFeatures.sort(reverse=True, key=getElevation)
+                del newFeatures[numPeaks:]
+                del layer.features[:]
+                layer.features.extend(newFeatures)
+
+            restrictTags(layer, ["class", "name_en"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "place":
+            restrictFeatures(layer, "class", ["city", "town", "village"])
+            restrictTags(layer, ["class", "name", "name_en"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "transportation":
+            restrictFeatures(layer, "class", ["aerialway", "motorway", "trunk", "primary", "secondary", "rail"])
+            restrictTags(layer, ["class", "subclass", "network"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "transportation_name":
+            restrictFeatures(layer, "class", ["motorway", "trunk", "primary"])
+            restrictTags(layer, ["class", "name", "name_en", "network", "ref", "ref_length"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "water":
+            restrictFeatures(layer, "class", ["river", "lake", "ocean"])
+            restrictTags(layer, ["class"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "water_name":
+            restrictTags(layer, ["class", "name", "name_en"])
+            optimizeLayer(layer)
+            continue
+
+        if layer.name == "waterway":
+            restrictFeatures(layer, "class", ["stream", "river", "canal"])
+            restrictTags(layer, ["class", "name", "name_en"])
+            optimizeLayer(layer)
+            continue
+
+        print("Error in optimizeTile(). Unknown layer {}".format(layer.name))
+        exit(-1)
