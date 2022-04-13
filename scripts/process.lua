@@ -99,11 +99,9 @@ landuseKeys     = Set { "school", "university", "kindergarten", "college", "libr
                         "railway", "cemetery", "military", "residential", "commercial", "industrial",
                         "retail", "stadium", "pitch", "playground", "theme_park", "bus_station", "zoo" }
 landcoverKeys   = { wood="wood", forest="wood", rock="rock", bare_rock="rock",
-                    wetland="wetland",
                     beach="sand", sand="sand",
-                    farmland="farmland", farm="farmland", orchard="farmland", vineyard="farmland", plant_nursery="farmland",
-                    glacier="ice", ice_shelf="ice",
-                    grassland="grass", grass="grass", meadow="grass", allotments="grass", park="grass", village_green="grass", recreation_ground="grass", garden="grass", golf_course="grass" }
+                    glacier="ice", ice_shelf="ice"}
+--                    grassland="grass", grass="grass", meadow="grass", allotments="grass", park="grass", village_green="grass", recreation_ground="grass", garden="grass", golf_course="grass" }
 
 -- POI "class" values: based on https://github.com/openmaptiles/openmaptiles/blob/master/layers/poi/poi.yaml
 waterClasses    = Set { "river", "riverbank", "stream", "canal", "drain", "ditch", "dock" }
@@ -182,7 +180,7 @@ function way_function(way)
 		way:Layer("transportation", false)
 		way:Attribute("class", "aerialway")
 		SetZOrder(way)
-		way:MinZoom(10)
+		way:MinZoom(9)
 	end
 
 	-- Water table -----------------------------------------------
@@ -316,6 +314,7 @@ function way_function(way)
 		end
 		if class=="lake" and way:Find("wikidata")=="Q192770" then return end
 		if class=="ocean" and isClosed and (way:AreaIntersecting("ocean")/way:Area() > 0.98) then return end
+		if way:Area()<5000 then return end
 		way:Layer("water",true)
 		SetMinZoomByArea(way)
 		way:Attribute("class",class)

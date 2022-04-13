@@ -17,20 +17,8 @@ osmium tags-filter \
     -o out.pbf \
     --overwrite
 
-echo "Run Osmium extract"
-osmium extract --bbox 5.864417,47.26543,15.05078,55.14777 out.pbf -o bboxed.pbf --overwrite
+./pbf2mbtiles.py out.pbf 5.864417,47.26543,15.05078,55.14777 Germany.mbtiles
+#./pbf2mbtiles.py out.pbf 5.952882,45.81617,10.49584,47.81126 Switzerland.mbtiles
 
-echo "Run tilemaker"
-tilemaker \
-    --bbox 5.864417,47.26543,15.05078,55.14777 \
-    --input bboxed.pbf \
-    --output ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
-
-echo "Optimize"
-#./optimize.py ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
-
-
-rm -rf ~/.cache/QtLocation 
-ls -lah *.pbf
-ls -lah ~/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe/Germany.mbtiles
-cd ~/Software/projects/enroute/build && ninja && ./src/enroute
+mv *.mbtiles /home/kebekus/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe
+~/Software/projects/enroute/build/src/enroute

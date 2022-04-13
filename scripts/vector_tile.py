@@ -117,7 +117,7 @@ def optimizeTile(tile):
     :param layer: Tile that is to be optimized. The tile is modified in-place
     """
 
-    removeLayers(tile, ["aerodrome_label", "building", "housenumber", "landuse", "park", "poi"])
+    removeLayers(tile, ["aerodrome_label", "building", "housenumber", "park", "poi"])
 
     for layer in tile.layers:
         if layer.name == "aeroway":
@@ -141,7 +141,7 @@ def optimizeTile(tile):
             continue
 
         if layer.name == "mountain_peak":
-            numPeaks = 3
+            numPeaks = 5
             if len(layer.features) > numPeaks:
 
                 newFeatures = []
