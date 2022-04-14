@@ -23,13 +23,11 @@ def num2deg(xtile, ytile, zoom):
 
 bboxStringList = sys.argv[2].split(",")
 bboxList = list(map(float, bboxStringList))
-print(bboxList)
 
 (x, y) = deg2num(bboxList[1], bboxList[0], 7.0)
 (latNW, lonNW) = num2deg(x, y+1, 7.0)
 (x, y) = deg2num(bboxList[3], bboxList[2], 7.0)
 (latSE, lonSE) = num2deg(x+1, y, 7.0)
-print(lonNW, latNW, lonSE, latSE)
 
 print('Run Osmium extract')
 subprocess.run(

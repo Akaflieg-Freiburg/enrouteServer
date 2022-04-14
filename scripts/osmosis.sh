@@ -18,7 +18,7 @@ osmium tags-filter \
     --overwrite
 
 ./pbf2mbtiles.py out.pbf 5.864417,47.26543,15.05078,55.14777 Germany.mbtiles
-#./pbf2mbtiles.py out.pbf 5.952882,45.81617,10.49584,47.81126 Switzerland.mbtiles
+./pbf2mbtiles.py out.pbf 5.952882,45.81617,10.49584,47.81126 Switzerland.mbtiles
 
 mv *.mbtiles /home/kebekus/.local/share/Akaflieg\ Freiburg/enroute\ flight\ navigation/aviation_maps/Europe
 ~/Software/projects/enroute/build/src/enroute
