@@ -2,7 +2,7 @@
 enrouteServer documentation
 =========================================
 
-.. automodule:: flarmDB
+.. automodule:: vector_tile
     :members:
 .. automodule:: OFMX
     :members:

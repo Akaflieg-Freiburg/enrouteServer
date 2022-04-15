@@ -1,7 +1,5 @@
 #!/bin/python3
 
-import vector_tile_pb2
-
 """
 vector_tile
 =======================================================================================================
@@ -9,6 +7,10 @@ vector_tile
 Toolset to manipulate vector tiles, in the format described here:
 https://github.com/mapbox/vector-tile-spec/tree/master/2.1
 """
+
+import gzip
+import sqlite3
+import vector_tile_pb2
 
 
 def getMetaData(feature, layer):
@@ -202,3 +204,34 @@ def optimizeTile(tile):
 
         print("Error in optimizeTile(). Unknown layer {}".format(layer.name))
         exit(-1)
+
+def optimizeMBTILES(filename):
+    # Open database
+    conn = sqlite3.connect(filename)
+    c = conn.cursor()
+
+    #
+    # Go through all remaining tiles
+    #
+    for row in c.execute('SELECT * FROM tiles'):
+        blob = row[3]
+        unzipedBlob = gzip.decompress(blob)
+
+        tile = vector_tile_pb2.Tile()
+        tile.ParseFromString(unzipedBlob)
+
+        optimizeTile(tile)
+
+        newBlob = gzip.compress(tile.SerializeToString())
+        localCursor = conn.cursor()
+        localCursor.execute("UPDATE tiles SET tile_data=? WHERE zoom_level=? AND tile_column=? AND tile_row=?", (newBlob, row[0], row[1], row[2]))
+
+    print("Committing changes")
+    conn.commit()
+
+    print("Compactifying database")
+    c.execute("vacuum")
+    conn.commit()
+
+    # Close database
+    conn.close()

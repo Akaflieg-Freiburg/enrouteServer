@@ -6,11 +6,9 @@ import sys
 import vector_tile
 import vector_tile_pb2
 
-
-
 if len(sys.argv) == 1:
     print("{} file.mbtiles".format(sys.argv[0]))
-    print("Optimizes MBTILE file for enrouteFlightMap, by removing all data that is irrelevant to the map.")
+    print("Optimizes MBTILES file for enrouteFlightMap, by removing all data that is irrelevant to the map. The file is modified in-place.")
     exit(0)
 
 

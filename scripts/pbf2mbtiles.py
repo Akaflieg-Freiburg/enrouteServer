@@ -4,6 +4,7 @@ import math
 import os
 import subprocess
 import sys
+import vector_tile
 
 
 def deg2num(lat_deg, lon_deg, zoom):
@@ -45,9 +46,4 @@ subprocess.run(
 os.remove("bboxed.pbf")
 
 print('Optimize')
-subprocess.run(
-    "./optimize.py {}".format(sys.argv[3]),
-    shell=True,
-    check=True
-)
-
+vector_tile.optimizeMBTILES(sys.argv[3])
