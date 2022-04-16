@@ -7,27 +7,6 @@ import sys
 import vector_tile
 
 
-def deg2num(lat_deg, lon_deg, zoom):
-  """
-  Converts coordinate to tile number
-  taken from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
-  """
-  lat_rad = math.radians(lat_deg)
-  n = 2.0 ** zoom
-  xtile = int((lon_deg + 180.0) / 360.0 * n)
-  ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
-  return (xtile, ytile)
-
-def num2deg(xtile, ytile, zoom):
-  """
-  Converts tile number to coordinate
-  taken from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
-  """
-  n = 2.0 ** zoom
-  lon_deg = xtile / n * 360.0 - 180.0
-  lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
-  lat_deg = math.degrees(lat_rad)
-  return (lat_deg, lon_deg)
 
 def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
   """Converts openstreetmap PBF file into mbtiles
@@ -53,6 +32,29 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
   :param pbfFileName: Name of output file, will be overwritten if exists
 
   """
+
+  def deg2num(lat_deg, lon_deg, zoom):
+    """
+    Converts coordinate to tile number
+    taken from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
+    """
+    lat_rad = math.radians(lat_deg)
+    n = 2.0 ** zoom
+    xtile = int((lon_deg + 180.0) / 360.0 * n)
+    ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
+    return (xtile, ytile)
+
+  def num2deg(xtile, ytile, zoom):
+    """
+    Converts tile number to coordinate
+    taken from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
+    """
+    n = 2.0 ** zoom
+    lon_deg = xtile / n * 360.0 - 180.0
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+    lat_deg = math.degrees(lat_rad)
+    return (lat_deg, lon_deg)
+
 
   (x, y) = deg2num(latNW, lonNW, 7.0)
   (extLatNW, extLonNW) = num2deg(x, y+1, 7.0)
