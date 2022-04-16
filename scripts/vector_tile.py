@@ -116,7 +116,7 @@ def optimizeTile(tile):
     It also lowers the number of mountain peaks, removing all but the three highest peaks
     from each tile.
 
-    :param layer: Tile that is to be optimized. The tile is modified in-place
+    :param tile: Tile that is to be optimized. The tile is modified in-place
     """
 
     removeLayers(tile, ["aerodrome_label", "building", "housenumber", "park", "poi"])
@@ -206,6 +206,13 @@ def optimizeTile(tile):
         exit(-1)
 
 def optimizeMBTILES(filename):
+    """Optimize an mbtiles file
+
+    This method optimizes an mbtiles file, by running optimizeTile on every tile of the file.
+
+    :param filename: mbtiles file. The file is modified in-place.
+    """
+
     # Open database
     conn = sqlite3.connect(filename)
     c = conn.cursor()

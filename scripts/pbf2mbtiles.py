@@ -8,6 +8,10 @@ import vector_tile
 
 
 def deg2num(lat_deg, lon_deg, zoom):
+  """
+  Converts coordinate to tile number
+  taken from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
+  """
   lat_rad = math.radians(lat_deg)
   n = 2.0 ** zoom
   xtile = int((lon_deg + 180.0) / 360.0 * n)
@@ -15,35 +19,60 @@ def deg2num(lat_deg, lon_deg, zoom):
   return (xtile, ytile)
 
 def num2deg(xtile, ytile, zoom):
+  """
+  Converts tile number to coordinate
+  taken from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
+  """
   n = 2.0 ** zoom
   lon_deg = xtile / n * 360.0 - 180.0
   lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
   lat_deg = math.degrees(lat_rad)
   return (lat_deg, lon_deg)
 
+def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
+  """Converts openstreetmap PBF file into mbtiles
 
-bboxStringList = sys.argv[2].split(",")
-bboxList = list(map(float, bboxStringList))
+  This method converts a PBF file with openstreetmap data into an mbtiles file.
+  The output contains tiles for zoom level 7--10 and it optimized for use with
+  the enrouteMap style.
 
-(x, y) = deg2num(bboxList[1], bboxList[0], 7.0)
-(latNW, lonNW) = num2deg(x, y+1, 7.0)
-(x, y) = deg2num(bboxList[3], bboxList[2], 7.0)
-(latSE, lonSE) = num2deg(x+1, y, 7.0)
+  The coordiante arguments specify a bounding box. The box is enlarged to fit
+  zoom level 7 tile boundaries. This way, it is ensured that the output does not
+  contain any half-filled tiles.
 
-print('Run Osmium extract')
-subprocess.run(
-    "osmium extract --bbox {},{},{},{} {} -o bboxed.pbf --overwrite".format(lonNW, latNW, lonSE, latSE, sys.argv[1]),
+  :param pbfFileName: Name of input file
+
+  :param latNW: latitude of NW edge of bounding box
+
+  :param lonNW: longitude of NW edge of bounding box
+
+  :param latSE: latitude of SE edge of bounding box
+
+  :param lonSE: longitude of SE edge of bounding box
+
+  :param pbfFileName: Name of output file, will be overwritten if exists
+
+  """
+
+  (x, y) = deg2num(latNW, lonNW, 7.0)
+  (extLatNW, extLonNW) = num2deg(x, y+1, 7.0)
+  (x, y) = deg2num(latSE, lonSE, 7.0)
+  (extLatSE, extLonSE) = num2deg(x+1, y, 7.0)
+
+  print('Run Osmium extract')
+  subprocess.run(
+    "osmium extract --bbox {},{},{},{} {} -o bboxed.pbf --overwrite".format(extLonNW, extLatNW, extLonSE, extLatSE, pbfFileName),
     shell=True,
     check=True,
-)
+  )
 
-print('Run tilemaker')
-subprocess.run(
-    "tilemaker --bbox {} --input bboxed.pbf --output {}".format(sys.argv[2], sys.argv[3]),
+  print('Run tilemaker')
+  subprocess.run(
+    "tilemaker --config tilemaker/config.json --process tilemaker/process.lua --bbox {},{},{},{} --input bboxed.pbf --output {}".format(lonNW, latNW, lonSE, latSE, mbtilesFileName),
     shell=True,
     check=True
-)
-os.remove("bboxed.pbf")
+  )
+  os.remove("bboxed.pbf")
 
-print('Optimize')
-vector_tile.optimizeMBTILES(sys.argv[3])
+  print('Optimize')
+  vector_tile.optimizeMBTILES(mbtilesFileName)
