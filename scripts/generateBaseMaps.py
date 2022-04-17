@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-import pbf2mbtiles
 import subprocess
 import sys
+import vector_tile
 
 
 tasks = [
@@ -40,7 +40,8 @@ subprocess.run(
     check=True
 )
 
-pbf2mbtiles.pbf2mbtiles('out.pbf', 5.864417, 47.26543, 15.05078, 55.14777, 'Germany.mbtiles')
+vector_tile.pbf2mbtiles('out.pbf', 5.864417, 47.26543, 15.05078, 55.14777, 'Germany.mbtiles')
+vector_tile.pbf2mbtiles('out.pbf', 5.952882, 45.81617, 10.49584, 47.81126, 'Switzerland.mbtiles')
 
 #subprocess.run(
 #    "./pbf2mbtiles.py out.pbf 5.864417,47.26543,15.05078,55.14777 Germany.mbtiles",
