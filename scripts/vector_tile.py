@@ -8,6 +8,7 @@ Toolset to manipulate vector tiles, in the format described here:
 https://github.com/mapbox/vector-tile-spec/tree/master/2.1
 """
 
+from datetime import date
 import math
 import gzip
 import os
@@ -23,6 +24,8 @@ def optimizeMBTILES(filename):
     to enrouteFlightMap. It also lowers the number of mountain peaks, removing
     all but the three highest peaks from each tile.running optimizeTile on
     every tile.
+
+    The method also adds a few entries to the map file metadata.
 
     :param filename: mbtiles file. The file is modified in-place.
     """
@@ -279,6 +282,16 @@ def optimizeMBTILES(filename):
                             "AND tile_row=?",
                             (newBlob, row[0], row[1], row[2]))
 
+    c.execute("REPLACE INTO metadata VALUES (?,?)",
+              (
+                  'attribution',
+                  '<a href="http://www.openstreetmap.org/about/" '
+                  'target="_blank">&copy; OpenStreetMap contributors</a>'
+              ))
+    c.execute("REPLACE INTO metadata VALUES (?,?)", ('name', filename))
+    c.execute("REPLACE INTO metadata VALUES (?,?)",
+              ('version', date.today().strftime("%d/%m/%Y")))
+
     print("Committing changes")
     conn.commit()
 
@@ -290,7 +303,7 @@ def optimizeMBTILES(filename):
     conn.close()
 
 
-def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
+def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName):
     """Converts openstreetmap PBF file into mbtiles
 
     This method converts a PBF file with openstreetmap data into an mbtiles
@@ -311,7 +324,8 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
 
     :param lonSE: longitude of SE edge of bounding box
 
-    :param pbfFileName: Name of output file, will be overwritten if exists
+    :param pbfFileBaseName: Name of output file, without ending and without
+    path. The file will be overwritten if exists.
 
     """
 
@@ -353,6 +367,16 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
         check=True,
     )
 
+    # Generate config file
+    f = open("tilemaker/config.json", "r")
+    config = f.read()
+    f.close()
+    config = config.replace("%name", mbtilesFileBaseName)
+    config = config.replace("%version", date.today().strftime("%d/%m/%Y"))
+    f = open("config.json", "w")
+    f.write(config)
+    f.close()
+
     print('Run tilemaker')
     subprocess.run(
         "tilemaker "
@@ -360,11 +384,12 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileName):
         "--process tilemaker/process.lua "
         "--bbox {},{},{},{} "
         "--input bboxed.pbf "
-        "--output {}".format(lonNW, latNW, lonSE, latSE, mbtilesFileName),
+        "--output {}".format(lonNW, latNW, lonSE, latSE, mbtilesFileBaseName+".mbtiles"),
         shell=True,
         check=True
     )
     os.remove("bboxed.pbf")
+    os.remove("config.json")
 
     print('Optimize')
-    optimizeMBTILES(mbtilesFileName)
+    optimizeMBTILES(mbtilesFileBaseName+".mbtiles")

@@ -41,7 +41,7 @@
 		"combine_below": 14,
 		"name": "Tilemaker to OpenMapTiles schema",
 		"version": "3.0",
-		"description": "Tile config based on OpenMapTiles schema",
+		"description": "Base map for Enroute Flight Navigation",
 		"compress": "gzip",
 		"filemetadata": {
 			"tilejson": "2.0.0", 
