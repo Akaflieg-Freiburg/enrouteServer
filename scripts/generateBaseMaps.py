@@ -7,11 +7,21 @@ import vector_tile
 
 
 tasks = [
+    ['North America',
+     'https://download.geofabrik.de/north-america-latest.osm.pbf',
+     [
+         ['Canada', [-141.7761,41.6377, -44.17684, 85.04032]],
+         ['USA Midwest', [-104.0588, 35.98507, -80.50521, 49.40714]],
+         ['USA Northeast', [-80.52632, 38.77178, -66.87576, 47.48423]],
+         ['USA Pacific', [-179.9965, 15.98281, -129.7998, 72.98845]],
+         ['USA South', [-106.6494, 24.20031, -71.50981, 40.64636]],
+         ['USA West', [-133.0637, 31.32659, -102.041, 49.45605]]
+     ]],
     ['South America',
      'https://download.geofabrik.de/south-america-latest.osm.pbf',
      [
-         ['Argentina',     [-73.61453,  -55.68296, -53.59024, -21.72575]],
-         ['Brazil',        [-74.09056,  -35.46552, -27.67249,   5.522895]]
+         ['Argentina', [-73.61453, -55.68296, -53.59024, -21.72575]],
+         ['Brazil', [-74.09056, -35.46552, -27.67249, 5.522895]]
      ]]
 #    ['europe',
 #        [
@@ -25,7 +35,7 @@ for task in tasks:
     maps = task[2]
     print('Download {}'.format(continent))
 #    os.remove('download.pbf')
-    subprocess.run( ['curl', task[1], "--output", "download.pbf"], check=True )
+    subprocess.run(['curl', task[1], "--output", "download.pbf"], check=True)
 
     print('Run Osmium tags-filter')
     subprocess.run(
@@ -51,10 +61,9 @@ for task in tasks:
     for map in maps:
         country = map[0]
         bbox = map[1]
-
         vector_tile.pbf2mbtiles('out.pbf', bbox[0], bbox[1], bbox[2], bbox[3], country)
-    break
     os.remove('out.pbf')
+    break
 
 exit(-1)
 

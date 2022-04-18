@@ -367,29 +367,17 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName):
         check=True,
     )
 
-    # Generate config file
-    f = open("tilemaker/config.json", "r")
-    config = f.read()
-    f.close()
-    config = config.replace("%name", mbtilesFileBaseName)
-    config = config.replace("%version", date.today().strftime("%d/%m/%Y"))
-    f = open("config.json", "w")
-    f.write(config)
-    f.close()
-
     print('Run tilemaker')
     subprocess.run(
-        "tilemaker "
-        "--config tilemaker/config.json "
-        "--process tilemaker/process.lua "
-        "--bbox {},{},{},{} "
-        "--input bboxed.pbf "
-        "--output {}".format(lonNW, latNW, lonSE, latSE, mbtilesFileBaseName+".mbtiles"),
-        shell=True,
+        ["tilemaker",
+        "--config", "tilemaker/config.json",
+        "--process", "tilemaker/process.lua",
+        "--bbox", "{},{},{},{}".format(lonNW, latNW, lonSE, latSE, mbtilesFileBaseName+".mbtiles"),
+        "--input", "bboxed.pbf",
+        "--output", mbtilesFileBaseName+".mbtiles"],
         check=True
     )
     os.remove("bboxed.pbf")
-    os.remove("config.json")
 
     print('Optimize')
     optimizeMBTILES(mbtilesFileBaseName+".mbtiles")
