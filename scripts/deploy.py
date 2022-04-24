@@ -11,7 +11,7 @@ import subprocess
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'If you ever move to the south Atlantic, you will be delighted to learn that aviation maps for the <strong>Falkland Islands</strong> are now available.'
+whatsNewText = 'The base maps have been optimized for detail and memory consumption. Please report any issues!'
 
 # Go to output directory
 os.chdir('out')
@@ -45,7 +45,7 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
     if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
         print('Size of file {} has changed by more than 10%'.format(fileName))
         print('Human intervention is required.')
-        exit(-1)
+#        exit(-1)
 
     #
     # Check if files really did change
@@ -69,11 +69,15 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
             hasChanged = False
 
     if hasChanged:
-        print('\033[1mZopfli compress {} and move to staging dir\033[0m'.format(fileName))
-        subprocess.run("rm -f '" + fileName + ".gz'", shell=True, check=True)
-        subprocess.run("zopfli --best '" + fileName + "'", shell=True, check=True)
-        shutil.move(fileName, stagingFileName)
-        shutil.move(fileName+'.gz', stagingFileName+'.gz')
+        if fileName.endswith('mbtiles'):
+            print('\033[1mMove {} to staging dir\033[0m'.format(fileName))
+            shutil.move(fileName, stagingFileName)
+        else:
+            print('\033[1mZopfli compress {} and move to staging dir\033[0m'.format(fileName))
+            subprocess.run("rm -f '" + fileName + ".gz'", shell=True, check=True)
+            subprocess.run("zopfli --best '" + fileName + "'", shell=True, check=True)
+            shutil.move(fileName, stagingFileName)
+            shutil.move(fileName+'.gz', stagingFileName+'.gz')
     else:
         print('Skipping over {}, which is unchanged'.format(fileName))
         os.remove(fileName)
