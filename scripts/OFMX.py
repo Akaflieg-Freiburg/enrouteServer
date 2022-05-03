@@ -358,7 +358,7 @@ def readFeatures_Procedures(root, numCoordDigits):
             heightString = readHeight(prc, 'Tfc')
             if heightString != "":
                 if txtName != "":
-                    txtName = txtName + " • "
+                    txtName = txtName + " "
                 txtName = txtName + heightString
         else:
             # Get height - if procedure is not TFC. In this case, the procedure
@@ -374,7 +374,7 @@ def readFeatures_Procedures(root, numCoordDigits):
                 heightBands.add(band)
             if (len(heightBands) == 1) and not "" in heightBands:
                 if txtName != "":
-                    txtName = txtName + " • "
+                    txtName = txtName + " "
                 txtName = txtName + band
 
         # Setup properties
@@ -416,22 +416,24 @@ def readHeight(xmlNode, ending, short=False):
     In OFMX, height information for property X in an xmlNode is usually
     specified by three subnodes that are named as follows.
 
-    - codeDistVerX: Type altitude information (flight level, above ground, above MSL)
+    - codeDistVerX: Type altitude information (flight level, above ground, above
+      MSL)
 
     - uomDistVerX: Unit of measurement
 
     - valDistVerX: Numerical value
 
     This method looks for these subnodes and interprets their content. If all
-    goes well, it returns a human-readable string such as "GND", "100 FT GND",
-    "2300 FT MSL" or "FL 95". If the data is not found or cannot be interpreted,
+    goes well, it returns a human-readable string such as "GND", "100 ft GND",
+    "2300 ft" or "FL 95". If the data is not found or cannot be interpreted,
     this method fails silently and an empty string is returned.
 
     :param xmlNode: An ElementTree xml node
 
     :param ending: Name of the property. This is the string 'X' described above.
 
-    :param short: If set to 'True', the method will create slightly shorter strings, of the form "GND", "100 AGL", "2300" or "FL 95"
+    :param short: If set to 'True', the method will create slightly shorter
+        strings, of the form "GND", "100 AGL", "2300" or "FL 95"
 
     :returns: A string describing altitude, or an empty string in case of error
 
@@ -477,11 +479,11 @@ def readHeight(xmlNode, ending, short=False):
             return "GND"
         if short:
             return valDistVer + " AGL"
-        return valDistVer + " " + uomDistVer + " AGL"
+        return valDistVer + " " + uomDistVer.lower() + " AGL"
     if codeDistVer == "ALT":
         if short:
             return valDistVer
-        return valDistVer + " " + uomDistVer + " MSL"
+        return valDistVer + " " + uomDistVer.lower()
 
     return ""
 
@@ -493,13 +495,14 @@ def readMinMaxHeight(xmlNode):
     subnodes, called "codeDistVerLower", "uomDistVerLower", "valDistVerLower",
     "codeDistVerUpper", "uomDistVerUpper" and "valDistVerUpper". This method
     looks for these subnodes and interprets their content. If all goes well, it
-    returns a string such as "MIN. 100 FT GND", "MIN. 2500 FT MSL · MAX 4500 FT
+    returns a string such as "MIN. 100 ft GND", "MIN. 2500 ft · MAX 4500 ft
     MSL". If the data is not found or cannot be interpreted, an empty string is
     returned.
 
     :param xmlNode: An ElementTree xml node
 
-    :returns: A string describing minimal and maximal altitude, or an empty string in case of error
+    :returns: A string describing minimal and maximal altitude, or an empty
+        string in case of error
 
     """
 
