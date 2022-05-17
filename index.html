@@ -205,20 +205,22 @@ features.</p>
 <p>In OFMX, height information for property X in an xmlNode is usually
 specified by three subnodes that are named as follows.</p>
 <ul class="simple">
-<li><p>codeDistVerX: Type altitude information (flight level, above ground, above MSL)</p></li>
+<li><p>codeDistVerX: Type altitude information (flight level, above ground, above
+MSL)</p></li>
 <li><p>uomDistVerX: Unit of measurement</p></li>
 <li><p>valDistVerX: Numerical value</p></li>
 </ul>
 <p>This method looks for these subnodes and interprets their content. If all
-goes well, it returns a human-readable string such as “GND”, “100 FT GND”,
-“2300 FT MSL” or “FL 95”. If the data is not found or cannot be interpreted,
+goes well, it returns a human-readable string such as “GND”, “100 ft GND”,
+“2300 ft” or “FL 95”. If the data is not found or cannot be interpreted,
 this method fails silently and an empty string is returned.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xmlNode</strong> – An ElementTree xml node</p></li>
 <li><p><strong>ending</strong> – Name of the property. This is the string ‘X’ described above.</p></li>
-<li><p><strong>short</strong> – If set to ‘True’, the method will create slightly shorter strings, of the form “GND”, “100 AGL”, “2300” or “FL 95”</p></li>
+<li><p><strong>short</strong> – If set to ‘True’, the method will create slightly shorter
+strings, of the form “GND”, “100 AGL”, “2300” or “FL 95”</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -235,7 +237,7 @@ this method fails silently and an empty string is returned.</p>
 subnodes, called “codeDistVerLower”, “uomDistVerLower”, “valDistVerLower”,
 “codeDistVerUpper”, “uomDistVerUpper” and “valDistVerUpper”. This method
 looks for these subnodes and interprets their content. If all goes well, it
-returns a string such as “MIN. 100 FT GND”, “MIN. 2500 FT MSL · MAX 4500 FT
+returns a string such as “MIN. 100 ft GND”, “MIN. 2500 ft · MAX 4500 ft
 MSL”. If the data is not found or cannot be interpreted, an empty string is
 returned.</p>
 <dl class="field-list simple">
@@ -243,7 +245,8 @@ returned.</p>
 <dd class="field-odd"><p><strong>xmlNode</strong> – An ElementTree xml node</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A string describing minimal and maximal altitude, or an empty string in case of error</p>
+<dd class="field-even"><p>A string describing minimal and maximal altitude, or an empty
+string in case of error</p>
 </dd>
 </dl>
 </dd></dl>
