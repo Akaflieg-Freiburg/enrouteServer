@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 
 import datetime
 import filecmp
@@ -11,7 +11,7 @@ import subprocess
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'The base maps have been optimized for detail and memory consumption. Please report any issues!'
+whatsNewText = 'Aviation maps are now updated daily, provided that new data is available.'
 
 # Go to output directory
 os.chdir('out')
@@ -25,7 +25,7 @@ subprocess.run(
     + "kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003/ " 
     + stagingDir,
     shell=True,
-    check=True,
+    check=True
 )
 
 
@@ -45,7 +45,7 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
     if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
         print('Size of file {} has changed by more than 10%'.format(fileName))
         print('Human intervention is required.')
-#        exit(-1)
+        exit(-1)
 
     #
     # Check if files really did change
@@ -112,5 +112,5 @@ subprocess.run(
     + stagingDir
     + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003",
     shell=True,
-    check=True,
+    check=True
 )
