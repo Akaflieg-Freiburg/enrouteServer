@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 
 
 stagingDir = "../staging"
@@ -44,8 +45,9 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
     Bsize = os.path.getsize(stagingFileName) 
     if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
         print('Size of file {} has changed by more than 10%'.format(fileName))
-        print('Human intervention is required.')
-        exit(-1)
+        if "force" not in sys.argv:
+            print('Human intervention is required.')
+            exit(-1)
 
     #
     # Check if files really did change
