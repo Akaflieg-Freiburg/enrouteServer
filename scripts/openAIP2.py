@@ -416,6 +416,13 @@ def readOpenAIPAirspaces():
         # 23: Traffic Information Zone (TIZ)
         # 24: Traffic Information Area (TIA)
         # 25: Military Training Area (MTA)
+        # 26: Controlled Area (CTA)
+        # 27: ACC Sector (ACC)
+        if item['type'] == 28: # 28: Aerial Sporting Or Recreational Activity
+            if 'PARA' in item['name']:
+                properties['CAT'] = 'PJE'
+        if item['type'] == 29: # 29: Low Altitude Overflight Restriction
+            properties['CAT'] = 'R'
 
         #
         # If CAT has not yet been assigned, look at the ICAO class of the airspace
