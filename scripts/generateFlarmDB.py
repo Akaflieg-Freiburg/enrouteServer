@@ -151,7 +151,7 @@ def readFlarmDB(outFileName):
 
     outfile = open(outFileName, 'w', encoding='ISO-8859-1')
     outfile.write(version)
-    for FLARMID, callsign in result.items():
+    for FLARMID, callsign in sorted(result.items()):
         outfile.write(FLARMID)
         outfile.write(",")
         outfile.write(callsign.ljust(16))
