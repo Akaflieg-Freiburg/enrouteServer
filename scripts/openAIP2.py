@@ -11,6 +11,7 @@ https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-en
 
 import json
 import math
+import re
 import requests
 import os
 
@@ -103,18 +104,19 @@ def downloadOpenAIPData(typeName):
     return items
 
 
-def readOpenAIPAirports():
+def readOpenAIPAirports(airportData):
     """Read airspaces from the openAIP2 API.
+
+    :param airportData: Data about airports, as downloaded from openAIP
 
     :returns: GeoJSON feature array, in the format described here:
         https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 
     """
 
-    items = downloadOpenAIPData('airports')
     print("Interpreting airport data…")
     features = []
-    for item in items:
+    for item in airportData:
         properties = {}
 
         #
@@ -530,6 +532,64 @@ def readOpenAIPNavaids():
         features.append(feature)
     return features
 
+def readOpenAIPReportingPoints(airportData):
+    """Read reporting points from the openAIP2 API.
+
+    :param airportData: Data about airports, as downloaded from openAIP
+
+    :returns: GeoJSON feature array, in the format described here:
+        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+
+    """
+
+    ICAOAlpha = ["ALFA", "BRAVO", "CHARLIE", "DELTA", "ECHO", "FOXTROT", "GOLF", "HOTEL", "INDIA", "JULIETT", "KILO", "LIMA", "MIKE", "NOVEMBER", "OSCAR", "PAPA", "QUEBEC", "ROMEO", "SIERRA", "TANGO", "UNIFORM", "VICTOR", "WHISKEY", "X-RAY", "YANKEE", "ZULU"]
+
+    airportCodes = {} # ICAO Codes by _id
+    airportNames = {} # Airport names by _id
+    for airport in airportData:
+        id = airport['_id']
+        if 'icaoCode' in airport:
+            airportCodes[id] = airport['icaoCode']
+        airportNames[id] = airport['name']
+
+    items = downloadOpenAIPData('reporting-points')
+    print("Interpreting reporting-points data…")
+    features = []
+    for item in items:
+        id = item['airports'][0]
+
+        #
+        # Get properties
+        #
+        properties = {}
+        properties['TYP'] = "WP"
+
+        if item['compulsory']:
+            properties['CAT'] = "MRP"
+        else:
+            properties['CAT'] = "RP"
+        properties['NAM'] = airportNames[id]+" ("+item['name']+")"
+        SCO = item['name']
+        for letter in ICAOAlpha:
+            SCO = re.sub(r'\b'+letter+r'\b', letter[0], SCO)
+        properties['SCO'] = SCO
+        if id in airportCodes:
+            properties['COD'] = airportCodes[id]+"-"+SCO
+            properties['ICA'] = airportCodes[id]
+        else:
+            properties['COD'] = SCO
+        print(properties['COD'])
+
+        #
+        # Generate feature
+        #
+        feature = {'type': 'Feature'}
+        feature['geometry'] = item['geometry']
+        feature['properties'] = properties
+        features.append(feature)
+
+    return features
+
 
 def readOpenAIP():
     """Read complete database from the openAIP2 API.
@@ -539,8 +599,11 @@ def readOpenAIP():
 
     """
 
+    airportData = downloadOpenAIPData('airports')
+
     features = []
-    features += readOpenAIPAirports()
+    features += readOpenAIPReportingPoints(airportData)
+    features += readOpenAIPAirports(airportData)
     features += readOpenAIPAirspaces()
     features += readOpenAIPNavaids()
     return features
