@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -70,9 +71,9 @@
            <div itemprop="articleBody">
              
   <section id="module-OFMX">
-<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Permalink to this headline"></a></h1>
+<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Permalink to this heading"></a></h1>
 <section id="ofmx">
-<h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this headline"></a></h2>
+<h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this heading"></a></h2>
 <p>Tools to interpret ofmx files</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readAirspace">
@@ -253,7 +254,7 @@ string in case of error</p>
 
 </section>
 <span class="target" id="module-openAIP2"></span><section id="openaip2">
-<h2>openAIP2<a class="headerlink" href="#openaip2" title="Permalink to this headline"></a></h2>
+<h2>openAIP2<a class="headerlink" href="#openaip2" title="Permalink to this heading"></a></h2>
 <p>Toolset to read aviation data from the openAIP2 web site and to transform the
 data into the GeoJSON format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
@@ -285,11 +286,14 @@ data into the GeoJSON format described here:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.readOpenAIPAirports">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirports" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirports" title="Permalink to this definition"></a></dt>
 <dd><p>Read airspaces from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>GeoJSON feature array, in the format described here:
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>airportData</strong> – Data about airports, as downloaded from openAIP</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GeoJSON feature array, in the format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
 </dl>
@@ -319,12 +323,27 @@ data into the GeoJSON format described here:
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="openAIP2.readOpenAIPReportingPoints">
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPReportingPoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPReportingPoints" title="Permalink to this definition"></a></dt>
+<dd><p>Read reporting points from the openAIP2 API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>airportData</strong> – Data about airports, as downloaded from openAIP</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GeoJSON feature array, in the format described here:
+<a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <div class="toctree-wrapper compound">
 </div>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
