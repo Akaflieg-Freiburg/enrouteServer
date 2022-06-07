@@ -44,7 +44,7 @@ def removeduplicate(it):
             if hasRP:
                 print(x)
                 continue
-            #reportingPointCoordinates.append(coord)
+            reportingPointCoordinates.append(coord)
         
         # Yield the element, and add it to the list of elements that we have
         # already seen.
