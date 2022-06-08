@@ -578,7 +578,6 @@ def readOpenAIPReportingPoints(airportData):
             properties['ICA'] = airportCodes[id]
         else:
             properties['COD'] = SCO
-        print(properties['COD'])
 
         #
         # Generate feature
