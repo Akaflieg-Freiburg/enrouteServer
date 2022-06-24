@@ -573,6 +573,7 @@ def readOpenAIPReportingPoints(airportData):
         for letter in ICAOAlpha:
             SCO = re.sub(r'\b'+letter+r'\b', letter[0], SCO)
         properties['SCO'] = SCO
+        properties['ELE'] = item['elevation']['value']
         if id in airportCodes:
             properties['COD'] = airportCodes[id]+"-"+SCO
             properties['ICA'] = airportCodes[id]
