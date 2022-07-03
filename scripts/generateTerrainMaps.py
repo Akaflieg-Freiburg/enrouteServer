@@ -2,22 +2,13 @@
 
 import math
 import os
-import shutil
 import requests
 import sqlite3
 import subprocess
-import sys
-import vector_tile
 
 from datetime import date
 
-
 tasks = [
-    ['Europe',
-     'https://download.geofabrik.de/europe-latest.osm.pbf',
-     [
-      ['Germany', [5.864417, 47.26543, 15.05078, 55.14777]]
-     ]],
     ['Africa',
      'https://download.geofabrik.de/africa-latest.osm.pbf',
      [
@@ -103,7 +94,41 @@ def deg2num(lat_deg, lon_deg, zoom):
     ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
     return (xtile, ytile)
 
+def png2webp(blob):
+    with open('x-in.png','wb') as f:
+       f.write(blob)
+       f.close()
 
+    subprocess.run(
+        ["cwebp",
+        "x-in.png",
+        "-z", "9",
+        "-quiet",
+        "-noalpha",
+        "-o", "x-out.webp"],
+        check=True
+    )
+    newBlob = open('x-out.webp', 'rb').read()
+    os.remove('x-in.png')
+    os.remove('x-out.webp')
+    return newBlob
+
+
+zoomMin = 7
+zoomMax = 10
+
+attribution = """ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc., imagery and funded under National Science Foundation awards 1043681, 1559691, and 1542736. 
+Australia terrain data © Commonwealth of Australia (Geoscience Australia) 2017. 
+Austria terrain data © offene Daten Österreichs – Digitales Geländemodell (DGM) Österreich. 
+Canada terrain data contains information licensed under the Open Government Licence – Canada. 
+Europe terrain data produced using Copernicus data and information funded by the European Union - EU-DEM layers. 
+Global ETOPO1 terrain data U.S. National Oceanic and Atmospheric Administration. 
+Mexico terrain data source: INEGI, Continental relief, 2016. 
+New Zealand terrain data Copyright 2011 Crown copyright (c) Land Information New Zealand and the New Zealand Government (All rights reserved). 
+Norway terrain data © Kartverket. 
+United Kingdom terrain data © Environment Agency copyright and/or database right 2015. All rights reserved. 
+United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey. 
+""".replace('\n', '<br>')
 
 for task in tasks:
     continent = task[0]
@@ -112,30 +137,39 @@ for task in tasks:
     for map in maps:
         country = map[0]
 
+        fileName = 'out/'+continent+'/'+country+'.terrain'
+        if os.path.exists(fileName):
+            print("Terrain data for {} already exists. Skipping.".format(country))
+            continue
+        print("Working on country {}.".format(country))
+
         dbConnection = None
-        os.makedirs("out/"+continent, exist_ok=True)
         try:
-            os.remove('out/'+continent+'/'+country+'.terrain')
+            os.remove('tmp.terrain')
         except BaseException as err:
             True
-        dbConnection = sqlite3.connect('out/'+continent+'/'+country+'.terrain')
+        dbConnection = sqlite3.connect('tmp.terrain')
         cursor = dbConnection.cursor()
         cursor.execute('CREATE TABLE metadata (name text, value text)')
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('name', '{}')".format(continent+'/'+country))
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('type', 'baselayer')")
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('version', '{}')".format(date.today().strftime("%d-%b-%Y")))
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('description', 'Terrain data for Enroute Flight Navigation')")
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('format', 'png')")
+        cursor.execute("INSERT INTO metadata (name, value) VALUES ('format', 'webp')")
+        cursor.execute("INSERT INTO metadata (name, value) VALUES ('encoding', 'terrarium')")
+        cursor.execute("INSERT INTO metadata (name, value) VALUES ('maxzoom', ?)", (str(zoomMax),))
+        cursor.execute("INSERT INTO metadata (name, value) VALUES ('minzoom', ?)", (str(zoomMin),))
+        cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', ?)", (attribution,))
         bboxString = str(map[1][0])+','+str(map[1][1])+','+str(map[1][2])+','+str(map[1][3])
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('bounds', '{}')".format(bboxString))
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', 'None yet')")
 
         cursor.execute('CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)')
-        for zoom in [7]:
+        for zoom in range(zoomMin, zoomMax+1):
             (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
             (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
-            for x in range(xmin, xmax):
-                for y in range(ymin, xmax):
+            for x in range(xmin, xmax+1):
+                for y in range(ymin, ymax+1):
                     try:
                         response = requests.get(' https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{}/{}/{}.png'.format(zoom, x, y))
                         response.raise_for_status()
@@ -153,54 +187,25 @@ for task in tasks:
                         print(err)
                         exit(-1)
                     yflipped = 2**zoom-1-y
-                    cursor.execute("INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, response.content))
+                    blob = png2webp(response.content)
+                    cursor.execute("INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
                     print(zoom, x, y)
        
+        dbConnection.commit()
+
+        cursor.execute("CREATE UNIQUE INDEX tile_index on tiles (zoom_level, tile_column, tile_row)")
+        dbConnection.commit()
+
+        cursor.execute("vacuum")
+        dbConnection.commit()
 
         cursor.close()
         dbConnection.commit()
         dbConnection.close()
-        print(country)
+
+        os.makedirs("out/"+continent, exist_ok=True)
+        os.rename('tmp.terrain', fileName)
+
         exit(-1)
 
     break
-    print('Download {}'.format(continent))
-    try:
-        os.remove('download.pbf')
-    except BaseException as err:
-        True
-    print(task[1])
-    subprocess.run(['curl', task[1], "-L", "--output", "download.pbf"], check=True)
-
-    print('Run Osmium tags-filter')
-    subprocess.run(
-        ["osmium",
-        "tags-filter",
-        'download.pbf',
-        "/aerialway=cable_car,gondola,zip_line,goods",
-        "/aeroway",
-        "/admin_level=2",
-        "/highway=motorway,trunk,primary,secondary,motorway_link",
-        "/landuse",
-        "/natural",
-        "/place=city,town,village",
-        "/railway",
-        "/water",
-        "/waterway",
-        "-o", "out.pbf",
-        "--overwrite"],
-        check=True
-    )
-    os.remove('download.pbf')
-    
-    for map in maps:
-        country = map[0]
-        bbox = map[1]
-        vector_tile.pbf2mbtiles('out.pbf', bbox[0], bbox[1], bbox[2], bbox[3], country)
-        try:
-            os.remove("out/"+continent+"/"+country+'.mbtiles')
-        except BaseException as err:
-            True
-        os.makedirs("out/"+continent, exist_ok=True)
-        os.replace(country+'.mbtiles', "out/"+continent+"/"+country+'.mbtiles')
-    os.remove('out.pbf')

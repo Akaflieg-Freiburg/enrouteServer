@@ -66,12 +66,12 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
         if A == B:
             hasChanged = False
 
-    if fileName.endswith('mbtiles'):
+    if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
         if filecmp.cmp(fileName, stagingFileName, shallow=False):
             hasChanged = False
 
     if hasChanged:
-        if fileName.endswith('mbtiles'):
+        if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
             print('\033[1mMove {} to staging dir\033[0m'.format(fileName))
             shutil.move(fileName, stagingFileName)
         else:
@@ -89,7 +89,7 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
 #
 print("\n\nGenerate maps.json")
 maps = []
-for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glob(stagingDir + "/**/*.mbtiles", recursive=True)+glob.glob(stagingDir + "/**/*.txt", recursive=True):
+for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glob(stagingDir + "/**/*.mbtiles", recursive=True)+glob.glob(stagingDir + "/**/*.terrain", recursive=True)+glob.glob(stagingDir + "/**/*.txt", recursive=True):
     map = {}
     map['path']  = fileName.replace(stagingDir + "/", "")
     t = os.path.getmtime(fileName)
