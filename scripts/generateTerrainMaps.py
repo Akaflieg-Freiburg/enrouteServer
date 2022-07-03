@@ -2,9 +2,12 @@
 
 import math
 import os
+import pyprind
+import random
 import requests
 import sqlite3
 import subprocess
+import sys
 
 from datetime import date
 
@@ -95,22 +98,28 @@ def deg2num(lat_deg, lon_deg, zoom):
     return (xtile, ytile)
 
 def png2webp(blob):
-    with open('x-in.png','wb') as f:
+    r = random.randint(0,100000)
+
+    pngFileName = '{}.png'.format(r)
+    webpFileName = '{}.webp'.format(r)
+
+
+    with open(pngFileName,'wb') as f:
        f.write(blob)
        f.close()
 
     subprocess.run(
         ["cwebp",
-        "x-in.png",
+        pngFileName,
         "-z", "9",
         "-quiet",
         "-noalpha",
-        "-o", "x-out.webp"],
+        "-o", webpFileName],
         check=True
     )
-    newBlob = open('x-out.webp', 'rb').read()
-    os.remove('x-in.png')
-    os.remove('x-out.webp')
+    newBlob = open(webpFileName, 'rb').read()
+    os.remove(pngFileName)
+    os.remove(webpFileName)
     return newBlob
 
 
@@ -130,6 +139,12 @@ United Kingdom terrain data © Environment Agency copyright and/or database righ
 United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey. 
 """.replace('\n', '<br>')
 
+taskNo = 0
+if len(sys.argv) == 1:
+    modulus = -1
+else:
+    modulus = int(sys.argv[1])
+
 for task in tasks:
     continent = task[0]
     maps = task[2]
@@ -137,18 +152,24 @@ for task in tasks:
     for map in maps:
         country = map[0]
 
+        taskNo = taskNo+1   
+        if ((taskNo % 8) != modulus) and (modulus != -1):
+            print("Skipping {}.".format(country))
+            continue
+
         fileName = 'out/'+continent+'/'+country+'.terrain'
         if os.path.exists(fileName):
             print("Terrain data for {} already exists. Skipping.".format(country))
             continue
         print("Working on country {}.".format(country))
 
+        tmpFileName = '{}.terrain'.format(random.randint(0,100000))
         dbConnection = None
         try:
-            os.remove('tmp.terrain')
+            os.remove(tmpFileName)
         except BaseException as err:
             True
-        dbConnection = sqlite3.connect('tmp.terrain')
+        dbConnection = sqlite3.connect(tmpFileName)
         cursor = dbConnection.cursor()
         cursor.execute('CREATE TABLE metadata (name text, value text)')
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('name', '{}')".format(continent+'/'+country))
@@ -165,6 +186,14 @@ for task in tasks:
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', 'None yet')")
 
         cursor.execute('CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)')
+
+        iterations = 0
+        for zoom in range(zoomMin, zoomMax+1):
+            (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
+            (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
+            iterations = iterations + (xmax+1-xmin)*(ymax+1-ymin)
+
+        bar = pyprind.ProgBar(iterations)
         for zoom in range(zoomMin, zoomMax+1):
             (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
             (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
@@ -189,7 +218,8 @@ for task in tasks:
                     yflipped = 2**zoom-1-y
                     blob = png2webp(response.content)
                     cursor.execute("INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
-                    print(zoom, x, y)
+                    bar.update(force_flush=True)
+
        
         dbConnection.commit()
 
@@ -204,8 +234,4 @@ for task in tasks:
         dbConnection.close()
 
         os.makedirs("out/"+continent, exist_ok=True)
-        os.rename('tmp.terrain', fileName)
-
-        exit(-1)
-
-    break
+        os.rename(tmpFileName, fileName)
