@@ -33,7 +33,7 @@ subprocess.run(
 #
 # Copy files over to the mapStorageDir
 #
-for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.txt", recursive=True):
+for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.terrain", recursive=True)+glob.glob("**/*.txt", recursive=True):
     stagingFileName = stagingDir+'/'+fileName
     hasChanged = True
     
@@ -41,35 +41,38 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
     # If file sizes changes by more than 10%, then probably something is wrong.
     # In that case, exit with an error.
     #
-    Asize = os.path.getsize(fileName) 
-    Bsize = os.path.getsize(stagingFileName) 
-    if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
-        print('Size of file {} has changed by more than 10%'.format(fileName))
-        if "force" not in sys.argv:
-            print('Human intervention is required.')
-            exit(-1)
+    if os.path.exists(stagingFileName):
+        Asize = os.path.getsize(fileName) 
+        Bsize = os.path.getsize(stagingFileName) 
+        if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
+            print('Size of file {} has changed by more than 10%'.format(fileName))
+            if "force" not in sys.argv:
+                print('Human intervention is required.')
+                exit(-1)
 
-    #
-    # Check if files really did change
-    #
-    if fileName.endswith('geojson'):
-        A = json.load( open(fileName) )
-        A['info'] = 'infoString'
-        B = json.load( open(stagingFileName) )
-        B['info'] = 'infoString'
-        if A == B:
-            hasChanged = False
+        #
+        # Check if files really did change
+        #
+        if fileName.endswith('geojson'):
+            A = json.load( open(fileName) )
+            A['info'] = 'infoString'
+            B = json.load( open(stagingFileName) )
+            B['info'] = 'infoString'
+            if A == B:
+                hasChanged = False
 
-    if fileName.endswith('txt'):
-        A = open(fileName).readlines()[1:]
-        B = open(stagingFileName).readlines()[1:]
-        if A == B:
-            hasChanged = False
+        if fileName.endswith('txt'):
+            A = open(fileName).readlines()[1:]
+            B = open(stagingFileName).readlines()[1:]
+            if A == B:
+                hasChanged = False
 
-    if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
-        if filecmp.cmp(fileName, stagingFileName, shallow=False):
-            hasChanged = False
-
+        if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
+            if filecmp.cmp(fileName, stagingFileName, shallow=False):
+                hasChanged = False
+    else:
+        hasChanged = True
+                
     if hasChanged:
         if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
             print('\033[1mMove {} to staging dir\033[0m'.format(fileName))
