@@ -42,7 +42,6 @@ def removeduplicate(it):
                     hasRP = True
                     break
             if hasRP:
-                print(x)
                 continue
             reportingPointCoordinates.append(coord)
         
