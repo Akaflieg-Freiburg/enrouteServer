@@ -5,10 +5,10 @@ import multiprocessing
 import os
 from urllib import response
 import pyprind
-import random
 import requests
 import sqlite3
 import subprocess
+import time
 
 from datetime import date
 
@@ -109,8 +109,7 @@ def getWebp(zoom, x, y):
             success = True
         except Exception as e:
             wait = retries * 30;
-            print('Error! Waiting %s secs and re-trying...' % wait)
-            sys.stdout.flush()
+            print('Error! Waiting %s secs and re-trying...' % wait, flush=True)
             time.sleep(wait)
             retries += 1
 
