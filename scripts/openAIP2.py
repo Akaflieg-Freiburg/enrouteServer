@@ -405,7 +405,8 @@ def readOpenAIPAirspaces():
         # 11: Upper Flight Information Region (UIR)
         # 12: Air Defense Identification Zone (ADIZ)
         # 13: Airport Traffic Zone (ATZ)
-        # 14: Military Airport Traffic Zone (MATZ)
+        if item['type'] == 14: # 14: Military Airport Traffic Zone (MATZ)
+            properties['CAT'] = 'G' # openAIP classifies these airspaces as SUA, but they are class G
         # 15: Airway
         # 16: Military Training Route (MTR)
         # 17: Alert Area
