@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 
 import math
+import multiprocessing
 import os
+from urllib import response
 import pyprind
 import random
 import requests
 import sqlite3
 import subprocess
-import sys
 
 from datetime import date
 
@@ -97,15 +98,28 @@ def deg2num(lat_deg, lon_deg, zoom):
     ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
     return (xtile, ytile)
 
-def png2webp(blob):
-    r = random.randint(0,100000)
+def getWebp(zoom, x, y):
 
-    pngFileName = '{}.png'.format(r)
-    webpFileName = '{}.webp'.format(r)
+    retries = 1
+    success = False
+    while not success:
+        try:
+            response = requests.get('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{}/{}/{}.png'.format(zoom, x, y))
+            response.raise_for_status()
+            success = True
+        except Exception as e:
+            wait = retries * 30;
+            print('Error! Waiting %s secs and re-trying...' % wait)
+            sys.stdout.flush()
+            time.sleep(wait)
+            retries += 1
+
+    pngFileName = '{}.{}.{}.png'.format(zoom,x,y)
+    webpFileName = '{}.{}.{}.webp'.format(zoom,x,y)
 
 
     with open(pngFileName,'wb') as f:
-       f.write(blob)
+       f.write(response.content)
        f.close()
 
     subprocess.run(
@@ -122,11 +136,12 @@ def png2webp(blob):
     os.remove(webpFileName)
     return newBlob
 
+if __name__ == '__main__':
 
-zoomMin = 7
-zoomMax = 10
+    zoomMin = 7
+    zoomMax = 10
 
-attribution = """ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc., imagery and funded under National Science Foundation awards 1043681, 1559691, and 1542736. 
+    attribution = """ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc., imagery and funded under National Science Foundation awards 1043681, 1559691, and 1542736. 
 Australia terrain data © Commonwealth of Australia (Geoscience Australia) 2017. 
 Austria terrain data © offene Daten Österreichs – Digitales Geländemodell (DGM) Österreich. 
 Canada terrain data contains information licensed under the Open Government Licence – Canada. 
@@ -139,99 +154,74 @@ United Kingdom terrain data © Environment Agency copyright and/or database righ
 United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey. 
 """.replace('\n', '<br>')
 
-taskNo = 0
-if len(sys.argv) == 1:
-    modulus = -1
-else:
-    modulus = int(sys.argv[1])
+    for task in tasks:
+        continent = task[0]
+        maps = task[2]
 
-for task in tasks:
-    continent = task[0]
-    maps = task[2]
+        for map in maps:
+            country = map[0]
 
-    for map in maps:
-        country = map[0]
+            fileName = 'out/'+continent+'/'+country+'.terrain'
+            if os.path.exists(fileName):
+                print("Terrain data for {} already exists. Skipping.".format(country))
+                continue
+            print("Working on country {}.".format(country))
 
-        taskNo = taskNo+1   
-        if ((taskNo % 8) != modulus) and (modulus != -1):
-            print("Skipping {}.".format(country))
-            continue
+            tmpFileName = '{}.terrain'.format(country)
+            dbConnection = None
+            try:
+                os.remove(tmpFileName)
+            except BaseException as err:
+                True
+            dbConnection = sqlite3.connect(tmpFileName)
+            cursor = dbConnection.cursor()
+            cursor.execute('CREATE TABLE metadata (name text, value text)')
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('name', '{}')".format(continent+'/'+country))
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('type', 'baselayer')")
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('version', '{}')".format(date.today().strftime("%d-%b-%Y")))
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('description', 'Terrain data for Enroute Flight Navigation')")
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('format', 'webp')")
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('encoding', 'terrarium')")
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('maxzoom', ?)", (str(zoomMax),))
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('minzoom', ?)", (str(zoomMin),))
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', ?)", (attribution,))
+            bboxString = str(map[1][0])+','+str(map[1][1])+','+str(map[1][2])+','+str(map[1][3])
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('bounds', '{}')".format(bboxString))
+            cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', 'None yet')")
+            cursor.execute('CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)')
 
-        fileName = 'out/'+continent+'/'+country+'.terrain'
-        if os.path.exists(fileName):
-            print("Terrain data for {} already exists. Skipping.".format(country))
-            continue
-        print("Working on country {}.".format(country))
+            iterations = 0
+            for zoom in range(zoomMin, zoomMax+1):
+                (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
+                (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
+                iterations = iterations + (xmax+1-xmin)*(ymax+1-ymin)
 
-        tmpFileName = '{}.terrain'.format(random.randint(0,100000))
-        dbConnection = None
-        try:
-            os.remove(tmpFileName)
-        except BaseException as err:
-            True
-        dbConnection = sqlite3.connect(tmpFileName)
-        cursor = dbConnection.cursor()
-        cursor.execute('CREATE TABLE metadata (name text, value text)')
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('name', '{}')".format(continent+'/'+country))
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('type', 'baselayer')")
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('version', '{}')".format(date.today().strftime("%d-%b-%Y")))
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('description', 'Terrain data for Enroute Flight Navigation')")
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('format', 'webp')")
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('encoding', 'terrarium')")
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('maxzoom', ?)", (str(zoomMax),))
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('minzoom', ?)", (str(zoomMin),))
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', ?)", (attribution,))
-        bboxString = str(map[1][0])+','+str(map[1][1])+','+str(map[1][2])+','+str(map[1][3])
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('bounds', '{}')".format(bboxString))
-        cursor.execute("INSERT INTO metadata (name, value) VALUES ('attribution', 'None yet')")
-
-        cursor.execute('CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)')
-
-        iterations = 0
-        for zoom in range(zoomMin, zoomMax+1):
-            (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
-            (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
-            iterations = iterations + (xmax+1-xmin)*(ymax+1-ymin)
-
-        bar = pyprind.ProgBar(iterations)
-        for zoom in range(zoomMin, zoomMax+1):
-            (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
-            (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
-            for x in range(xmin, xmax+1):
-                for y in range(ymin, ymax+1):
-                    try:
-                        response = requests.get(' https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{}/{}/{}.png'.format(zoom, x, y))
-                        response.raise_for_status()
-                        # Code here will only run if the request is successful
-                    except requests.exceptions.HTTPError as errh:
-                        print(errh)
-                        exit(-1)
-                    except requests.exceptions.ConnectionError as errc:
-                        print(errc)
-                        exit(-1)
-                    except requests.exceptions.Timeout as errt:
-                        print(errt)
-                        exit(-1)
-                    except requests.exceptions.RequestException as err:
-                        print(err)
-                        exit(-1)
-                    yflipped = 2**zoom-1-y
-                    blob = png2webp(response.content)
-                    cursor.execute("INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
-                    bar.update(force_flush=True)
+            bar = pyprind.ProgBar(iterations)
+            for zoom in range(zoomMin, zoomMax+1):
+                (xmin, ymax) = deg2num(map[1][1], map[1][0], zoom)
+                (xmax, ymin) = deg2num(map[1][3], map[1][2], zoom)
+                for x in range(xmin, xmax+1):
+                    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+                    webpImages = pool.starmap(getWebp, [(zoom, x,y) for y in range(ymin, ymax+1)] )
+                    pool.close()
+                    for y in range(ymin, ymax+1):
+                        yflipped = 2**zoom-1-y
+                        blob = webpImages[y-ymin]
+                        cursor.execute("INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
+                    bar.update(ymax+1-ymin, force_flush=True)
 
        
-        dbConnection.commit()
+            dbConnection.commit()
 
-        cursor.execute("CREATE UNIQUE INDEX tile_index on tiles (zoom_level, tile_column, tile_row)")
-        dbConnection.commit()
+            cursor.execute("CREATE UNIQUE INDEX tile_index on tiles (zoom_level, tile_column, tile_row)")
+            dbConnection.commit()
 
-        cursor.execute("vacuum")
-        dbConnection.commit()
+            cursor.execute("vacuum")
+            dbConnection.commit()
 
-        cursor.close()
-        dbConnection.commit()
-        dbConnection.close()
+            cursor.close()
+            dbConnection.commit()
+            dbConnection.close()
 
-        os.makedirs("out/"+continent, exist_ok=True)
-        os.rename(tmpFileName, fileName)
+            os.makedirs("out/"+continent, exist_ok=True)
+            os.rename(tmpFileName, fileName)
