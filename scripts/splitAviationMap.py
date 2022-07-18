@@ -7,6 +7,7 @@ import os
 countries = [
     # Africa
     ["South Africa", "Africa/South Africa"],
+    ["Madagascar", "Africa/Madagascar"],
     ["Namibia", "Africa/Namibia"],
 
     # Asia
