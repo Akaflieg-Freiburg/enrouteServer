@@ -46,7 +46,6 @@ if countryGDF.size == 0:
 countryGDF.set_crs("EPSG:4326")
 buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
 
-
 dbConnection = sqlite3.connect('Germany.mbtiles')
 cursor = dbConnection.cursor()
 
