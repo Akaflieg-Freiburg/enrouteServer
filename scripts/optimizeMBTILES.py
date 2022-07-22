@@ -50,13 +50,18 @@ buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
 dbConnection = sqlite3.connect('Germany.mbtiles')
 cursor = dbConnection.cursor()
 
+tilesToDelete = []
 for (z,x,y) in cursor.execute('SELECT zoom_level, tile_column, tile_row FROM tiles'):
     yflipped = 2**z-1-y
     p = Polygon([num2deg(x,yflipped,z), num2deg(x+1,yflipped,z), num2deg(x+1,yflipped+1,z), num2deg(x,yflipped+1,z)])
-    int = buffer.intersects(p)
-    print(p)
-    print(int)
-    print(True in int.values)
+    intersectionVector = buffer.intersects(p)
+    if True in intersectionVector.values:
+        continue
+    tilesToDelete.append( (z,x,y) )
+
+for (z,x,y) in tilesToDelete:
+    print(z,x,y)
+    cursor.execute('DELETE FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?', (z,x,y))
 
 dbConnection.commit()
 

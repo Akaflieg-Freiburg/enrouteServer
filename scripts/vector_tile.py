@@ -324,7 +324,7 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName):
 
     :param lonSE: longitude of SE edge of bounding box
 
-    :param pbfFileBaseName: Name of output file, without ending and without
+    :param mbtilesFileBaseName: Name of output file, without ending and without
     path. The file will be overwritten if exists.
 
     """
