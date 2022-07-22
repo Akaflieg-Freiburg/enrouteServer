@@ -6,6 +6,9 @@ import sqlite3
 
 from shapely.geometry import Polygon
 
+
+
+
 def deg2num(lat_deg, lon_deg, zoom):
     """
     Converts coordinate to tile number
@@ -32,40 +35,42 @@ def num2deg(xtile, ytile, zoom):
     lat_deg = math.degrees(lat_rad)
     return (lon_deg, lat_deg)
 
+def foreignTiles(tileList, countryName):
+    result = []
 
-worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
+    # Generate buffered region around country
+    worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
+    countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == countryName]
+    if countryGDF.size == 0:
+        print('Country is empty: '+countryName)
+        exit(-1)
+    countryGDF.set_crs("EPSG:4326")
+    buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
+
+    for (z,x,y) in tileList:
+#        yflipped = 2**z-1-y
+        p = Polygon([num2deg(x,y,z), num2deg(x+1,y,z), num2deg(x+1,y+1,z), num2deg(x,y+1,z)])
+        intersectionVector = buffer.intersects(p)
+        if True not in intersectionVector.values:
+            result.append( (z,x,y) )
+
+    return result
+
 
 country = 'Germany'
-print('Generating map extract for ' + country )
-countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == country]
-
-if countryGDF.size == 0:
-    print('Country is empty: '+country)
-    exit(-1)
-
-countryGDF.set_crs("EPSG:4326")
-buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
 
 dbConnection = sqlite3.connect('Germany.mbtiles')
 cursor = dbConnection.cursor()
 
-tilesToDelete = []
-for (z,x,y) in cursor.execute('SELECT zoom_level, tile_column, tile_row FROM tiles'):
-    yflipped = 2**z-1-y
-    p = Polygon([num2deg(x,yflipped,z), num2deg(x+1,yflipped,z), num2deg(x+1,yflipped+1,z), num2deg(x,yflipped+1,z)])
-    intersectionVector = buffer.intersects(p)
-    if True in intersectionVector.values:
-        continue
-    tilesToDelete.append( (z,x,y) )
+tileList = [(z,x,2**z-1-y) for (z,x,y) in cursor.execute('SELECT zoom_level, tile_column, tile_row FROM tiles')]
+tilesToDelete = foreignTiles(tileList, country)
 
 for (z,x,y) in tilesToDelete:
     print(z,x,y)
-    cursor.execute('DELETE FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?', (z,x,y))
+    cursor.execute('DELETE FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?', (z,x,2**z-1-y))
 
 dbConnection.commit()
-
 cursor.execute("vacuum")
-dbConnection.commit()
 cursor.close()
 dbConnection.commit()
 dbConnection.close()
