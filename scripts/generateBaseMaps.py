@@ -39,7 +39,7 @@ for continent in regions.continents:
     for region in [region for region in regions.regions if (region['continent'] == continent['name'])]:
         bbox = region['bbox']
         vector_tile.pbf2mbtiles(
-            'out.pbf', bbox[0], bbox[1], bbox[2], bbox[3], region['name'])
+            'out.pbf', bbox[0], bbox[1], bbox[2], bbox[3], region['name'], region['country'])
         try:
             os.remove("out/"+continent['name']+"/"+region['name']+'.mbtiles')
         except BaseException as err:

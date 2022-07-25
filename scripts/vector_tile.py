@@ -16,8 +16,49 @@ import sqlite3
 import subprocess
 import vector_tile_pb2
 
+def num2lonlat(xtile, ytile, zoom):
+    """
+    This returns the NW-corner of the square. Use the function with xtile+1
+    and/or ytile+1 to get the other corners. With xtile+0.5 & ytile+0.5 it will
+    return the center of the tile. 
 
-def optimizeMBTILES(filename):
+    https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_numbers_to_lon./lat._2
+    """
+    n = 2.0 ** zoom
+    lon_deg = xtile / n * 360.0 - 180.0
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+    lat_deg = math.degrees(lat_rad)
+    return (lon_deg, lat_deg)
+
+
+def foreignTiles(tileList, countryName):
+    """
+    This method takes a list of slippy map tilenames and the name of a country,
+    and returns a list of those tiles that do not intersect the country.
+
+    https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+    """
+    
+    result = []
+
+    # Generate buffered region around country
+    worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
+    countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == countryName]
+    if countryGDF.size == 0:
+        print('Country is empty: '+countryName)
+        exit(-1)
+    countryGDF.set_crs("EPSG:4326")
+    buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
+
+    for (z,x,y) in tileList:
+        p = Polygon([num2lonlat(x,y,z), num2lonlat(x+1,y,z), num2lonlat(x+1,y+1,z), num2lonlat(x,y+1,z)])
+        intersectionVector = buffer.intersects(p)
+        if True not in intersectionVector.values:
+            result.append( (z,x,y) )
+    return result
+
+
+def optimizeVectorTiles(filename):
     """Optimize an mbtiles file
 
     This method optimizes an mbtiles file, by removing data this is irrelevant
@@ -303,7 +344,29 @@ def optimizeMBTILES(filename):
     conn.close()
 
 
-def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName):
+def removeForeignTiles(filename, country):
+    """
+    This method removes all tiles that do not intersect the country.
+    """
+
+    dbConnection = sqlite3.connect(filename)
+    cursor = dbConnection.cursor()
+
+    tileList = [(z,x,2**z-1-y) for (z,x,y) in cursor.execute('SELECT zoom_level, tile_column, tile_row FROM tiles')]
+    tilesToDelete = foreignTiles(tileList, country)
+
+    for (z,x,y) in tilesToDelete:
+        print(z,x,y)
+        cursor.execute('DELETE FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?', (z,x,2**z-1-y))
+
+    dbConnection.commit()
+    cursor.execute("vacuum")
+    cursor.close()
+    dbConnection.commit()
+    dbConnection.close()
+
+
+def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, country):
     """Converts openstreetmap PBF file into mbtiles
 
     This method converts a PBF file with openstreetmap data into an mbtiles
@@ -327,6 +390,8 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName):
     :param mbtilesFileBaseName: Name of output file, without ending and without
     path. The file will be overwritten if exists.
 
+    :param country: Country. Tiles that do not intersect this country will be
+        removed.
     """
 
     def deg2num(lat_deg, lon_deg, zoom):
@@ -379,5 +444,8 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName):
     )
     os.remove("bboxed.pbf")
 
-    print('Optimize')
-    optimizeMBTILES(mbtilesFileBaseName+".mbtiles")
+    print('Remove tiles that do not intersect {}'.format(country))
+    removeForeignTiles(mbtilesFileBaseName+".mbtiles", country)
+
+    print('Optimize vector tiles')
+    optimizeVectorTiles(mbtilesFileBaseName+".mbtiles")
