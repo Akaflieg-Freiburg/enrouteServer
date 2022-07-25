@@ -8,34 +8,34 @@ import vector_tile
 
 
 continents = [
-    {'name': 'Africa', 'osmUrl': 'https://download.geofabrik.de/africa-latest.osm.pbf'},
-    {'name': 'Asia', 'osmUrl': 'https://download.geofabrik.de/asia/japan-latest.osm.pbf'},
-    {'name': 'Australia Oceanica', 'osmUrl': 'https://download.geofabrik.de/australia-oceania-latest.osm.pbf'},
+#    {'name': 'Africa', 'osmUrl': 'https://download.geofabrik.de/africa-latest.osm.pbf'},
+#    {'name': 'Asia', 'osmUrl': 'https://download.geofabrik.de/asia/japan-latest.osm.pbf'},
+#    {'name': 'Australia Oceanica', 'osmUrl': 'https://download.geofabrik.de/australia-oceania-latest.osm.pbf'},
     {'name': 'Europe', 'osmUrl': 'https://download.geofabrik.de/europe-latest.osm.pbf'},
     {'name': 'North America', 'osmUrl': 'https://download.geofabrik.de/north-america-latest.osm.pbf'},
     {'name': 'South America', 'osmUrl': 'https://download.geofabrik.de/south-america-latest.osm.pbf'}
 ]
 
 regions = [
-    {'continent': 'Africa', 'name': 'Canary Islands', 'bbox': [-18.92352, 26.36117, -12.47875, 30.25648], 'country': 'Spain'},
-    {'continent': 'Africa', 'name': 'Madagascar', 'bbox': [42.30124, -26.5823, 51.14843, -11.36225], 'country': 'Madagascar'},
-    {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
-    {'continent': 'Africa', 'name': 'South Africa', 'bbox': [15.99606, -47.58493, 39.24259, -22.11736], 'country': 'South Africa'},
+#    {'continent': 'Africa', 'name': 'Canary Islands', 'bbox': [-18.92352, 26.36117, -12.47875, 30.25648], 'country': 'Spain'},
+#    {'continent': 'Africa', 'name': 'Madagascar', 'bbox': [42.30124, -26.5823, 51.14843, -11.36225], 'country': 'Madagascar'},
+#    {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
+#    {'continent': 'Africa', 'name': 'South Africa', 'bbox': [15.99606, -47.58493, 39.24259, -22.11736], 'country': 'South Africa'},
+#
+#    {'continent': 'Asia', 'name': 'Japan', 'bbox': [122.5607, 21.20992, 153.8901, 45.80245], 'country': 'Japan'},
+#
+#    {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
+#    {'continent': 'Australia Oceanica', 'name': 'New Zealand', 'bbox': [162.096, -48.77, 179.8167, -32.667], 'country': 'New Zealand'},
 
-    {'continent': 'Asia', 'name': 'Japan', 'bbox': [122.5607, 21.20992, 153.8901, 45.80245], 'country': 'Japan'},
-
-    {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
-    {'continent': 'Australia Oceanica', 'name': 'New Zealand', 'bbox': [162.096, -48.77, 179.8167, -32.667], 'country': 'New Zealand'},
-
-    {'continent': 'Europe', 'name': 'Austria', 'bbox': [9.52678, 46.36851, 17.16273, 49.02403], 'country': 'Austria'},
-    {'continent': 'Europe', 'name': 'Belgium', 'bbox': [2.340725, 49.49196, 6.411619, 51.59839], 'country': 'Belgium'},
-    {'continent': 'Europe', 'name': 'Bulgaria', 'bbox': [22.34875, 41.22681, 29.18819, 44.22477], 'country': 'Bulgaria'},
-    {'continent': 'Europe', 'name': 'Croatia', 'bbox': [13.08916, 42.16483, 19.45911, 46.56498], 'country': 'Croatia'},
-    {'continent': 'Europe', 'name': 'Cyprus', 'bbox': [31.95244, 34.23374, 34.96147, 36.00323], 'country': 'Cyprus'},
-    {'continent': 'Europe', 'name': 'Czech Republic', 'bbox': [12.08477, 48.54292, 18.86321, 51.06426], 'country': 'Czechia'},
-    {'continent': 'Europe', 'name': 'Denmark', 'bbox': [7.7011, 54.44065, 15.65449, 58.06239], 'country': 'Denmark'},
-    {'continent': 'Europe', 'name': 'Estonia', 'bbox': [20.85166, 57.49764, 28.21426, 59.99705], 'country': 'Estonia'},
-    {'continent': 'Europe', 'name': 'Finland', 'bbox': [19.02427, 59.28783, 31.60089, 70.09959], 'country': 'Finland'},
+#    {'continent': 'Europe', 'name': 'Austria', 'bbox': [9.52678, 46.36851, 17.16273, 49.02403], 'country': 'Austria'},
+#    {'continent': 'Europe', 'name': 'Belgium', 'bbox': [2.340725, 49.49196, 6.411619, 51.59839], 'country': 'Belgium'},
+#    {'continent': 'Europe', 'name': 'Bulgaria', 'bbox': [22.34875, 41.22681, 29.18819, 44.22477], 'country': 'Bulgaria'},
+#    {'continent': 'Europe', 'name': 'Croatia', 'bbox': [13.08916, 42.16483, 19.45911, 46.56498], 'country': 'Croatia'},
+#    {'continent': 'Europe', 'name': 'Cyprus', 'bbox': [31.95244, 34.23374, 34.96147, 36.00323], 'country': 'Cyprus'},
+#    {'continent': 'Europe', 'name': 'Czech Republic', 'bbox': [12.08477, 48.54292, 18.86321, 51.06426], 'country': 'Czechia'},
+#    {'continent': 'Europe', 'name': 'Denmark', 'bbox': [7.7011, 54.44065, 15.65449, 58.06239], 'country': 'Denmark'},
+#    {'continent': 'Europe', 'name': 'Estonia', 'bbox': [20.85166, 57.49764, 28.21426, 59.99705], 'country': 'Estonia'},
+#    {'continent': 'Europe', 'name': 'Finland', 'bbox': [19.02427, 59.28783, 31.60089, 70.09959], 'country': 'Finland'},
     {'continent': 'Europe', 'name': 'France', 'bbox': [-6.3, 41.27688, 9.8, 51.32937], 'country': 'France'},
     {'continent': 'Europe', 'name': 'Germany', 'bbox': [5.864417, 47.26543, 15.05078, 55.14777], 'country': 'Germany'},
     {'continent': 'Europe', 'name': 'Great Britain', 'bbox': [-9.408655, 49.00443, 2.25, 61.13564], 'country': 'United Kingdom'},

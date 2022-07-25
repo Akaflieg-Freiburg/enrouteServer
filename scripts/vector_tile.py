@@ -360,7 +360,6 @@ def removeForeignTiles(filename, country):
     tilesToDelete = foreignTiles(tileList, country)
 
     for (z,x,y) in tilesToDelete:
-        print(z,x,y)
         cursor.execute('DELETE FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?', (z,x,2**z-1-y))
 
     dbConnection.commit()
