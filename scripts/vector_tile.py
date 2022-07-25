@@ -8,13 +8,17 @@ Toolset to manipulate vector tiles, in the format described here:
 https://github.com/mapbox/vector-tile-spec/tree/master/2.1
 """
 
-from datetime import date
+import geopandas
 import math
 import gzip
 import os
 import sqlite3
 import subprocess
 import vector_tile_pb2
+
+from datetime import date
+from shapely.geometry import Polygon
+
 
 def num2lonlat(xtile, ytile, zoom):
     """
