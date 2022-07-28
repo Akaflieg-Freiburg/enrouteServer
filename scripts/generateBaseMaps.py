@@ -2,11 +2,20 @@
 
 import os
 import subprocess
+import sys
 import vector_tile
 
 import regions
 
+myRegion = ""
+if len(sys.argv) > 1:
+    myRegion = sys.argv[1]
+myRegions = [region for region in regions.regions if myRegion in region['name'] or myRegion in region['continent']]
+
 for continent in regions.continents:
+    if len([region for region in myRegions if (region['continent'] == continent['name'])]) == 0:
+        continue
+
     print('Download {}'.format(continent['name']))
     try:
         os.remove('download.pbf')
@@ -36,7 +45,7 @@ for continent in regions.continents:
     )
     os.remove('download.pbf')
 
-    for region in [region for region in regions.regions if (region['continent'] == continent['name'])]:
+    for region in [region for region in myRegions if (region['continent'] == continent['name'])]:
         bbox = region['bbox']
         vector_tile.pbf2mbtiles(
             'out.pbf', bbox[0], bbox[1], bbox[2], bbox[3], region['name'], region['country'])

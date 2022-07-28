@@ -42,7 +42,7 @@ regions = [
     {'continent': 'Europe', 'name': 'Greece', 'bbox': [19.15881, 34.59111, 29.65683, 41.74954], 'country': 'Greece'},
     {'continent': 'Europe', 'name': 'Hungary', 'bbox': [16.11262, 45.73218, 22.90201, 48.58766], 'country': 'Hungary'},
     {'continent': 'Europe', 'name': 'Iceland', 'bbox': [-25.7, 62.84553, -12.41708, 67.50085], 'country': 'Iceland'},
-    {'continent': 'Europe', 'name': 'Ireland and Northern Ireland', 'bbox': [-12.57937, 49.60002, -5.059265, 56.64261], 'country': 'Ireland'},
+    {'continent': 'Europe', 'name': 'Ireland', 'bbox': [-12.57937, 49.60002, -5.059265, 56.64261], 'country': 'Ireland'},
     {'continent': 'Europe', 'name': 'Italy', 'bbox': [6.602696, 35.07638, 19.12499, 47.10169], 'country': 'Italy'},
     {'continent': 'Europe', 'name': 'Latvia', 'bbox': [20.79407, 55.66886, 28.24116, 58.08231], 'country': 'Latvia'},
     {'continent': 'Europe', 'name': 'Liechtenstein', 'bbox': [9.471078, 47.04774, 9.636217, 47.27128], 'country': 'Liechtenstein'},
