@@ -69,7 +69,7 @@ regions = [
     {'continent': 'North America', 'name': 'USA Northeast', 'bbox': [-80.52632, 38.77178, -66.87576, 47.48423], 'country': 'United States of America'},
     {'continent': 'North America', 'name': 'USA Pacific', 'bbox': [-179.9965, 15.98281, -129.7998, 72.98845], 'country': 'United States of America'},
     {'continent': 'North America', 'name': 'USA South', 'bbox': [-106.6494, 24.20031, -71.50981, 40.64636], 'country': 'United States of America'},
-    {'continent': 'North America', 'name': 'USA West', 'bbox': [-133.0637, 31.32659, -102.041, 49.45605], 'country': 'United States of America'}
+    {'continent': 'North America', 'name': 'USA West', 'bbox': [-133.0637, 31.32659, -102.041, 49.45605], 'country': 'United States of America'},
 
     {'continent': 'South America', 'name': 'Argentina', 'bbox': [-73.61453, -55.68296, -53.59024, -21.72575], 'country': 'Argentina'},
     {'continent': 'South America', 'name': 'Brazil', 'bbox': [-74.09056, -35.46552, -27.67249, 5.522895], 'country': 'Brazil'},

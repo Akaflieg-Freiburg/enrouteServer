@@ -8,6 +8,7 @@ import pyprind
 import requests
 import sqlite3
 import subprocess
+import sys
 import time
 
 from datetime import date
@@ -68,6 +69,10 @@ def getWebp(zoom, x, y):
 
 if __name__ == '__main__':
 
+    myRegion = ""
+    if len(sys.argv) > 1:
+        myRegion = sys.argv[1]
+
     zoomMin = 7
     zoomMax = 10
 
@@ -84,7 +89,7 @@ United Kingdom terrain data © Environment Agency copyright and/or database righ
 United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey.
 """.replace('\n', '<br>')
 
-    for region in regions.regions:
+    for region in [region for region in regions.regions if myRegion in region['name'] or myRegion in region['continent']]:
         fileName = 'out/'+region['continent']+'/'+region['name']+'.terrain'
         bbox = region['bbox']
 
