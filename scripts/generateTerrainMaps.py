@@ -4,7 +4,6 @@ import math
 import multiprocessing
 import os
 from urllib import response
-import pyprind
 import requests
 import sqlite3
 import subprocess
@@ -63,9 +62,7 @@ def getWebp(zoom, x, y):
     )
     newBlob = open(webpFileName, 'rb').read()
     os.remove(pngFileName)
-    os.remove(webpFileName)
-    return newBlob
-
+    
 
 if __name__ == '__main__':
 
@@ -93,9 +90,6 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
         fileName = 'out/'+region['continent']+'/'+region['name']+'.terrain'
         bbox = region['bbox']
 
-        if os.path.exists(fileName):
-            print("Terrain data for {} already exists. Skipping.".format(region['name']))
-            continue
         print("Working on country {}.".format(region['name']))
 
         tmpFileName = '{}.terrain'.format(region['name'])
@@ -134,27 +128,27 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
         cursor.execute(
             'CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)')
 
-        iterations = 0
-        for zoom in range(zoomMin, zoomMax+1):
-            (xmin, ymax) = deg2num(bbox[1], bbox[0], zoom)
-            (xmax, ymin) = deg2num(bbox[3], bbox[2], zoom)
-            iterations = iterations + (xmax+1-xmin)*(ymax+1-ymin)
-
-        bar = pyprind.ProgBar(iterations)
+        tiles = []
         for zoom in range(zoomMin, zoomMax+1):
             (xmin, ymax) = deg2num(bbox[1], bbox[0], zoom)
             (xmax, ymin) = deg2num(bbox[3], bbox[2], zoom)
             for x in range(xmin, xmax+1):
-                pool = multiprocessing.Pool(multiprocessing.cpu_count())
-                webpImages = pool.starmap(
-                    getWebp, [(zoom, x, y) for y in range(ymin, ymax+1)])
-                pool.close()
                 for y in range(ymin, ymax+1):
-                    yflipped = 2**zoom-1-y
-                    blob = webpImages[y-ymin]
-                    cursor.execute(
-                        "INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
-                bar.update(ymax+1-ymin, force_flush=True)
+                    tiles.append( (zoom,x,y) )
+
+        pool = multiprocessing.Pool(multiprocessing.cpu_count())
+        pool.starmap(getWebp, tiles)
+        pool.close()
+        
+        for (zoom,x,y) in tiles:
+            yflipped = 2**zoom-1-y
+
+            webpFileName = '{}.{}.{}.webp'.format(zoom, x, y)
+            blob = open(webpFileName, 'rb').read()
+            os.remove(webpFileName)
+
+            cursor.execute(
+                "INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
 
         dbConnection.commit()
 
