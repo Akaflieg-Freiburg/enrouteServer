@@ -12,7 +12,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'We are proud to offer maps for Madagascar. Aviation maps are now updated daily, provided that new data is available.'
+whatsNewText = 'The base maps have been optimized for file size. The base map for Canada has been split into three maps. The Falkland Islands and Northern Ireland now have their own base maps.'
 
 # Go to output directory
 os.chdir('out')
