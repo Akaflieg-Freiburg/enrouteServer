@@ -9,8 +9,10 @@ import sqlite3
 import subprocess
 import sys
 import time
+import vector_tile
 
 from datetime import date
+from PIL import Image
 
 import regions
 
@@ -50,6 +52,13 @@ def getWebp(zoom, x, y):
     with open(pngFileName, 'wb') as f:
         f.write(response.content)
         f.close()
+
+    img = Image.open(pngFileName)
+    matrix = ( 1, 0, 0, 0,
+               0, 1, 0, 0,
+               0, 0, 0, 0)
+    img = img.convert("RGB", matrix)
+    img.save(pngFileName)
 
     subprocess.run(
         ["cwebp",
@@ -135,6 +144,8 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
             for x in range(xmin, xmax+1):
                 for y in range(ymin, ymax+1):
                     tiles.append( (zoom,x,y) )
+        foreignTiles = vector_tile.foreignTiles(tiles, region['country'])
+        tiles = [tile for tile in tiles if tile not in foreignTiles]
 
         pool = multiprocessing.Pool(multiprocessing.cpu_count())
         pool.starmap(getWebp, tiles)
