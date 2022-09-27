@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -40,7 +41,21 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">enrouteServer documentation</a><ul>
 <li><a class="reference internal" href="#ofmx">OFMX</a></li>
+<li><a class="reference internal" href="#OFMX.readAirspace"><code class="docutils literal notranslate"><span class="pre">readAirspace()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readCoordinate"><code class="docutils literal notranslate"><span class="pre">readCoordinate()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readFeatures_FISSectors"><code class="docutils literal notranslate"><span class="pre">readFeatures_FISSectors()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readFeatures_NRA"><code class="docutils literal notranslate"><span class="pre">readFeatures_NRA()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readFeatures_Procedures"><code class="docutils literal notranslate"><span class="pre">readFeatures_Procedures()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readFeatures_RP"><code class="docutils literal notranslate"><span class="pre">readFeatures_RP()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readHeight"><code class="docutils literal notranslate"><span class="pre">readHeight()</span></code></a></li>
+<li><a class="reference internal" href="#OFMX.readMinMaxHeight"><code class="docutils literal notranslate"><span class="pre">readMinMaxHeight()</span></code></a></li>
 <li><a class="reference internal" href="#openaip2">openAIP2</a></li>
+<li><a class="reference internal" href="#openAIP2.downloadOpenAIPData"><code class="docutils literal notranslate"><span class="pre">downloadOpenAIPData()</span></code></a></li>
+<li><a class="reference internal" href="#openAIP2.readOpenAIP"><code class="docutils literal notranslate"><span class="pre">readOpenAIP()</span></code></a></li>
+<li><a class="reference internal" href="#openAIP2.readOpenAIPAirports"><code class="docutils literal notranslate"><span class="pre">readOpenAIPAirports()</span></code></a></li>
+<li><a class="reference internal" href="#openAIP2.readOpenAIPAirspaces"><code class="docutils literal notranslate"><span class="pre">readOpenAIPAirspaces()</span></code></a></li>
+<li><a class="reference internal" href="#openAIP2.readOpenAIPNavaids"><code class="docutils literal notranslate"><span class="pre">readOpenAIPNavaids()</span></code></a></li>
+<li><a class="reference internal" href="#openAIP2.readOpenAIPReportingPoints"><code class="docutils literal notranslate"><span class="pre">readOpenAIPReportingPoints()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -70,12 +85,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-OFMX">
-<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Permalink to this heading"></a></h1>
+  <section id="enrouteserver-documentation">
+<h1>enrouteServer documentation<a class="headerlink" href="#enrouteserver-documentation" title="Permalink to this heading"></a></h1>
 <section id="ofmx">
 <h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this heading"></a></h2>
 <p>Tools to interpret ofmx files</p>
-<dl class="py function">
+</section>
+<span class="target" id="module-OFMX"></span><dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readAirspace">
 <span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readAirspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aseNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readAirspace" title="Permalink to this definition"></a></dt>
 <dd><p>Generate GeoJSON for airspace</p>
@@ -252,13 +268,13 @@ string in case of error</p>
 </dl>
 </dd></dl>
 
-</section>
-<span class="target" id="module-openAIP2"></span><section id="openaip2">
+<section id="openaip2">
 <h2>openAIP2<a class="headerlink" href="#openaip2" title="Permalink to this heading"></a></h2>
 <p>Toolset to read aviation data from the openAIP2 web site and to transform the
 data into the GeoJSON format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
-<dl class="py function">
+</section>
+<span class="target" id="module-openAIP2"></span><dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.downloadOpenAIPData">
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">downloadOpenAIPData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.downloadOpenAIPData" title="Permalink to this definition"></a></dt>
 <dd><p>Read data from the openAIP2 API.</p>
@@ -338,7 +354,6 @@ data into the GeoJSON format described here:
 </dl>
 </dd></dl>
 
-</section>
 <div class="toctree-wrapper compound">
 </div>
 </section>
