@@ -424,6 +424,8 @@ def readOpenAIPAirspaces():
         if item['type'] == 28: # 28: Aerial Sporting Or Recreational Activity
             if 'PARA' in item['name']:
                 properties['CAT'] = 'PJE'
+            if item['icaoClass'] == 7: # SUA
+                properties['CAT'] = 'SUA'
         if item['type'] == 29: # 29: Low Altitude Overflight Restriction
             properties['CAT'] = 'R'
 
