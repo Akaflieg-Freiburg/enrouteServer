@@ -447,6 +447,8 @@ def readOpenAIPAirspaces():
                 properties['CAT'] = 'F'
             if item['icaoClass'] == 6: # G
                 properties['CAT'] = 'G'
+            if item['icaoClass'] == 7: # SUA
+                properties['CAT'] = 'SUA'
 
         #
         # If CAT has still not yet been assigned, ignore this airspace
