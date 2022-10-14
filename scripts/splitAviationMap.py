@@ -17,13 +17,6 @@ print('Splitting world aviation map {}'.format(infoString))
 
 
 worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
-os.makedirs('out/Africa', exist_ok=True)
-os.makedirs('out/Asia', exist_ok=True)
-os.makedirs('out/Australia Oceanica', exist_ok=True)
-os.makedirs('out/Europe', exist_ok=True)
-os.makedirs('out/North America', exist_ok=True)
-os.makedirs('out/South America', exist_ok=True)
-
 
 myRegion = ""
 if len(sys.argv) > 1:
@@ -48,5 +41,6 @@ for region in myRegions:
     jsonDict['info'] = infoString
     jsonString = json.dumps(jsonDict, sort_keys=True, separators=(',', ':'))
 
+    os.makedirs('out/' + region["continent"], exist_ok=True)
     file = open('out/' + region["continent"] + '/' + region["name"] + '.geojson', 'w')
     file.write(jsonString)
