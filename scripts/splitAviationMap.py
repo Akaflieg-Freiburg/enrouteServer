@@ -3,64 +3,9 @@
 import geopandas
 import json
 import os
+import sys
 
-countries = [
-    # Africa
-    ["South Africa", "Africa/South Africa"],
-    ["Madagascar", "Africa/Madagascar"],
-    ["Namibia", "Africa/Namibia"],
-
-    # Asia
-    ["Japan", "Asia/Japan"],
-
-    # Oceania Australia
-    ["Australia", "Australia Oceanica/Australia"],
-    ["New Zealand", "Australia Oceanica/New Zealand"],
-
-    # Europe
-    ["Austria", "Europe/Austria"],
-    ["Belgium", "Europe/Belgium"],
-    ["Bulgaria", "Europe/Bulgaria"],
-    ["Croatia", "Europe/Croatia"],
-    ["Cyprus", "Europe/Cyprus"],
-    ["Czechia", "Europe/Czech Republic"],
-    ["Denmark", "Europe/Denmark"],
-    ["Estonia", "Europe/Estonia"],
-    ["Finland", "Europe/Finland"],
-    ["France", "Europe/France"],
-    ["Germany", "Europe/Germany"],
-    ["Greece", "Europe/Greece"],
-    ["Hungary", "Europe/Hungary"],
-    ["Iceland", "Europe/Iceland"],
-    ["Ireland", "Europe/Ireland"],
-    ["Italy", "Europe/Italy"],
-    ["Latvia", "Europe/Latvia"],
-    ["Liechtenstein", "Europe/Liechtenstein"],
-    ["Lithuania", "Europe/Lithuania"],
-    ["Luxembourg", "Europe/Luxembourg"],
-    ["Malta", "Europe/Malta"],
-    ["Netherlands", "Europe/Netherlands"],
-    ["Norway", "Europe/Norway"],
-    ["Poland", "Europe/Poland"],
-    ["Portugal", "Europe/Portugal"],
-    ["Romania", "Europe/Romania"],
-    ["Republic of Serbia", "Europe/Serbia"],
-    ["Slovakia", "Europe/Slovakia"],
-    ["Slovenia", "Europe/Slowenia"],
-    ["Spain", "Europe/Spain"],
-    ["Sweden", "Europe/Sweden"],
-    ["Switzerland", "Europe/Switzerland"],
-    ["United Kingdom", "Europe/United Kingdom"],
-
-    # North America
-    ["Canada", "North America/Canada"],
-    ["United States of America", "North America/United States"],
-
-    # South America
-    ["Argentina", "South America/Argentina"],
-    ["Brazil", "South America/Brazil"],
-    ["United Kingdom", "South America/Falkland Islands"],
-]
+import regions
 
 # Extract info string from world aviation map
 infoString = ''
@@ -80,11 +25,17 @@ os.makedirs('out/North America', exist_ok=True)
 os.makedirs('out/South America', exist_ok=True)
 
 
-for country in countries:
-    print('Generating map extract for ' + country[1] )
-    countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == country[0]]
+myRegion = ""
+if len(sys.argv) > 1:
+    myRegion = sys.argv[1]
+myRegions = [region for region in regions.regions if myRegion in region['name'] or myRegion in region['continent']]
+
+
+for region in myRegions:
+    print('Generating map extract for ' + region["name"] )
+    countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == region["country"]]
     if countryGDF.size == 0:
-        print('Country is empty: '+country)
+        print('Country is empty: '+region["country"])
         exit(-1)
 
     countryGDF.set_crs("EPSG:4326")
@@ -97,5 +48,5 @@ for country in countries:
     jsonDict['info'] = infoString
     jsonString = json.dumps(jsonDict, sort_keys=True, separators=(',', ':'))
 
-    file = open('out/' + country[1] + '.geojson', 'w')
+    file = open('out/' + region["continent"] + '/' + region["name"] + '.geojson', 'w')
     file.write(jsonString)
