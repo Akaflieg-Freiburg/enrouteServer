@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from shapely.geometry import Polygon
+
 import geopandas
 import json
 import os
@@ -33,7 +35,14 @@ for region in myRegions:
 
     countryGDF.set_crs("EPSG:4326")
     buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
-    aviationMap = geopandas.read_file('worldAviationMap.geojson', mask=buffer)
+
+    bbox = Polygon([(region['bbox'][0],region['bbox'][1]), (region['bbox'][0],region['bbox'][3]), (region['bbox'][2],region['bbox'][3]), (region['bbox'][2],region['bbox'][1])])
+    bboxSeries = geopandas.GeoSeries([bbox])
+    bboxSeries.set_crs("EPSG:4326")
+
+    myMask = countryGDF.intersection( bbox )
+
+    aviationMap = geopandas.read_file('worldAviationMap.geojson', mask=bbox)
 
     # Generate json
     jsonString = aviationMap.to_json(na='drop', drop_id=True)
