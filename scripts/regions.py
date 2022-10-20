@@ -73,5 +73,6 @@ regions = [
 
     {'continent': 'South America', 'name': 'Argentina', 'bbox': [-73.61453, -55.68296, -53.59024, -21.72575], 'country': 'Argentina'},
     {'continent': 'South America', 'name': 'Brazil', 'bbox': [-74.09056, -35.46552, -27.67249, 5.522895], 'country': 'Brazil'},
+    {'continent': 'South America', 'name': 'Colombia', 'bbox': [-79.68074, -4.230484, -66.86983, 13.11676], 'country': 'Colombia'},
     {'continent': 'South America', 'name': 'Falkland Islands', 'bbox': [-63.11192, -53.38141, -56.11363, -50.35743], 'country': 'United Kingdom'}
 ]
