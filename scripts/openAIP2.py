@@ -401,10 +401,12 @@ def readOpenAIPAirspaces():
         # 7: Terminal Maneuvering Area (TMA)
         # 8: Temporary Reserved Area (TRA)
         # 9: Temporary Segregated Area (TSA)
-        # 10: Flight Information Region (FIR)
+        if item['type'] == 10: # 10: Flight Information Region (FIR)
+            properties['CAT'] = 'FIR'
         # 11: Upper Flight Information Region (UIR)
         # 12: Air Defense Identification Zone (ADIZ)
-        # 13: Airport Traffic Zone (ATZ)
+        if item['type'] == 13: # 13: Airport Traffic Zone (ATZ)
+            properties['CAT'] = 'ATZ' # openAIP classifies these airspaces as SUA, but they are class G
         if item['type'] == 14: # 14: Military Airport Traffic Zone (MATZ)
             properties['CAT'] = 'G' # openAIP classifies these airspaces as SUA, but they are class G
         # 15: Airway
@@ -416,8 +418,10 @@ def readOpenAIPAirspaces():
         if item['type'] == 21: # Gliding Sector
             properties['CAT'] = 'GLD'
         # 22: Transponder Setting (TRP)
-        # 23: Traffic Information Zone (TIZ)
-        # 24: Traffic Information Area (TIA)
+        if item['type'] == 23: # 23: Traffic Information Zone (TIZ)
+            properties['CAT'] = 'TIZ'
+        if item['type'] == 24: # 24: Traffic Information Area (TIA)
+            properties['CAT'] = 'TIA'
         # 25: Military Training Area (MTA)
         # 26: Controlled Area (CTA)
         # 27: ACC Sector (ACC)
@@ -536,6 +540,7 @@ def readOpenAIPNavaids():
         feature['properties'] = properties
         features.append(feature)
     return features
+
 
 def readOpenAIPReportingPoints(airportData):
     """Read reporting points from the openAIP2 API.

@@ -12,7 +12,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'The base and terrain maps have been optimized for file size. The map for Canada has been split into three maps. The Falkland Islands and Northern Ireland now have their own maps.'
+whatsNewText = 'The aviation maps file format has changed and the boundaries have been adjusted to match the base maps. For full airspace information, please ensure that you have the latest programm version installed (version >= 21.0.0). Users in Canada, Slovenia, the UK and the USA: please re-install your aviation maps if necessary. We apologize for the inconvenience.'
 
 # Go to output directory
 os.chdir('out')
