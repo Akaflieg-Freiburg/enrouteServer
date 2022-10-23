@@ -12,7 +12,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'The aviation maps file format has changed and the boundaries have been adjusted to match the base maps. For full airspace information, please ensure that you have the latest programm version installed (version >= 21.0.0). Users in Canada, Slovenia, the UK and the USA: please re-install your aviation maps if necessary. We apologize for the inconvenience.'
+whatsNewText = 'The aviation maps file format has changed and the boundaries have been adjusted to match the base maps. For full airspace information, please ensure that you have the latest programm version installed (version >= 2.20.0). Users in Canada, Slovenia, the UK and the USA: please re-install your aviation maps if necessary. We apologize for the inconvenience.'
 
 # Go to output directory
 os.chdir('out')
