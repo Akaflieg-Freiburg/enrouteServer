@@ -426,7 +426,7 @@ def readOpenAIPAirspaces():
         # 26: Controlled Area (CTA)
         # 27: ACC Sector (ACC)
         if item['type'] == 28: # 28: Aerial Sporting Or Recreational Activity
-            if item['icaoClass'] == 7: # SUA
+            if item['icaoClass'] == 7 or item['icaoClass'] == 8: # SUA
                 properties['CAT'] = 'SUA'
             if 'PARA' in item['name']:
                 properties['CAT'] = 'PJE'
@@ -451,7 +451,7 @@ def readOpenAIPAirspaces():
                 properties['CAT'] = 'F'
             if item['icaoClass'] == 6: # G
                 properties['CAT'] = 'G'
-            if item['icaoClass'] == 7: # SUA
+            if item['icaoClass'] == 7 or item['icaoClass'] == 8: # SUA
                 properties['CAT'] = 'SUA'
 
         #
