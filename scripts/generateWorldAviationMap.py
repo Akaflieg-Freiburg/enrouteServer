@@ -38,7 +38,7 @@ def removeduplicate(it):
             coord = x['geometry']['coordinates']
             hasRP = False
             for exCoord in reportingPointCoordinates:
-                if geopy.distance.geodesic(coord, exCoord).km < 0.1:
+                if geopy.distance.geodesic(coord, exCoord).km < 0.2:
                     hasRP = True
                     break
             if hasRP:
