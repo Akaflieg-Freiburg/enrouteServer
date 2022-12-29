@@ -22,8 +22,11 @@ regions = [
     {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
     {'continent': 'Africa', 'name': 'South Africa', 'bbox': [15.99606, -47.58493, 39.24259, -22.11736], 'country': 'South Africa'},
 
+    {'continent': 'Asia', 'name': 'Bahrain', 'bbox': [35.1878012, 35.2278012, 72.5273968, 72.5673968], 'country': 'Bahrain'},
     {'continent': 'Asia', 'name': 'Japan', 'bbox': [122.5607, 21.20992, 153.8901, 45.80245], 'country': 'Japan'},
-
+    {'continent': 'Asia', 'name': 'Qatar', 'bbox': [25.2271767, 25.2289841, 55.1726803, 55.1741485], 'country': 'Qatar'},
+    {'continent': 'Asia', 'name': 'United Arab Emirates', 'bbox': [22.6444, 26.2822, 51.4980, 56.3834], 'country': 'United Arab Emirates'},
+    
     {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
     {'continent': 'Australia Oceanica', 'name': 'New Zealand', 'bbox': [162.096, -48.77, 179.8167, -32.667], 'country': 'New Zealand'},
 
