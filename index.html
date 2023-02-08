@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>enrouteServer documentation &mdash; enrouteServer 1.0 documentation</title>
@@ -11,10 +11,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -27,11 +25,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> enrouteServer
+
+          
+          
+          <a href="#" class="icon icon-home">
+            enrouteServer
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -74,7 +76,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a></li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">enrouteServer documentation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
@@ -100,7 +102,7 @@ the approriate geometry in the shape file and generates a GeoJSON feature.
 This is a generic method that is used by the more specialized methods
 readFeature_*.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>aseNode</strong> – An ElementTree xml node pointing to an airspace ‘Ase’ node</p></li>
 <li><p><strong>shapeRoot</strong> – Root of the xml shape file</p></li>
@@ -110,7 +112,7 @@ field</p></li>
 <li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A feature dictionary, ready for inclusion in GeoJSON</p>
 </dd>
 </dl>
@@ -126,10 +128,10 @@ places and returns an array with latitude and longitude as floats</p>
 <p>In case of error, this method will fail siliently and return undefined
 results.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xmlNode</strong> – An ElementTree xml node</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A float with two elements, containing latitude and longitude
 as floats.</p>
 </dd>
@@ -143,14 +145,14 @@ as floats.</p>
 <p>This method reads information about FIS-airspaces from an OFMX file, finds
 the approriate geometries in the shape file and generates GeoJSON features.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – Root of the OFMX file</p></li>
 <li><p><strong>shapeRoot</strong> – Root of the OFMX shape file</p></li>
 <li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
 </dd>
 </dl>
@@ -163,14 +165,14 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 <p>This method reads information about NRA-airspaces from an OFMX file, finds
 the approriate geometries in the shape file and generates GeoJSON features.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – Root of the OFMX file</p></li>
 <li><p><strong>shapeRoot</strong> – Root of the OFMX shape file</p></li>
 <li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
 </dd>
 </dl>
@@ -183,13 +185,13 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 <p>This method reads information about procedures from an OFMX file, and
 generates GeoJSON features.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – Root of the OFMX file</p></li>
 <li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
 </dd>
 </dl>
@@ -203,13 +205,13 @@ generates GeoJSON features.</p>
 finds the approriate geometries in the shape file and generates GeoJSON
 features.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – Root of the OFMX file</p></li>
 <li><p><strong>numCoordDigits</strong> – Numer of digits for coordinate pairs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An array of feature dictionaries, ready for inclusion in GeoJSON</p>
 </dd>
 </dl>
@@ -232,7 +234,7 @@ goes well, it returns a human-readable string such as “GND”, “100 ft GND�
 “2300 ft” or “FL 95”. If the data is not found or cannot be interpreted,
 this method fails silently and an empty string is returned.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xmlNode</strong> – An ElementTree xml node</p></li>
 <li><p><strong>ending</strong> – Name of the property. This is the string ‘X’ described above.</p></li>
@@ -240,7 +242,7 @@ this method fails silently and an empty string is returned.</p>
 strings, of the form “GND”, “100 AGL”, “2300” or “FL 95”</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A string describing altitude, or an empty string in case of error</p>
 </dd>
 </dl>
@@ -258,10 +260,10 @@ returns a string such as “MIN. 100 ft GND”, “MIN. 2500 ft · MAX 4500 ft
 MSL”. If the data is not found or cannot be interpreted, an empty string is
 returned.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xmlNode</strong> – An ElementTree xml node</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A string describing minimal and maximal altitude, or an empty
 string in case of error</p>
 </dd>
@@ -279,10 +281,10 @@ data into the GeoJSON format described here:
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">downloadOpenAIPData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.downloadOpenAIPData" title="Permalink to this definition"></a></dt>
 <dd><p>Read data from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>typeName</strong> – Name data (“navaids”)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>array with data items</p>
 </dd>
 </dl>
@@ -293,7 +295,7 @@ data into the GeoJSON format described here:
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIP" title="Permalink to this definition"></a></dt>
 <dd><p>Read complete database from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>GeoJSON feature array, in the format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
@@ -305,10 +307,10 @@ data into the GeoJSON format described here:
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirports" title="Permalink to this definition"></a></dt>
 <dd><p>Read airspaces from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>airportData</strong> – Data about airports, as downloaded from openAIP</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>GeoJSON feature array, in the format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
@@ -320,7 +322,7 @@ data into the GeoJSON format described here:
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirspaces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirspaces" title="Permalink to this definition"></a></dt>
 <dd><p>Read airspaces from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>GeoJSON feature array, in the format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
@@ -332,7 +334,7 @@ data into the GeoJSON format described here:
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPNavaids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPNavaids" title="Permalink to this definition"></a></dt>
 <dd><p>Read navaids from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>GeoJSON feature array, in the format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
@@ -344,10 +346,10 @@ data into the GeoJSON format described here:
 <span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPReportingPoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPReportingPoints" title="Permalink to this definition"></a></dt>
 <dd><p>Read reporting points from the openAIP2 API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>airportData</strong> – Data about airports, as downloaded from openAIP</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>GeoJSON feature array, in the format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </dd>
