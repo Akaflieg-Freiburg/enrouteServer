@@ -5,6 +5,7 @@ import filecmp
 import glob
 import json
 import os
+import regions
 import shutil
 import subprocess
 import sys
@@ -99,6 +100,14 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
     d = datetime.datetime.fromtimestamp(t)
     map['time'] = ("%04d" % d.year) + ("%02d" % d.month) + ("%02d" % d.day)
     map['size'] = os.path.getsize(fileName)
+
+    #
+    # Find the relevant region and add its bounding box to the map
+    #
+    for region in regions.regions:
+        if region['name'] in map['path']:
+            map['bbox'] = region['bbox']
+            break
     maps.append(map)
 
 top = {'maps': maps}
