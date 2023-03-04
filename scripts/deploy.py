@@ -11,6 +11,15 @@ import subprocess
 import sys
 
 
+FAA_ID = os.environ['FAA_ID']
+if FAA_ID == "":
+    print("FAA ID is empty")
+    exit(-1)
+FAA_KEY = os.environ['FAA_KEY']
+if FAA_KEY == "":
+    print("FAA KEY is empty")
+    exit(-1)
+
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
 whatsNewText = 'As requested by our community, we have added maps for Bahrain, Qatar, and the Emirates.'
@@ -113,6 +122,8 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
 top = {'maps': maps}
 top['url'] = serverURL
 top['whatsNew'] = whatsNewText
+top['FAA_ID'] = FAA_ID
+top['FAA_KEY'] = FAA_KEY
 fileName = open(stagingDir + '/maps.json', 'w')
 fileName.write(json.dumps(top, sort_keys=True, indent=4))
 fileName.close()
