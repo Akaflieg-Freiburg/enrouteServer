@@ -11,7 +11,7 @@ import openAIP2
 #
 # This generator function does two things. First, it removes all duplicate items
 # from the list. Second, it searches for reporting points that are less than
-# 100m apart.  These duplicate reporting points may enter the list because we
+# 1000m apart.  These duplicate reporting points may enter the list because we
 # import reporting points from openAIP and from open flightmaps.
 #
 # The current implementation is seriously slow and should be improved.
@@ -33,12 +33,12 @@ def removeduplicate(it):
             continue
 
         # If the item is a waypoint whose coordinates are already in the list
-        # (up to 100m tolerance), then also skip it
+        # (up to 1000m tolerance), then also skip it
         if x['properties']['TYP'] == 'WP':
             coord = x['geometry']['coordinates']
             hasRP = False
             for exCoord in reportingPointCoordinates:
-                if geopy.distance.geodesic(coord, exCoord).km < 0.2:
+                if geopy.distance.geodesic(coord, exCoord).km < 1.0:
                     hasRP = True
                     break
             if hasRP:

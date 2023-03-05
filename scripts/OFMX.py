@@ -219,7 +219,7 @@ def readFeatures_RP(root, numCoordDigits):
     print("… Reporting Points")
     RPfeatures = []
     for Dpn in root.findall('./Dpn'):
-        if not Dpn.find("codeType").text in ["VFR-MRP", "VFR-RP"]:
+        if not Dpn.find("codeType").text in ["VFR-ENR", "VFR-MRP", "VFR-RP"]:
             continue
         DpnUid   = Dpn.find('DpnUid')
 
@@ -258,6 +258,8 @@ def readFeatures_RP(root, numCoordDigits):
         #
         properties = {'TYP': 'WP'}
         properties['MID'] = DpnUid.get('mid')
+        if Dpn.find("codeType").text == "VFR-ENR":
+            properties['CAT'] = 'RP'
         if Dpn.find("codeType").text == "VFR-MRP":
             properties['CAT'] = 'MRP'
         if Dpn.find("codeType").text == "VFR-RP":
