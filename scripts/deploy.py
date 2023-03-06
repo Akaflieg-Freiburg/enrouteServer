@@ -22,7 +22,7 @@ if FAA_KEY == "":
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'As requested by our community, we have added maps for Bahrain, Qatar, and the Emirates.'
+whatsNewText = 'Our map maps now show VFR enroute reporting points, including designated border crossing points.'
 
 # Go to output directory
 os.chdir('out')
