@@ -15,11 +15,11 @@ Layers contained are:
 
 water_polygons.shp:
 
-  53306 Polygon features
+  53350 Polygon features
   WGS84 geographic coordinates (EPSG: 4326)
   Extent: (-180.000, -78.739) - (180.000, 90.000)
 
-Date of the data used is 2022-04-09T00:00:00Z
+Date of the data used is 2023-03-08T01:00:00Z
 
 You can find more information on this data set at
 
@@ -29,7 +29,7 @@ https://osmdata.openstreetmap.de/data/water-polygons.html
 LICENSE
 =======
 
-This data is Copyright 2022 OpenStreetMap contributors. It is
+This data is Copyright 2023 OpenStreetMap contributors. It is
 available under the Open Database License (ODbL).
 
 For more information see https://www.openstreetmap.org/copyright
