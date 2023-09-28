@@ -11,10 +11,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -88,14 +89,14 @@
            <div itemprop="articleBody">
              
   <section id="module-OFMX">
-<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Permalink to this heading"></a></h1>
+<span id="enrouteserver-documentation"></span><h1>enrouteServer documentation<a class="headerlink" href="#module-OFMX" title="Link to this heading"></a></h1>
 <section id="ofmx">
-<h2>OFMX<a class="headerlink" href="#ofmx" title="Permalink to this heading"></a></h2>
+<h2>OFMX<a class="headerlink" href="#ofmx" title="Link to this heading"></a></h2>
 <p>Tools to interpret ofmx files</p>
 </section>
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readAirspace">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readAirspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aseNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readAirspace" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readAirspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aseNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readAirspace" title="Link to this definition"></a></dt>
 <dd><p>Generate GeoJSON for airspace</p>
 <p>This method reads information about a given airspace from aseNode, finds
 the approriate geometry in the shape file and generates a GeoJSON feature.
@@ -120,7 +121,7 @@ field</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readCoordinate">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readCoordinate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readCoordinate" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readCoordinate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readCoordinate" title="Link to this definition"></a></dt>
 <dd><p>Read coordinate from children of the given XML Node</p>
 <p>Takes an XML node, looks for children with name ‘geoLat’ and ‘geoLong’,
 reads and interprets coordinates, rounds them to the number of decimal
@@ -140,7 +141,7 @@ as floats.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readFeatures_FISSectors">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_FISSectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_FISSectors" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_FISSectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_FISSectors" title="Link to this definition"></a></dt>
 <dd><p>Generate GeoJSON for airspaces: Flight Information Sectors</p>
 <p>This method reads information about FIS-airspaces from an OFMX file, finds
 the approriate geometries in the shape file and generates GeoJSON features.</p>
@@ -160,7 +161,7 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readFeatures_NRA">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_NRA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_NRA" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_NRA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapeRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_NRA" title="Link to this definition"></a></dt>
 <dd><p>Generate GeoJSON for airspaces: Nature Reserve Areas</p>
 <p>This method reads information about NRA-airspaces from an OFMX file, finds
 the approriate geometries in the shape file and generates GeoJSON features.</p>
@@ -180,7 +181,7 @@ the approriate geometries in the shape file and generates GeoJSON features.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readFeatures_Procedures">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_Procedures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_Procedures" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_Procedures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_Procedures" title="Link to this definition"></a></dt>
 <dd><p>Generate GeoJSON for airspaces: Procedures</p>
 <p>This method reads information about procedures from an OFMX file, and
 generates GeoJSON features.</p>
@@ -199,7 +200,7 @@ generates GeoJSON features.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readFeatures_RP">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_RP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_RP" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readFeatures_RP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numCoordDigits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readFeatures_RP" title="Link to this definition"></a></dt>
 <dd><p>Generate GeoJSON for airspaces: Reporting Points</p>
 <p>This method reads information about reporting points from an OFMX file,
 finds the approriate geometries in the shape file and generates GeoJSON
@@ -219,7 +220,7 @@ features.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readHeight">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ending</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readHeight" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ending</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readHeight" title="Link to this definition"></a></dt>
 <dd><p>Read height information from XML Node and return as human-readable string</p>
 <p>In OFMX, height information for property X in an xmlNode is usually
 specified by three subnodes that are named as follows.</p>
@@ -250,7 +251,7 @@ strings, of the form “GND”, “100 AGL”, “2300” or “FL 95”</p></li
 
 <dl class="py function">
 <dt class="sig sig-object py" id="OFMX.readMinMaxHeight">
-<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readMinMaxHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readMinMaxHeight" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">OFMX.</span></span><span class="sig-name descname"><span class="pre">readMinMaxHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmlNode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#OFMX.readMinMaxHeight" title="Link to this definition"></a></dt>
 <dd><p>Read height information - height bands</p>
 <p>In OFMX, height bands for VFR procedure for X in usually specified by six
 subnodes, called “codeDistVerLower”, “uomDistVerLower”, “valDistVerLower”,
@@ -270,15 +271,15 @@ string in case of error</p>
 </dl>
 </dd></dl>
 
-<span class="target" id="module-openAIP2"></span><section id="openaip2">
-<h2>openAIP2<a class="headerlink" href="#openaip2" title="Permalink to this heading"></a></h2>
+<section id="openaip2">
+<span id="module-openAIP2"></span><h2>openAIP2<a class="headerlink" href="#openaip2" title="Link to this heading"></a></h2>
 <p>Toolset to read aviation data from the openAIP2 web site and to transform the
 data into the GeoJSON format described here:
 <a class="reference external" href="https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation">https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation</a></p>
 </section>
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.downloadOpenAIPData">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">downloadOpenAIPData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.downloadOpenAIPData" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">downloadOpenAIPData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.downloadOpenAIPData" title="Link to this definition"></a></dt>
 <dd><p>Read data from the openAIP2 API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -292,7 +293,7 @@ data into the GeoJSON format described here:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.readOpenAIP">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIP" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIP" title="Link to this definition"></a></dt>
 <dd><p>Read complete database from the openAIP2 API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -304,7 +305,7 @@ data into the GeoJSON format described here:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.readOpenAIPAirports">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirports" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirports" title="Link to this definition"></a></dt>
 <dd><p>Read airspaces from the openAIP2 API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -319,7 +320,7 @@ data into the GeoJSON format described here:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.readOpenAIPAirspaces">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirspaces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirspaces" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPAirspaces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPAirspaces" title="Link to this definition"></a></dt>
 <dd><p>Read airspaces from the openAIP2 API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -331,7 +332,7 @@ data into the GeoJSON format described here:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.readOpenAIPNavaids">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPNavaids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPNavaids" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPNavaids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPNavaids" title="Link to this definition"></a></dt>
 <dd><p>Read navaids from the openAIP2 API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -343,7 +344,7 @@ data into the GeoJSON format described here:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="openAIP2.readOpenAIPReportingPoints">
-<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPReportingPoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPReportingPoints" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">openAIP2.</span></span><span class="sig-name descname"><span class="pre">readOpenAIPReportingPoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">airportData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openAIP2.readOpenAIPReportingPoints" title="Link to this definition"></a></dt>
 <dd><p>Read reporting points from the openAIP2 API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -360,7 +361,7 @@ data into the GeoJSON format described here:
 </div>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
