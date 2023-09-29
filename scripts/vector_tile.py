@@ -46,7 +46,7 @@ def foreignTiles(tileList, countryName):
     result = []
 
     # Generate buffered region around country
-    worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
+    worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries/ne_10m_admin_0_countries.dbf' )
     countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == countryName]
     if countryGDF.size == 0:
         print('Country is empty: '+countryName)
