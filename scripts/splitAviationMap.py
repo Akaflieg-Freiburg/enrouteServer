@@ -18,7 +18,7 @@ with open('worldAviationMap.geojson') as file:
 print('Splitting world aviation map {}'.format(infoString))
 
 
-worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries.dbf' )
+worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries/ne_10m_admin_0_countries.dbf' )
 
 myRegion = ""
 if len(sys.argv) > 1:

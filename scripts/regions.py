@@ -19,21 +19,31 @@ continents = [
 # Bounding boxes: long_min, lat_min, long_max, lat_max
 
 regions = [
+    {'continent': 'Africa', 'name': 'Botswana', 'bbox': [19.98745, -26.91539, 29.38549, -17.76871], 'country': 'Botswana'},
     {'continent': 'Africa', 'name': 'Canary Islands', 'bbox': [-18.92352, 26.36117, -12.47875, 30.25648], 'country': 'Spain'},
+    {'continent': 'Africa', 'name': 'Kenya', 'bbox': [33.8679, -4.816276, 41.97685, 4.629931], 'country': 'Kenya'},
     {'continent': 'Africa', 'name': 'Madagascar', 'bbox': [42.30124, -26.5823, 51.14843, -11.36225], 'country': 'Madagascar'},
+    {'continent': 'Africa', 'name': 'Mauritius', 'bbox': [53.54727, -22.2411, 64.54151, -9.183617], 'country': 'Mauritius'},
     {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
     {'continent': 'Africa', 'name': 'South Africa', 'bbox': [15.99606, -47.58493, 39.24259, -22.11736], 'country': 'South Africa'},
 
     {'continent': 'Asia', 'name': 'Bahrain', 'bbox': [50.2597, 25.5325, 50.9381, 26.6941], 'country': 'Bahrain'},
     {'continent': 'Asia', 'name': 'Japan', 'bbox': [122.5607, 21.20992, 153.8901, 45.80245], 'country': 'Japan'},
+    {'continent': 'Asia', 'name': 'Laos', 'bbox': [100.115987583, 13.88109101, 107.564525181, 22.4647531194], 'country': 'Laos'},
+    {'continent': 'Asia', 'name': 'Nepal', 'bbox': [80.02361, 26.31982, 88.22574, 30.47746], 'country': 'Nepal'},
     {'continent': 'Asia', 'name': 'Qatar', 'bbox': [50.554, 24.467, 52.646, 26.446], 'country': 'Qatar'},
+    {'continent': 'Asia', 'name': 'Sri Lanka', 'bbox': [79.16416, 5.621275, 82.64612, 10.07153], 'country': 'Sri Lanka'},
     {'continent': 'Asia', 'name': 'United Arab Emirates', 'bbox': [51.394, 22.594, 56.635, 26.155], 'country': 'United Arab Emirates'},
-    
+
+    {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
     {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
     {'continent': 'Australia Oceanica', 'name': 'New Zealand', 'bbox': [162.096, -48.77, 179.8167, -32.667], 'country': 'New Zealand'},
+    {'continent': 'Australia Oceanica', 'name': 'Vanuatu', 'bbox': [166.629136998, -16.5978496233, 167.844876744, -14.6264970842], 'country': 'Vanuatu'},
 
+    {'continent': 'Europe', 'name': 'Albania', 'bbox': [19.13709, 39.59972, 21.06846, 42.66562], 'country': 'Albania'},
     {'continent': 'Europe', 'name': 'Austria', 'bbox': [9.52678, 46.36851, 17.16273, 49.02403], 'country': 'Austria'},
     {'continent': 'Europe', 'name': 'Belgium', 'bbox': [2.340725, 49.49196, 6.411619, 51.59839], 'country': 'Belgium'},
+    {'continent': 'Europe', 'name': 'Bosnia and Herzegovina', 'bbox': [15.73639, 42.56583, 19.62176, 45.26595], 'country': 'Bosnia and Herzegovina'},
     {'continent': 'Europe', 'name': 'Bulgaria', 'bbox': [22.34875, 41.22681, 29.18819, 44.22477], 'country': 'Bulgaria'},
     {'continent': 'Europe', 'name': 'Croatia', 'bbox': [13.08916, 42.16483, 19.45911, 46.56498], 'country': 'Croatia'},
     {'continent': 'Europe', 'name': 'Cyprus', 'bbox': [31.95244, 34.23374, 34.96147, 36.00323], 'country': 'Cyprus'},
@@ -54,6 +64,8 @@ regions = [
     {'continent': 'Europe', 'name': 'Lithuania', 'bbox': [20.63822, 53.89605, 26.83873, 56.45106], 'country': 'Lithuania'},
     {'continent': 'Europe', 'name': 'Luxembourg', 'bbox': [5.733033, 49.44553, 6.532249, 50.18496], 'country': 'Luxembourg'},
     {'continent': 'Europe', 'name': 'Malta', 'bbox': [14.0988, 35.77776, 14.61755, 36.11909], 'country': 'Malta'},
+    {'continent': 'Europe', 'name': 'Moldova', 'bbox': [26.61889, 45.4689, 30.16374, 48.49017], 'country': 'Moldova'},
+    {'continent': 'Europe', 'name': 'Montenegro', 'bbox': [18.17282, 41.61621, 20.36638, 43.55504], 'country': 'Montenegro'},
     {'continent': 'Europe', 'name': 'Netherlands', 'bbox': [2.992192, 50.74753, 7.230455, 54.01786], 'country': 'Netherlands'},
     {'continent': 'Europe', 'name': 'Northern Ireland', 'bbox': [-8.37516, 53.88797, -5.15067, 55.43195], 'country': 'United Kingdom'},
     {'continent': 'Europe', 'name': 'Norway', 'bbox': [-11.36801, 57.55323, 35.52711, 81.05195], 'country': 'Norway'},
