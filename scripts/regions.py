@@ -9,7 +9,7 @@ import vector_tile
 
 continents = [
     {'name': 'Africa', 'osmUrl': 'https://download.geofabrik.de/africa-latest.osm.pbf'},
-    {'name': 'Asia', 'osmUrl': 'https://download.geofabrik.de/asia/japan-latest.osm.pbf'},
+    {'name': 'Asia', 'osmUrl': 'https://download.geofabrik.de/asia-latest.osm.pbf'},
     {'name': 'Australia Oceanica', 'osmUrl': 'https://download.geofabrik.de/australia-oceania-latest.osm.pbf'},
     {'name': 'Europe', 'osmUrl': 'https://download.geofabrik.de/europe-latest.osm.pbf'},
     {'name': 'North America', 'osmUrl': 'https://download.geofabrik.de/north-america-latest.osm.pbf'},
@@ -36,9 +36,8 @@ regions = [
     {'continent': 'Asia', 'name': 'United Arab Emirates', 'bbox': [51.394, 22.594, 56.635, 26.155], 'country': 'United Arab Emirates'},
 
     {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
-    {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
     {'continent': 'Australia Oceanica', 'name': 'New Zealand', 'bbox': [162.096, -48.77, 179.8167, -32.667], 'country': 'New Zealand'},
-    {'continent': 'Australia Oceanica', 'name': 'Vanuatu', 'bbox': [166.629136998, -16.5978496233, 167.844876744, -14.6264970842], 'country': 'Vanuatu'},
+    {'continent': 'Australia Oceanica', 'name': 'Vanuatu', 'bbox': [166.5415638, -20.254446647, 170.23828392, -13.071706876], 'country': 'Vanuatu'},
 
     {'continent': 'Europe', 'name': 'Albania', 'bbox': [19.13709, 39.59972, 21.06846, 42.66562], 'country': 'Albania'},
     {'continent': 'Europe', 'name': 'Austria', 'bbox': [9.52678, 46.36851, 17.16273, 49.02403], 'country': 'Austria'},
