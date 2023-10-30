@@ -566,7 +566,9 @@ def readOpenAIPReportingPoints(airportData):
     print("Interpreting reporting-points data…")
     features = []
     for item in items:
-        id = item['airports'][0]
+        id = ""
+        if 'airports' in item:
+            id = item['airports'][0]
 
         #
         # Get properties
@@ -578,7 +580,10 @@ def readOpenAIPReportingPoints(airportData):
             properties['CAT'] = "MRP"
         else:
             properties['CAT'] = "RP"
-        properties['NAM'] = airportNames[id]+" ("+item['name']+")"
+        if id != '':
+            properties['NAM'] = airportNames[id]+" ("+item['name']+")"
+        else:
+            properties['NAM'] = item['name']
         SCO = item['name']
         for letter in ICAOAlpha:
             SCO = re.sub(r'\b'+letter+r'\b', letter[0], SCO)
