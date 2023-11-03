@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 
-import os
-import shutil
-import subprocess
-import sys
-import vector_tile
+from shapely.geometry import Polygon
+import geopandas
 
 
 continents = [
@@ -92,3 +89,30 @@ regions = [
     {'continent': 'South America', 'name': 'Colombia', 'bbox': [-79.68074, -4.230484, -66.86983, 13.11676], 'country': 'Colombia'},
     {'continent': 'South America', 'name': 'Falkland Islands', 'bbox': [-63.11192, -53.38141, -56.11363, -50.35743], 'country': 'United Kingdom'}
 ]
+
+print('Read country boundary file')
+worldCountryMap = geopandas.read_file( 'data/ne_10m_admin_0_countries/ne_10m_admin_0_countries.dbf' )
+
+
+def bufferedBoundary(region):
+    """Returns polygons that contain a given region, with a 20km buffer around the region boundaries
+
+    :param region: Entry of the array 'regions'
+
+    :returns: geopandas geometry
+    """
+
+    # Get the boundary of the country
+    countryGDF = worldCountryMap[worldCountryMap.SOVEREIGNT == region["country"]]
+    if countryGDF.size == 0:
+        print('Error in bufferedBoundary(), country is empty: ' + region["country"])
+        exit(-1)
+
+    # Intersect the boundary with the bounding box of the region
+    bbox = Polygon([(region['bbox'][0],region['bbox'][1]), (region['bbox'][0],region['bbox'][3]), (region['bbox'][2],region['bbox'][3]), (region['bbox'][2],region['bbox'][1])])
+    bboxSeries = geopandas.GeoSeries([bbox])
+    bboxSeries.set_crs("EPSG:4326")
+    countryGDF = countryGDF.intersection(bbox)
+
+    # Compute and return buffer
+    return countryGDF.to_crs(crs=3857).buffer(20000).to_crs(crs=4326)
