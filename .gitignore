@@ -1,5 +1,6 @@
 .vscode/
 docs/
+proxy/.htaccess
 scripts/__pycache__
 scripts/data
 scripts/out
