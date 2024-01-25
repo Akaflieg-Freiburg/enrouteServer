@@ -56,12 +56,17 @@ function isValidRadius($input) {
     return is_numeric($input) && $input > 0 && $input < 500 && intval($input) == $input;
 }
 
-
 function isValidPageSize($input) {
     // Check if input is numeric and within the range
     return is_numeric($input) && $input > 0 && $input <= 1000 && intval($input) == $input;
 }
 
+
+
+
+//
+// Get parameters and check for validity
+//
 
 $pageSize = isset($_GET['pageSize']) ? $_GET['pageSize'] : 1000;
 if (!isValidPageSize($pageSize)) die ('Invalid pageSize string!');
@@ -79,30 +84,40 @@ $radius = $_GET['locationRadius'];
 if (!isValidLatitude($radius)) die ('Invalid radius string!');
 
 
-$url = 'https://external-api.faa.gov/notamapi/v1/notams?locationLongitude='
-	. $longitude
-	. '&locationLatitude='
-	. $latitude
-	. '&locationRadius='
-	. $radius
-	. '&pageSize='
-	. $pageSize;
+//
+// Build request
+//
+
+$url = 'https://external-api.faa.gov/notamapi/v1/notams?"
+  . 'locationLongitude=' . $longitude
+  . '&locationLatitude=' . $latitude
+  . '&locationRadius=' . $radius
+  . '&pageSize=' . $pageSize;
 
 $FAA_KEY = getenv('FAA_KEY');
-$FAA_ID = getenv('FAA_ID');
+$FAA_ID  = getenv('FAA_ID');
 
-	$opts = array(
+$opts = array(
 	'http' => array(
 		'header' => "client_id: $FAA_ID\r\n" .
-			    "client_secret: $FAA_KEY\r\n"
-		)
-	);
-ob_start(); // direkte Ausgabe abfangen, z.B. bei zu kleinem Radius //FB
+		      	    "client_secret: $FAA_KEY\r\n"
+	)
+);
+
+
+//
+// Get data
+//
+
 $context = stream_context_create($opts);
 $response = file_get_contents($url, false, $context);
-ob_end_clean(); //FB
-if (!strlen($response)) die('ERROR: Failure Contacting Server'); //FB
-if (str_contains($response, '"totalCount":0')) die('No NOTAMs found in specified area'); //FB
+
+
+//
+// Return data
+//
+
 echo $response;
 unset($pageSize, $url, $opts, $context, $response);
+
 ?>
