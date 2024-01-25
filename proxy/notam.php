@@ -88,7 +88,7 @@ if (!isValidLatitude($radius)) die ('Invalid radius string!');
 // Build request
 //
 
-$url = 'https://external-api.faa.gov/notamapi/v1/notams?"
+$url = 'https://external-api.faa.gov/notamapi/v1/notams?'
   . 'locationLongitude=' . $longitude
   . '&locationLatitude=' . $latitude
   . '&locationRadius=' . $radius
