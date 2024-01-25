@@ -12,3 +12,5 @@ The script "notam.php" assumes that environment variables FAA_ID and FAA_KEY
 contain the credentials required to access the FAA NOTAM service. These can,
 for instance, be set with the directive "SetEnv" in Apache's ".htaccess" 
 files.
+
+The scripts in this directory were kindly donated by Markus Sachs.
