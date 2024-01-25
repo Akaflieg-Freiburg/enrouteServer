@@ -17,15 +17,76 @@
 // Das Anhängen von &pageSize=d mit d als gewünschter Zahl ist optional; 
 // ohne Nennung wird 1000 als Default gesetzt.
 
-$pageSize = isset($_GET['pageSize']) ? $_GET['pageSize'] : 1000;
-if (!isset($_GET['locationLongitude'])) die('No longitude specified'); //FB
-if (!isset($_GET['locationLatitude']))  die('No latitude specified'); //FB
-if (!isset($_GET['locationRadius']))    die('No search radius specified'); //FB
+function isValidLatitude($input) {
+    // Define the regular expression pattern for latitude and longitude
+    $pattern = '/^(-?\d+(\.\d+)?)$/';
 
-$url = 'https://external-api.faa.gov/notamapi/v1/notams?locationLongitude=' . $_GET['locationLongitude'] 
-	. '&locationLatitude=' . $_GET['locationLatitude'] 
-	. '&locationRadius=' . $_GET['locationRadius'] 
-	. '&pageSize=' . $pageSize;
+    // Use preg_match to check if the input string matches the pattern
+    if (preg_match($pattern, $input) !== 1) {
+        return false; // Format is invalid
+    }
+
+    // Validate latitude and longitude ranges
+    if (!is_numeric($input) || $input < -90 || $input > 90) {
+        return false; // Invalid latitude range
+    }
+
+    return true; // Input string is valid
+}
+
+function isValidLongitude($input) {
+    // Define the regular expression pattern for latitude and longitude
+    $pattern = '/^(-?\d+(\.\d+)?)$/';
+
+    // Use preg_match to check if the input string matches the pattern
+    if (preg_match($pattern, $input) !== 1) {
+        return false; // Format is invalid
+    }
+
+    // Validate latitude and longitude ranges
+    if (!is_numeric($input) || $input < -180 || $input > 180) {
+        return false; // Invalid longitude range
+    }
+
+    return true; // Input string is valid
+}
+
+function isValidRadius($input) {
+    // Check if input is numeric and within the range
+    return is_numeric($input) && $input > 0 && $input < 500 && intval($input) == $input;
+}
+
+
+function isValidPageSize($input) {
+    // Check if input is numeric and within the range
+    return is_numeric($input) && $input > 0 && $input <= 1000 && intval($input) == $input;
+}
+
+
+$pageSize = isset($_GET['pageSize']) ? $_GET['pageSize'] : 1000;
+if (!isValidPageSize($pageSize)) die ('Invalid pageSize string!');
+
+if (!isset($_GET['locationLongitude'])) die('No longitude specified'); //FB
+$longitude = $_GET['locationLongitude'];
+if (!isValidLatitude($longitude)) die ('Invalid longitude string!');
+
+if (!isset($_GET['locationLatitude']))  die('No latitude specified'); //FB
+$latitude = $_GET['locationLatitude'];
+if (!isValidLatitude($latitude)) die ('Invalid latitude string!');
+
+if (!isset($_GET['locationRadius']))    die('No search radius specified'); //FB
+$radius = $_GET['locationRadius'];
+if (!isValidLatitude($radius)) die ('Invalid radius string!');
+
+
+$url = 'https://external-api.faa.gov/notamapi/v1/notams?locationLongitude='
+	. $longitude
+	. '&locationLatitude='
+	. $latitude
+	. '&locationRadius='
+	. $radius
+	. '&pageSize='
+	. $pageSize;
 
 $FAA_KEY = getenv('FAA_KEY');
 $FAA_ID = getenv('FAA_ID');
