@@ -526,21 +526,32 @@ def downloadXML(filename):
     try:
         response = requests.get(filename)
         response.raise_for_status()
-        # Code here will only run if the request is successful
     except requests.exceptions.HTTPError as errh:
+        print("Error downloading " + filename)
         print(errh)
         exit(-1)
     except requests.exceptions.ConnectionError as errc:
+        print("Error downloading " + filename)
         print(errc)
         exit(-1)
     except requests.exceptions.Timeout as errt:
+        print("Error downloading " + filename)
         print(errt)
         exit(-1)
     except requests.exceptions.RequestException as err:
+        print("Error downloading " + filename)
         print(err)
         exit(-1)
-    response.encoding = 'utf-8'
-    return ET.fromstring(response.text)
+
+    try:
+        response.encoding = 'utf-8'
+        result = ET.fromstring(response.text)
+    except Exception as err:
+        print("Succesfully downloaded " + filename)
+        print("Error parsing XML")
+        print(err)
+        exit(-1)
+    return result
 
 
 def readOFMX():
