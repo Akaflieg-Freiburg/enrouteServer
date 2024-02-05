@@ -17,7 +17,7 @@ datesAlreadyProcessed = []
 try:
     with open('filename.pickle', 'rb') as f:
         mapAccessNumbers = pickle.load(f)
-    datesAlreadyProcessed = mapAccessNumbers.keys()
+    datesAlreadyProcessed = sorted(mapAccessNumbers.keys())
 except:
     print("Cannot read old data.")
 
@@ -35,7 +35,8 @@ count = 0
 for line in lines:
     if "maps.json" not in line:
         continue
-
+    count = count + 1
+    
     # Find the date in the log line
     date = re.search(datePattern, line)
     if not date:
