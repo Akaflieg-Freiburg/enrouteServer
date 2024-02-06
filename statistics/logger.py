@@ -1,22 +1,30 @@
 #!/usr/bin/python3
 
-import re
-import pickle
-import sys
 from datetime import datetime
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+
+import pickle
+import re
+import shlex
+import sys
+
 
 #
 # Setup data structures
 #
 
+# keys: days_since_epoch, values: number that maps.json has been downloaded on that day
 mapAccessNumbers = {}
+
+# keys: days_since_epoch, values: traffic on that day
+trafficNumbers = {}
+
+# values: days since epoch
 datesAlreadyProcessed = []
 
 try:
     with open('filename.pickle', 'rb') as f:
         mapAccessNumbers = pickle.load(f)
+        trafficNumbers = pickle.load(f)
     datesAlreadyProcessed = sorted(mapAccessNumbers.keys())
 except:
     print("Cannot read old data.")
@@ -27,16 +35,14 @@ content = file.read()
 lines = content.splitlines()
 
 datePattern = r'\d{2}/\w{3}/\d{4}:\d{2}:\d{2}:\d{2}'
-
-
-
+downloadSizePattern = r'\s(\d+)\s*$'
 
 count = 0
 for line in lines:
-    if "maps.json" not in line:
-        continue
     count = count + 1
     
+    lineItems = shlex.split(line)
+
     # Find the date in the log line
     date = re.search(datePattern, line)
     if not date:
@@ -45,21 +51,26 @@ for line in lines:
     date = datetime.strptime(date_string, "%d/%b/%Y:%H:%M:%S")
     days_since_epoch = (date - datetime(1970, 1, 1)).days
 
-    if days_since_epoch in datesAlreadyProcessed:
-        continue
+    # Skip entries for days that have already been processed
+#    if days_since_epoch in datesAlreadyProcessed:
+#        continue
 
-    if days_since_epoch in mapAccessNumbers:
-        mapAccessNumbers[days_since_epoch] = mapAccessNumbers[days_since_epoch]+1
-    else:
-        mapAccessNumbers[days_since_epoch] = 1
+    # Count times that maps.json has been downloaded
+    if "maps.json" in line:
+        if days_since_epoch in mapAccessNumbers:
+            mapAccessNumbers[days_since_epoch] = mapAccessNumbers[days_since_epoch]+1
+        else:
+            mapAccessNumbers[days_since_epoch] = 1
+
+    if "enroute" in line:
+        traffic = int(lineItems[7])
+        if days_since_epoch in trafficNumbers:
+            trafficNumbers[days_since_epoch] = trafficNumbers[days_since_epoch]+traffic
+        else:
+            trafficNumbers[days_since_epoch] = traffic
+
+print(trafficNumbers)
 
 with open('filename.pickle', 'wb') as f:
     pickle.dump(mapAccessNumbers, f)
-
-fig, ax = plt.subplots()
-ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
-plt.plot(mapAccessNumbers.keys(), mapAccessNumbers.values(), "bo")
-plt.ylabel('Users')
-#plt.show()
-plt.savefig("test.png")
-plt.close()
+    pickle.dump(trafficNumbers, f)
