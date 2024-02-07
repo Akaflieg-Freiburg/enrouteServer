@@ -61,8 +61,8 @@ for line in lines:
     days_since_epoch = (date - datetime(1970, 1, 1)).days
 
     # Skip entries for days that have already been processed
-#    if days_since_epoch in datesAlreadyProcessed:
-#        continue
+    if days_since_epoch in datesAlreadyProcessed:
+        continue
 
     # Count times that maps.json has been downloaded
     if "maps.json" in line:
