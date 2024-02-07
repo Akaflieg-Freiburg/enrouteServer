@@ -15,6 +15,12 @@ import sys
 # keys: days_since_epoch, values: number that maps.json has been downloaded on that day
 mapAccessNumbers = {}
 
+# keys: days_since_epoch, values: number that maps.json has been downloaded on that day
+metarAccessNumbers = {}
+
+# keys: days_since_epoch, values: number that maps.json has been downloaded on that day
+notamAccessNumbers = {}
+
 # keys: days_since_epoch, values: traffic on that day
 trafficNumbers = {}
 
@@ -25,9 +31,12 @@ try:
     with open('filename.pickle', 'rb') as f:
         mapAccessNumbers = pickle.load(f)
         trafficNumbers = pickle.load(f)
-    datesAlreadyProcessed = sorted(mapAccessNumbers.keys())
+        metarAccessNumbers = pickle.load(f)
+        notamAccessNumbers = pickle.load(f)
 except:
     print("Cannot read old data.")
+
+datesAlreadyProcessed = sorted(mapAccessNumbers.keys())
 
 file=open(sys.argv[1],"r")
 
@@ -62,6 +71,21 @@ for line in lines:
         else:
             mapAccessNumbers[days_since_epoch] = 1
 
+    # Count times that metar info has been downloaded
+    if "metar" in line:
+        if days_since_epoch in metarAccessNumbers:
+            metarAccessNumbers[days_since_epoch] = metarAccessNumbers[days_since_epoch]+1
+        else:
+            metarAccessNumbers[days_since_epoch] = 1
+
+    # Count times that notam info has been downloaded
+    if "notam" in line:
+        if days_since_epoch in notamAccessNumbers:
+            notamAccessNumbers[days_since_epoch] = notamAccessNumbers[days_since_epoch]+1
+        else:
+            notamAccessNumbers[days_since_epoch] = 1
+
+    # Count traffic
     if "enroute" in line:
         traffic = int(lineItems[7])
         if days_since_epoch in trafficNumbers:
@@ -69,8 +93,9 @@ for line in lines:
         else:
             trafficNumbers[days_since_epoch] = traffic
 
-print(trafficNumbers)
 
 with open('filename.pickle', 'wb') as f:
     pickle.dump(mapAccessNumbers, f)
     pickle.dump(trafficNumbers, f)
+    pickle.dump(metarAccessNumbers, f)
+    pickle.dump(notamAccessNumbers, f)
