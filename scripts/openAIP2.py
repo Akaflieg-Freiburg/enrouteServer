@@ -425,13 +425,21 @@ def readOpenAIPAirspaces():
         # 25: Military Training Area (MTA)
         # 26: Controlled Area (CTA)
         # 27: ACC Sector (ACC)
-        if item['type'] == 28: # 28: Aerial Sporting Or Recreational Activity
+        # 28: Aerial Sporting Or Recreational Activity
+        if item['type'] == 28:
             if item['icaoClass'] == 7 or item['icaoClass'] == 8: # SUA
                 properties['CAT'] = 'SUA'
             if 'PARA' in item['name']:
                 properties['CAT'] = 'PJE'
-        if item['type'] == 29: # 29: Low Altitude Overflight Restriction
+        # 29: Low Altitude Overflight Restriction
+        if item['type'] == 29:
             properties['CAT'] = 'R'
+        # 30: Military Route (MRT)
+        # 31: TSA/TRA Feeding Route (TFR)
+        # 32: VFR Sector
+        # 33: FIS Sector
+        if item['type'] == 33:
+            continue # Ignore. We take our FIS sectors from open flightmaps
 
         #
         # If CAT has not yet been assigned, look at the ICAO class of the airspace
