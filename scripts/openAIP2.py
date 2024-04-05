@@ -382,6 +382,7 @@ def readOpenAIPAirspaces():
         #
         # Look at the various types of airspace
         #
+
         # 0: Other
         if item['type'] == 1: # Restricted
             properties['CAT'] = 'R'
@@ -400,6 +401,9 @@ def readOpenAIPAirspaces():
             properties['CAT'] = 'RMZ'
         # 7: Terminal Maneuvering Area (TMA)
         # 8: Temporary Reserved Area (TRA)
+        if item['type'] == 8:
+            properties['CAT'] = 'R'
+
         # 9: Temporary Segregated Area (TSA)
         if item['type'] == 10: # 10: Flight Information Region (FIR)
             properties['CAT'] = 'FIR'
@@ -473,6 +477,32 @@ def readOpenAIPAirspaces():
         properties['TYP'] = "AS"
         properties['BOT'] = interpretLimit(item['lowerLimit'], item)
         properties['TOP'] = interpretLimit(item['upperLimit'], item)
+
+        # Get MLI
+        MLI = []
+        if item['icaoClass'] == 0: # A
+            MLI.append('A')
+        if item['icaoClass'] == 1: # B
+            MLI.append('B')
+        if item['icaoClass'] == 2: # C
+            MLI.append('C')
+        if item['icaoClass'] == 3: # D
+            MLI.append('D')
+        if item['icaoClass'] == 4: # E
+            MLI.append('E')
+        if item['icaoClass'] == 5: # F
+            MLI.append('F')
+        if item['icaoClass'] == 6: # G
+            MLI.append('G')
+        if properties['CAT'] in ['DNG', 'FIR', 'FIS', 'P', 'R', 'TMZ']:
+            MLI.append(properties['NAM'])
+        if properties['CAT'] == 'SUA':
+            MLI.append(properties['CAT'])
+            MLI.append(properties['NAM'])
+        if properties['CAT'] in ['GLD', 'NRA', 'PJE', 'RMZ', 'TIA', 'TIZ']:
+            MLI.append(properties['CAT'])
+        MLI.append(properties['BOT'] + " - " + properties['TOP']) 
+        properties['MLI'] = ' • '.join(MLI)
         
         #
         # Generate feature
