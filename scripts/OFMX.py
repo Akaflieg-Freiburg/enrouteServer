@@ -90,6 +90,8 @@ def readAirspace(aseNode, shapeRoot, cat, nam, numCoordDigits):
     properties['CAT'] = cat
     properties['ID'] = mid
     properties['NAM'] = nam
+    properties['MLI'] = nam
+    properties['MLM'] = nam
     properties['TOP'] = readHeight(aseNode, 'Upper', short=True)
     properties['TYP'] = "AS"
 

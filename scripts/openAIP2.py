@@ -9,6 +9,7 @@ data into the GeoJSON format described here:
 https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
 """
 
+import copy
 import json
 import math
 import re
@@ -55,6 +56,26 @@ def interpretLimit(limit, item):
         return value + ' AGL'
     if limit['referenceDatum'] == 1:
         return value
+    print('Invalid airspace limit')
+    print(item)
+    print(limit)
+    exit(-1)
+
+
+def interpretLimitMetric(limit, item):
+    if limit['unit'] == 6:
+        return 'FL ' + str(round(limit['value']*100/3.2808)) + ' m'
+    value = 0
+    if limit['unit'] == 0:
+        value = str(round(limit['value']))
+    if limit['unit'] == 1:
+        value = str(round(limit['value']/3.2808))
+    if limit['referenceDatum'] == 0:
+        if value == "0":
+            return 'GND'
+        return value + ' m AGL'
+    if limit['referenceDatum'] == 1:
+        return value + ' m'
     print('Invalid airspace limit')
     print(item)
     print(limit)
@@ -382,6 +403,7 @@ def readOpenAIPAirspaces():
         #
         # Look at the various types of airspace
         #
+
         # 0: Other
         if item['type'] == 1: # Restricted
             properties['CAT'] = 'R'
@@ -400,6 +422,9 @@ def readOpenAIPAirspaces():
             properties['CAT'] = 'RMZ'
         # 7: Terminal Maneuvering Area (TMA)
         # 8: Temporary Reserved Area (TRA)
+        if item['type'] == 8:
+            properties['CAT'] = 'R'
+
         # 9: Temporary Segregated Area (TSA)
         if item['type'] == 10: # 10: Flight Information Region (FIR)
             properties['CAT'] = 'FIR'
@@ -473,6 +498,38 @@ def readOpenAIPAirspaces():
         properties['TYP'] = "AS"
         properties['BOT'] = interpretLimit(item['lowerLimit'], item)
         properties['TOP'] = interpretLimit(item['upperLimit'], item)
+
+        # Get MLI
+        ML = []
+        if item['icaoClass'] == 0: # A
+            ML.append('A')
+        if item['icaoClass'] == 1: # B
+            ML.append('B')
+        if item['icaoClass'] == 2: # C
+            ML.append('C')
+        if item['icaoClass'] == 3: # D
+            ML.append('D')
+        if item['icaoClass'] == 4: # E
+            ML.append('E')
+        if item['icaoClass'] == 5: # F
+            ML.append('F')
+        if item['icaoClass'] == 6: # G
+            ML.append('G')
+        if properties['CAT'] in ['DNG', 'FIR', 'FIS', 'P', 'R', 'TMZ']:
+            ML.append(properties['NAM'])
+        if properties['CAT'] == 'SUA':
+            ML.append(properties['CAT'])
+            ML.append(properties['NAM'])
+        if properties['CAT'] in ['GLD', 'NRA', 'PJE', 'RMZ', 'TIA', 'TIZ']:
+            ML.append(properties['CAT'])
+
+        MLI = copy.deepcopy(ML)
+        MLI.append(properties['BOT'] + " - " + properties['TOP']) 
+        properties['MLI'] = ' • '.join(MLI)
+
+        MLM = ML
+        MLM.append(interpretLimitMetric(item['lowerLimit'], item) + " - " + interpretLimitMetric(item['upperLimit'], item)) 
+        properties['MLM'] = ' • '.join(MLM)
         
         #
         # Generate feature
