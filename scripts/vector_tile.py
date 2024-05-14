@@ -52,7 +52,7 @@ def foreignTiles(tileList, countryName):
         print('Country is empty: '+countryName)
         exit(-1)
     countryGDF.set_crs("EPSG:4326")
-    buffer = countryGDF.buffer(0.3).set_crs("EPSG:4326")
+    buffer = countryGDF.to_crs(crs=3857).buffer(20000).to_crs(crs=4326) # countryGDF.buffer(0.3).set_crs("EPSG:4326")
 
     for (z,x,y) in tileList:
         p = Polygon([num2lonlat(x,y,z), num2lonlat(x+1,y,z), num2lonlat(x+1,y+1,z), num2lonlat(x,y+1,z)])
