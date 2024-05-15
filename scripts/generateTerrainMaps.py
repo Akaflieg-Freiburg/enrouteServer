@@ -58,6 +58,28 @@ def getWebp(zoom, x, y):
                0, 1, 0, 0,
                0, 0, 0, 0)
     img = img.convert("RGB", matrix)
+
+    #   
+    # Next, we can to delete all data that is below -127m MSL. 
+    #
+    # Get the dimensions of the image
+    width, height = img.size
+    # Process each pixel
+    for x in range(width):
+        for y in range(height):
+            # Get the RGB values of the current pixel
+            r, g, b = img.getpixel((x, y))
+
+            # Check the red value
+            if r < 128:
+                # Set new RGB values
+                new_r = 127
+                new_g = 0
+                new_b = 0
+
+                # Modify the pixel with the new values
+                img.putpixel((x, y), (new_r, new_g, new_b))
+
     img.save(pngFileName)
 
     subprocess.run(
