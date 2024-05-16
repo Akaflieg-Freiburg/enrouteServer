@@ -16,13 +16,18 @@ continents = [
 # Bounding boxes: long_min, lat_min, long_max, lat_max
 
 regions = [
+
+    {'continent': 'Africa', 'name': 'Algeria', 'bbox': [-8.704895, 18.92874, 12.03598, 37.77284], 'country': 'Algeria'},
     {'continent': 'Africa', 'name': 'Botswana', 'bbox': [19.98745, -26.91539, 29.38549, -17.76871], 'country': 'Botswana'},
     {'continent': 'Africa', 'name': 'Canary Islands', 'bbox': [-18.92352, 26.36117, -12.47875, 30.25648], 'country': 'Spain'},
     {'continent': 'Africa', 'name': 'Kenya', 'bbox': [33.8679, -4.816276, 41.97685, 4.629931], 'country': 'Kenya'},
     {'continent': 'Africa', 'name': 'Madagascar', 'bbox': [42.30124, -26.5823, 51.14843, -11.36225], 'country': 'Madagascar'},
     {'continent': 'Africa', 'name': 'Mauritius', 'bbox': [53.54727, -22.2411, 64.54151, -9.183617], 'country': 'Mauritius'},
+    {'continent': 'Africa', 'name': 'Morocco', 'bbox': [-18.1835, 20.40373, -0.997533, 36.05424], 'country': 'Morocco'},
     {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
+    {'continent': 'Africa', 'name': 'Reunion', 'bbox': [55.2164268, -21.3897308, 55.8366924, -20.8717136], 'country': 'France'},
     {'continent': 'Africa', 'name': 'South Africa', 'bbox': [15.99606, -47.58493, 39.24259, -22.11736], 'country': 'South Africa'},
+    {'continent': 'Africa', 'name': 'Tunisia', 'bbox': [7.520699, 30.23888, 11.84919, 37.77474], 'country': 'Tunisia'},
 
     {'continent': 'Asia', 'name': 'Bahrain', 'bbox': [50.2597, 25.5325, 50.9381, 26.6941], 'country': 'Bahrain'},
     {'continent': 'Asia', 'name': 'Japan', 'bbox': [122.5607, 21.20992, 153.8901, 45.80245], 'country': 'Japan'},
