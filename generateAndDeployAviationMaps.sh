@@ -11,3 +11,4 @@ cd scripts
 ./generateWorldAviationMap.py
 ./splitAviationMap.py
 ./deploy.py
+./deploy-hetzner.py
