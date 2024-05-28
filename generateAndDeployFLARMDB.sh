@@ -10,3 +10,4 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 cd scripts
 ./generateFlarmDB.py
 ./deploy.py
+./deploy-hetzner.py
