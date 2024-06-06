@@ -11,17 +11,8 @@ import subprocess
 import sys
 
 
-FAA_ID = os.environ['FAA_ID']
-if FAA_ID == "":
-    print("FAA ID is empty")
-    exit(-1)
-FAA_KEY = os.environ['FAA_KEY']
-if FAA_KEY == "":
-    print("FAA KEY is empty")
-    exit(-1)
-
 stagingDir = "../staging"
-serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
+serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
 whatsNewText = 'We added maps for Algeria, Morocco, Reunion and Tunisia.'
 
 # Go to output directory
@@ -122,8 +113,6 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
 top = {'maps': maps}
 top['url'] = serverURL
 top['whatsNew'] = whatsNewText
-top['FAA_ID'] = FAA_ID
-top['FAA_KEY'] = FAA_KEY
 fileName = open(stagingDir + '/maps.json', 'w')
 fileName.write(json.dumps(top, sort_keys=True, indent=4))
 fileName.close()
@@ -131,14 +120,6 @@ fileName.close()
 #
 # Sync the staging dir with the server
 #
-print('\n\nSync the staging dir with the server @ uni-freiburg')
-#subprocess.run(
-#    "rsync -e ssh -vaz --delete "
-#    + stagingDir
-#    + "/ kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003",
-#    shell=True,
-#    check=True
-#)
 print('\n\nSync the staging dir with the server @ hetzner')
 subprocess.run(
     "rsync -e 'ssh -p222' -vaz --delete "
