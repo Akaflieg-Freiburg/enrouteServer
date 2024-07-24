@@ -22,6 +22,7 @@ regions = [
     {'continent': 'Africa', 'name': 'Canary Islands', 'bbox': [-18.92352, 26.36117, -12.47875, 30.25648], 'country': 'Spain'},
     {'continent': 'Africa', 'name': 'Kenya', 'bbox': [33.8679, -4.816276, 41.97685, 4.629931], 'country': 'Kenya'},
     {'continent': 'Africa', 'name': 'Madagascar', 'bbox': [42.30124, -26.5823, 51.14843, -11.36225], 'country': 'Madagascar'},
+    {'continent': 'Africa', 'name': 'Malawi', 'bbox': [32.66, -17.1455, 35.93424, -9.353419], 'country': 'Malawi'},
     {'continent': 'Africa', 'name': 'Mauritius', 'bbox': [53.54727, -22.2411, 64.54151, -9.183617], 'country': 'Mauritius'},
     {'continent': 'Africa', 'name': 'Morocco', 'bbox': [-18.1835, 20.40373, -0.997533, 36.05424], 'country': 'Morocco'},
     {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
