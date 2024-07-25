@@ -80,6 +80,7 @@ regions = [
     {'continent': 'Europe', 'name': 'Spain', 'bbox': [-9.779014, 35.73509, 5.098525, 44.14855], 'country': 'Spain'},
     {'continent': 'Europe', 'name': 'Sweden', 'bbox': [10.54138, 55.02652, 24.22472, 69.06643], 'country': 'Sweden'},
     {'continent': 'Europe', 'name': 'Switzerland', 'bbox': [5.952882, 45.81617, 10.49584, 47.81126], 'country': 'Switzerland'},
+    {'continent': 'Europe', 'name': 'Turkey', 'bbox': [25.6071, 35.717, 44.9, 42.397], 'country': 'Turkey'},
 
     {'continent': 'North America', 'name': 'Canada West', 'bbox': [-141.7761, 46.41459, -88.12183, 60.00678], 'country': 'Canada'},
     {'continent': 'North America', 'name': 'Canada East', 'bbox': [-95.15965, 41.6377, -51.66101, 62.59], 'country': 'Canada'},
