@@ -13,7 +13,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
-whatsNewText = 'We added maps for Algeria, Morocco, Reunion and Tunisia.'
+whatsNewText = 'As requested by our user, maps for Malawi and Turkey are now available.'
 
 # Go to output directory
 os.chdir('out')

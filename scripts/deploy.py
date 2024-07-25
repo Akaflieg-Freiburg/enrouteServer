@@ -22,7 +22,7 @@ if FAA_KEY == "":
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'We added maps for Algeria, Morocco, Reunion and Tunisia.'
+whatsNewText = 'As requested by our user, maps for Malawi and Turkey are now available.'
 
 # Go to output directory
 os.chdir('out')
