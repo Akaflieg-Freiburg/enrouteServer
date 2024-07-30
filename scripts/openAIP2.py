@@ -545,9 +545,14 @@ def readOpenAIPAirspaces():
         properties['MLM'] = ' • '.join(MLM)
 
         if 'frequencies' in item:
+            lastName = "xxxxxx"
             for frequency in item['frequencies']:
                 if 'name' in frequency:
-                    properties['NAM'] = properties['NAM'] + ' • ' + frequency['name'] + " " + frequency['value'] + " MHz"
+                    if frequency['name'] == lastName:
+                        properties['NAM'] = properties['NAM'] + ', ' + frequency['value'] + " MHz"
+                    else:
+                        properties['NAM'] = properties['NAM'] + ' • ' + frequency['name'] + " " + frequency['value'] + " MHz"
+                    lastName = frequency['name']
 
 
         #
