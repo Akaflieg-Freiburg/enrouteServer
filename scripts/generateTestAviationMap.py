@@ -20,5 +20,5 @@ featureCollection = {'type': 'FeatureCollection', 'info': infoString, 'features'
 
 # Generate GeoJSON and write it to a file
 geojson = json.dumps(featureCollection, sort_keys=True, separators=(',', ':'))
-file = open('testdAviationMap.geojson', 'w')
+file = open('testAviationMap.geojson', 'w')
 file.write(geojson)

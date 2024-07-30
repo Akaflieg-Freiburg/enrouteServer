@@ -464,8 +464,7 @@ def readOpenAIPAirspaces():
         # 32: VFR Sector
         # 33: FIS Sector
         if item['type'] == 33:
-            continue # Ignore. We take our FIS sectors from open flightmaps
-
+            properties['CAT'] = 'FIS'
         #
         # If CAT has not yet been assigned, look at the ICAO class of the airspace
         # 
@@ -495,11 +494,18 @@ def readOpenAIPAirspaces():
 
         # Get further properties
         properties['NAM'] = item['name']
+        if 'frequencies' in item:
+            for frequency in item['frequencies']:
+                if 'name' in frequency:
+                    properties['NAM'] = properties['NAM'].replace(" " + frequency['value'] + " MHZ", '')
+                    properties['NAM'] = properties['NAM'].replace(" " + frequency['value'] + " MHz", '')
+                    properties['NAM'] = properties['NAM'].replace(" " + frequency['value'], '')
+
         properties['TYP'] = "AS"
         properties['BOT'] = interpretLimit(item['lowerLimit'], item)
         properties['TOP'] = interpretLimit(item['upperLimit'], item)
 
-        # Get MLI
+        # Prepare ML=airspace labels, to be shown in the moving map
         ML = []
         if item['icaoClass'] == 0: # A
             ML.append('A')
@@ -515,14 +521,21 @@ def readOpenAIPAirspaces():
             ML.append('F')
         if item['icaoClass'] == 6: # G
             ML.append('G')
-        if properties['CAT'] in ['DNG', 'FIR', 'FIS', 'P', 'R', 'TMZ']:
+        if properties['CAT'] in ['DNG', 'FIR', 'P', 'R', 'TMZ']:
             ML.append(properties['NAM'])
+        if properties['CAT'] == 'FIS':
+            # Shorten name by removing all appearances of 'FIS' and 'SIV'
+            properties['NAM'] = properties['NAM'].replace('FIS ', '')
+            properties['NAM'] = properties['NAM'].replace('SIV ', '')
+            ML.append('FIS • ' + properties['NAM'])
         if properties['CAT'] == 'SUA':
             ML.append(properties['CAT'])
             ML.append(properties['NAM'])
         if properties['CAT'] in ['GLD', 'NRA', 'PJE', 'RMZ', 'TIA', 'TIZ']:
             ML.append(properties['CAT'])
 
+        # Prepare two variants of the airspace labels, MLI = labels with
+        # imperial unity, and MLM = labels with metric units.
         MLI = copy.deepcopy(ML)
         MLI.append(properties['BOT'] + " - " + properties['TOP']) 
         properties['MLI'] = ' • '.join(MLI)
@@ -530,7 +543,18 @@ def readOpenAIPAirspaces():
         MLM = ML
         MLM.append(interpretLimitMetric(item['lowerLimit'], item) + " - " + interpretLimitMetric(item['upperLimit'], item)) 
         properties['MLM'] = ' • '.join(MLM)
-        
+
+        if 'frequencies' in item:
+            lastName = "xxxxxx"
+            for frequency in item['frequencies']:
+                if 'name' in frequency:
+                    if frequency['name'] == lastName:
+                        properties['NAM'] = properties['NAM'] + ', ' + frequency['value'] + " MHz"
+                    else:
+                        properties['NAM'] = properties['NAM'] + ' • ' + frequency['name'] + " " + frequency['value'] + " MHz"
+                    lastName = frequency['name']
+
+
         #
         # Generate feature
         #
