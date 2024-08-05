@@ -13,7 +13,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
-whatsNewText = 'As requested by our user, maps for Malawi and Turkey are now available.'
+whatsNewText = 'Issue: NOTAM data may be incomplete. Enroute Flight Navigation has become quite popular and our infrastructure receives more NOTAM requests than it can handle. We are currently expanding the infrastructure, and hope to solve the problem shortly.'
 
 # Go to output directory
 os.chdir('out')
