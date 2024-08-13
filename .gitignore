@@ -1,6 +1,7 @@
 .vscode/
 docs/
 proxy/.htaccess
+scripts/*.webp
 scripts/__pycache__
 scripts/data
 scripts/out

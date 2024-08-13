@@ -25,6 +25,7 @@ regions = [
     {'continent': 'Africa', 'name': 'Malawi', 'bbox': [32.66, -17.1455, 35.93424, -9.353419], 'country': 'Malawi'},
     {'continent': 'Africa', 'name': 'Mauritius', 'bbox': [53.54727, -22.2411, 64.54151, -9.183617], 'country': 'Mauritius'},
     {'continent': 'Africa', 'name': 'Morocco', 'bbox': [-18.1835, 20.40373, -0.997533, 36.05424], 'country': 'Morocco'},
+    {'continent': 'Africa', 'name': 'Mozambique', 'bbox': [30.17823, -26.93837, 42.53489, -9.986206], 'country': 'Mozambique'},
     {'continent': 'Africa', 'name': 'Namibia', 'bbox': [9.784615, -30.07236, 25.29929, -16.91682], 'country': 'Namibia'},
     {'continent': 'Africa', 'name': 'Reunion', 'bbox': [55.2164268, -21.3897308, 55.8366924, -20.8717136], 'country': 'France'},
     {'continent': 'Africa', 'name': 'South Africa', 'bbox': [15.99606, -47.58493, 39.24259, -22.11736], 'country': 'South Africa'},
