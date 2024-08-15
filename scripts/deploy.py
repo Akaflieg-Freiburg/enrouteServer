@@ -22,7 +22,8 @@ if FAA_KEY == "":
 
 stagingDir = "../staging"
 serverURL = 'https://cplx.vm.uni-freiburg.de/storage/enroute-GeoJSONv003'
-whatsNewText = 'As requested by our user, maps for Malawi and Turkey are now available.'
+whatsNewText = 'As requested by our users, maps for Mozambique are now available.'
+minAppVersion = '2.31.8'
 
 # Go to output directory
 os.chdir('out')
@@ -122,6 +123,7 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
 top = {'maps': maps}
 top['url'] = serverURL
 top['whatsNew'] = whatsNewText
+top['minAppVersion'] = minAppVersion
 top['FAA_ID'] = FAA_ID
 top['FAA_KEY'] = FAA_KEY
 fileName = open(stagingDir + '/maps.json', 'w')
