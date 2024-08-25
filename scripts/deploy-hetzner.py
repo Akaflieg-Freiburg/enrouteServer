@@ -14,6 +14,7 @@ import sys
 stagingDir = "../staging"
 serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
 whatsNewText = 'Maps for Mozambique are now available. NOTAM download should work normally again.'
+minAppVersion = '2.31.8'
 
 # Go to output directory
 os.chdir('out')
@@ -113,6 +114,7 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
 top = {'maps': maps}
 top['url'] = serverURL
 top['whatsNew'] = whatsNewText
+top['minAppVersion'] = minAppVersion
 fileName = open(stagingDir + '/maps.json', 'w')
 fileName.write(json.dumps(top, sort_keys=True, indent=4))
 fileName.close()
