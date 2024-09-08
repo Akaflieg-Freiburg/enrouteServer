@@ -10,6 +10,4 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 cd scripts
 ./generateWorldAviationMap.py
 ./splitAviationMap.py
-./deploy.py
-./splitAviationMap.py
 ./deploy-hetzner.py
