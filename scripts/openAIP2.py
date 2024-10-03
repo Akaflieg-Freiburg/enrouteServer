@@ -95,7 +95,7 @@ def downloadOpenAIPData(typeName):
     totalPages = 1.0
     items = []
     while page <= math.ceil(totalPages):
-        my_headers = {'x-openaip-client-id' : os.environ['openAIP']}
+        my_headers = {'x-openaip-api-key' : os.environ['openAIP']}
         try:
             response = requests.get("https://api.core.openaip.net/api/"+typeName, headers=my_headers, params={'limit': 1000, 'page': page} )
             response.raise_for_status()
