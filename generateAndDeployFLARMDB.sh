@@ -8,5 +8,5 @@ set -e
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 cd scripts
-./generateFlarmDB.py
-./deploy-hetzner.py
+python3 ./generateFlarmDB.py
+python3 ./deploy-hetzner.py

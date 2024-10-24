@@ -1,5 +1,3 @@
-#!/usr/bin/python3 -u
-
 import datetime
 import filecmp
 import glob
