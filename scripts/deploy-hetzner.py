@@ -22,8 +22,8 @@ os.chdir('out')
 #
 print('Sync the staging dir with the server')
 subprocess.run(
-    "rsync -e ssh -vaz --delete "
-    + "kebekus@cplx.vm.uni-freiburg.de:/var/www/storage/enroute-GeoJSONv003/ " 
+    "rsync -e 'ssh -p222' -vaz --delete "
+    + "akafli@www595.your-server.de:public_html/enroute-data/enroute-GeoJSONv003/ " 
     + stagingDir,
     shell=True,
     check=True
