@@ -580,8 +580,6 @@ def readOpenAIPNavaids():
         #
         # Ignore the following navaids
         #
-        if item['type'] == 0:   # DME
-            continue
         if item['type'] == 1:   # TACAN
             continue
 
@@ -590,6 +588,8 @@ def readOpenAIPNavaids():
         #
         properties = {}
 
+        if item['type'] == 0:   # DME
+            properties['CAT'] = "DME"
         if item['type'] == 2:
             properties['CAT'] = "NDB"
         if item['type'] == 3:
