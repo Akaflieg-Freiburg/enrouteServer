@@ -257,6 +257,9 @@ def readOpenAIPAirports(airportData):
                 if frequency['type'] == 21: # 21: VOLMET
                     name = 'VOLMET'
                     type = 'INFO'
+                if frequency['type'] == 22: # 22: AFIS
+                    name = 'AFIS'
+                    type = 'COM'
 
                 if 'name' in frequency:
                     name = frequency['name']
