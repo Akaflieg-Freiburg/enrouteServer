@@ -33,7 +33,7 @@ subprocess.run(
 #
 # Copy files over to the mapStorageDir
 #
-for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.terrain", recursive=True)+glob.glob("**/*.txt", recursive=True):
+for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.terrain", recursive=True)+glob.glob("**/*.raster", recursive=True)+glob.glob("**/*.txt", recursive=True):
     stagingFileName = stagingDir+'/'+fileName
     hasChanged = True
     
@@ -67,14 +67,14 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
             if A == B:
                 hasChanged = False
 
-        if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
+        if fileName.endswith('mbtiles') or fileName.endswith('terrain') or fileName.endswith('raster'):
             if filecmp.cmp(fileName, stagingFileName, shallow=False):
                 hasChanged = False
     else:
         hasChanged = True
                 
     if hasChanged:
-        if fileName.endswith('mbtiles') or fileName.endswith('terrain'):
+        if fileName.endswith('mbtiles') or fileName.endswith('terrain') or fileName.endswith('raster'):
             print('\033[1mMove {} to staging dir\033[0m'.format(fileName))
             shutil.move(fileName, stagingFileName)
         else:
