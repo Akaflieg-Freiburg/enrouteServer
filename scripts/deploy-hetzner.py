@@ -92,7 +92,7 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
 #
 print("\n\nGenerate maps.json")
 maps = []
-for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glob(stagingDir + "/**/*.mbtiles", recursive=True)+glob.glob(stagingDir + "/**/*.terrain", recursive=True)+glob.glob(stagingDir + "/**/*.txt", recursive=True):
+for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glob(stagingDir + "/**/*.mbtiles", recursive=True)+glob.glob(stagingDir + "/**/*.terrain", recursive=True)+glob.glob(stagingDir + "/**/*.raster", recursive=True)+glob.glob(stagingDir + "/**/*.txt", recursive=True):
     map = {}
     map['path']  = fileName.replace(stagingDir + "/", "")
     t = os.path.getmtime(fileName)
