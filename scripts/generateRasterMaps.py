@@ -1,5 +1,6 @@
 import requests
 import os
+import shutil
 from datetime import datetime
 import email.utils  # For parsing HTTP date strings
 import GeoTIFF2MBTILES
@@ -24,7 +25,8 @@ maps = [
 for map in maps:
     print(map['name'])
     chunk_size = 8192  # Download 8KB at a time (adjust as needed)
-    local_filename = map['name'] + '.tiff'
+    local_filename_tiff = 'tiff_storage/' + map['name'] + '.tiff'
+    local_filename_raster = map['name'] + '.raster'
 
     # Get the remote file's last modified time (from headers)
     response = requests.head(map['url'])  # HEAD request to avoid downloading the file
@@ -40,8 +42,8 @@ for map in maps:
         remote_time = datetime(*email.utils.parsedate(remote_time_str)[:6])
 
     # Get local file's last modified time (if it exists)
-    if os.path.exists(local_filename):
-        local_time = datetime.fromtimestamp(os.path.getmtime(local_filename))
+    if os.path.exists(local_filename_tiff):
+        local_time = datetime.fromtimestamp(os.path.getmtime(local_filename_tiff))
         do_download = remote_time > local_time
         print(f"Remote file: {remote_time}, Local file: {local_time}")
     else:
@@ -56,9 +58,16 @@ for map in maps:
     response.raise_for_status()  # Check for errors
 
     # Save the file in chunks
-    with open(local_filename, 'wb') as file:
+    directory = os.path.dirname(local_filename_tiff)
+    os.makedirs(directory, exist_ok=True)
+    with open(local_filename_tiff, 'wb') as file:
         for chunk in response.iter_content(chunk_size=chunk_size):
             if chunk:  # Filter out keep-alive chunks
                 file.write(chunk)
     print("Download complete!")
-    GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename, map['name'] + '.raster')
+    directory = os.path.dirname(local_filename_raster)
+    if directory != "":
+        os.makedirs(directory, exist_ok=True)
+    GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename_tiff, local_filename_raster)
+    GeoTIFF2MBTILES.update_mbtiles_metadata(local_filename_raster, map['attribution'], map['description'])
+    shutil.move(local_filename_raster, "aviation_maps/" + maps['continent'])

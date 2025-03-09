@@ -129,3 +129,53 @@ def GeoTIFF2MBTILES(infile, outfile):
     gdal.Translate(outfile, ds, options=translate_options)
 
     process_zoom_levels(outfile, target_zoom=7)
+
+def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None):
+    """
+    Update attribution and description fields in an MBTILES file.
+    
+    Args:
+        mbtiles_path (str): Path to the MBTILES file
+        attribution (str, optional): New attribution text
+        description (str, optional): New description text
+    """
+    try:
+        # Connect to the MBTILES file (SQLite database)
+        conn = sqlite3.connect(mbtiles_path)
+        cursor = conn.cursor()
+        
+        # Check if metadata table exists
+        cursor.execute("""
+            SELECT name FROM sqlite_master 
+            WHERE type='table' AND name='metadata'
+        """)
+        
+        if cursor.fetchone() is None:
+            raise ValueError("No metadata table found in the MBTILES file")
+        
+        # Update attribution if provided
+        if attribution is not None:
+            cursor.execute("""
+                INSERT OR REPLACE INTO metadata (name, value)
+                VALUES ('attribution', ?)
+            """, (attribution,))
+            
+        # Update description if provided
+        if description is not None:
+            cursor.execute("""
+                INSERT OR REPLACE INTO metadata (name, value)
+                VALUES ('description', ?)
+            """, (description,))
+        
+        # Commit changes
+        conn.commit()
+        print("Metadata updated successfully!")
+        
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        # Close the connection
+        if conn:
+            conn.close()
