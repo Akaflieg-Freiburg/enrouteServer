@@ -70,4 +70,4 @@ for map in maps:
         os.makedirs(directory, exist_ok=True)
     GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename_tiff, local_filename_raster)
     GeoTIFF2MBTILES.update_mbtiles_metadata(local_filename_raster, map['attribution'], map['description'])
-    shutil.move(local_filename_raster, "staging/" + map['continent'] + "/" + local_filename_raster)
+    shutil.move(local_filename_raster, "out/" + map['continent'] + "/" + local_filename_raster)
