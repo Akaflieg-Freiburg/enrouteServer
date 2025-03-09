@@ -9,3 +9,4 @@ scripts/staging
 scripts/worldAviationMap.geojson
 statistics/access.log.*
 statistics/filename.pickle
+**.tiff

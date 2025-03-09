@@ -118,19 +118,14 @@ def process_zoom_levels(mbtiles_path, target_zoom=7):
     conn.close()
     print("Processing complete")
 
-
-parser = argparse.ArgumentParser(description='Convert GeoTIFF to MBTiles format')
-parser.add_argument('input', help='Input GeoTIFF file path')
-parser.add_argument('output', help='Output MBTiles file path')
-args = parser.parse_args()
-
-# Open the input dataset
-gdal.UseExceptions()
-ds = gdal.Open(args.input)
+def GeoTIFF2MBTILES(infile, outfile):
+    # Open the input dataset
+    gdal.UseExceptions()
+    ds = gdal.Open(infile)
     
-# GDAL translate options with potential parameter name corrections
-print("Converting GeoTIFF to MBTILES")
-translate_options = gdal.TranslateOptions(format='MBTILES', creationOptions=['TILE_FORMAT=WEBP'])
-gdal.Translate(args.output, ds, options=translate_options)
+    # GDAL translate options with potential parameter name corrections
+    print("Converting GeoTIFF to MBTILES")
+    translate_options = gdal.TranslateOptions(format='MBTILES', creationOptions=['TILE_FORMAT=WEBP'])
+    gdal.Translate(outfile, ds, options=translate_options)
 
-process_zoom_levels(args.output, target_zoom=7)
+    process_zoom_levels(outfile, target_zoom=7)

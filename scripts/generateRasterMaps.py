@@ -2,19 +2,19 @@ import requests
 import os
 from datetime import datetime
 import email.utils  # For parsing HTTP date strings
-
+import GeoTIFF2MBTILES
 
 maps = [
     {
         'attribution': 'Federal Office of Topography swisstopo',
-        'description': 'Official Swiss ICAO Chart',
+        'description': 'Swiss ICAO Chart. For information only. The <a href="https://www.geo.admin.ch/en/general-terms-of-use-fsdi">license conditions</a> do not allow operational use.',
         'continent': 'Europe',
         'name': 'Switzerland ICAO Chart',
         'url': 'https://data.geo.admin.ch/ch.bazl.luftfahrtkarten-icao/luftfahrtkarten-icao/luftfahrtkarten-icao_total_50_2056.tif'
     },
     {
         'attribution': 'Federal Office of Topography swisstopo',
-        'description': 'Official Swiss Glider Chart',
+        'description': 'Swiss Glider Chart. For information only. The <a href="https://www.geo.admin.ch/en/general-terms-of-use-fsdi">license conditions</a> do not allow operational use.',
         'continent': 'Europe',
         'name': 'Switzerland Glider Chart',
         'url': 'https://data.geo.admin.ch/ch.bazl.segelflugkarte/segelflugkarte/segelflugkarte_total_30_2056.tif'
@@ -22,7 +22,7 @@ maps = [
 ]
 
 for map in maps:
-    print(map['attribution'])
+    print(map['name'])
     chunk_size = 8192  # Download 8KB at a time (adjust as needed)
     local_filename = map['name'] + '.tiff'
 
@@ -61,3 +61,4 @@ for map in maps:
             if chunk:  # Filter out keep-alive chunks
                 file.write(chunk)
     print("Download complete!")
+    GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename, map['name'] + '.raster')
