@@ -11,7 +11,10 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
-whatsNewText = 'Maps for Mozambique are now available. NOTAM download should work normally again.'
+whatsNewText = 'Enroute Flight Navigation now offers ICAO and Glider Charts for Switzerland. ' \
+'To download these maps, open the main menu and go to Library/Maps and Data. ' \
+'We thank the swiss Federal Office of Topography and the Federal Office of Civil Aviation for making the maps publicly available. ' \
+'Use these maps for information only. The <a href="https://www.geo.admin.ch/en/general-terms-of-use-fsdi">license conditions</a> do not allow operational use.'
 minAppVersion = '2.31.8'
 
 # Go to output directory
