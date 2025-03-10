@@ -35,11 +35,10 @@ for map in maps:
     # Check if 'Last-Modified' header exists
     remote_time_str = response.headers.get('Last-Modified')
     if not remote_time_str:
-        print("Server didn't provide Last-Modified header. Downloading anyway.")
-        do_download = True
-    else:
-        # Parse the remote timestamp (e.g., "Fri, 07 Mar 2025 12:00:00 GMT")
-        remote_time = datetime(*email.utils.parsedate(remote_time_str)[:6])
+        print("Server didn't provide Last-Modified header. Aborting")
+        exit(0)
+    # Parse the remote timestamp (e.g., "Fri, 07 Mar 2025 12:00:00 GMT")
+    remote_time = datetime(*email.utils.parsedate(remote_time_str)[:6])
 
     # Get local file's last modified time (if it exists)
     if os.path.exists(local_filename_tiff):
@@ -69,5 +68,5 @@ for map in maps:
     if directory != "":
         os.makedirs(directory, exist_ok=True)
     GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename_tiff, local_filename_raster)
-    GeoTIFF2MBTILES.update_mbtiles_metadata(local_filename_raster, map['attribution'], map['description'])
+    GeoTIFF2MBTILES.update_mbtiles_metadata(local_filename_raster, map['attribution'], map['description'], remote_time)
     shutil.move(local_filename_raster, "out/" + map['continent'] + "/" + local_filename_raster)

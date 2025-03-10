@@ -130,7 +130,7 @@ def GeoTIFF2MBTILES(infile, outfile):
 
     process_zoom_levels(outfile, target_zoom=7)
 
-def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None):
+def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None, version=None):
     """
     Update attribution and description fields in an MBTILES file.
     
@@ -153,6 +153,31 @@ def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None):
         if cursor.fetchone() is None:
             raise ValueError("No metadata table found in the MBTILES file")
         
+        # First, make sure the name column has a unique constraint
+        cursor.execute("""
+        PRAGMA table_info(metadata)
+        """)
+        columns_info = cursor.fetchall()
+        has_primary_key = any(col[5] == 1 for col in columns_info)  # Check if any column is a primary key
+
+        if not has_primary_key:
+            # Recreate the table with a primary key if it doesn't have one
+            cursor.execute("""
+            CREATE TABLE metadata_new (
+                name TEXT PRIMARY KEY,
+                value TEXT
+            )
+            """)
+            cursor.execute("""
+            INSERT INTO metadata_new SELECT * FROM metadata
+            """)
+            cursor.execute("""
+            DROP TABLE metadata
+            """)
+            cursor.execute("""
+            ALTER TABLE metadata_new RENAME TO metadata
+            """)
+
         # Update attribution if provided
         if attribution is not None:
             cursor.execute("""
@@ -166,6 +191,13 @@ def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None):
                 INSERT OR REPLACE INTO metadata (name, value)
                 VALUES ('description', ?)
             """, (description,))
+
+        # Update version if provided
+        if version is not None:
+            cursor.execute("""
+                REPLACE INTO metadata (name, value)
+                VALUES ('version', ?)
+            """, (version,))
         
         # Commit changes
         conn.commit()
