@@ -4,6 +4,7 @@ import math
 from osgeo import gdal
 from PIL import Image
 import io
+import sys
 
 def get_existing_zoom_level(db_path):
     """Get the zoom level from the MBTILES metadata"""
@@ -211,3 +212,12 @@ def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None, ve
         # Close the connection
         if conn:
             conn.close()
+    
+if __name__ == "__main__":
+    # If no arguments, print help and exit
+    if len(sys.argv) != 3:
+        print("Convert GeoTIFF files to MBTiles format")
+        print("Usage:")
+        print("python GeoTIFF2MBTILES.py input.tif output.mbtiles")
+        sys.exit(-1)
+    GeoTIFF2MBTILES(sys.argv[1], sys.argv[2])
