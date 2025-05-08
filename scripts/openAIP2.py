@@ -56,6 +56,8 @@ def interpretLimit(limit, item):
         return value + ' AGL'
     if limit['referenceDatum'] == 1:
         return value
+    if limit['referenceDatum'] == 2:
+        return value + ' STD'
     print('Invalid airspace limit')
     print(item)
     print(limit)
@@ -76,6 +78,8 @@ def interpretLimitMetric(limit, item):
         return value + ' m AGL'
     if limit['referenceDatum'] == 1:
         return value + ' m'
+    if limit['referenceDatum'] == 2:
+        return value + ' m STD'
     print('Invalid airspace limit')
     print(item)
     print(limit)
