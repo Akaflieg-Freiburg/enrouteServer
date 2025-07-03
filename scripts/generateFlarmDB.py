@@ -34,7 +34,7 @@ def readFlarmnetDB(dictionary):
     validReg = re.compile('^([A-Z0-9]{1,2}-[A-Z0-9]*|N[A-Z0-9]{2,6})$')
 
     try:
-        response = requests.get('https://www.flarmnet.org/static/files/wfn/data.fln')
+        response = requests.get('https://www.flarmnet.org/files/data.fln')
         response.raise_for_status()
         # Code here will only run if the request is successful
     except requests.exceptions.HTTPError as errh:
