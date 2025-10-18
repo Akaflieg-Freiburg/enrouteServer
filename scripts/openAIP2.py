@@ -268,7 +268,7 @@ def readOpenAIPAirports(airportData):
                 if 'name' in frequency:
                     name = frequency['name']
                 if not frequency['value'] in name:
-                    name = name + ' ' + frequency['value'] + ' MHz'
+                    name = name + ' ' + frequency['value']
 
                 if type == 'COM':
                     COMs.append(name)
@@ -556,9 +556,9 @@ def readOpenAIPAirspaces():
             for frequency in item['frequencies']:
                 if 'name' in frequency:
                     if frequency['name'] == lastName:
-                        properties['NAM'] = properties['NAM'] + ', ' + frequency['value'] + " MHz"
+                        properties['NAM'] = properties['NAM'] + ', ' + frequency['value']
                     else:
-                        properties['NAM'] = properties['NAM'] + ' • ' + frequency['name'] + " " + frequency['value'] + " MHz"
+                        properties['NAM'] = properties['NAM'] + ' • ' + frequency['name'] + " " + frequency['value']
                     lastName = frequency['name']
 
 
