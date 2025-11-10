@@ -377,7 +377,7 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, co
     use with the enrouteMap style.
 
     The coordiante arguments specify a bounding box. The box is enlarged to fit
-    zoom level 7 tile boundaries. This way, it is ensured that the output does
+    zoom level 6 tile boundaries. This way, it is ensured that the output does
     not contain any half-filled tiles.
 
     :param pbfFileName: Name of input file
@@ -421,10 +421,10 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, co
         lat_deg = math.degrees(lat_rad)
         return (lat_deg, lon_deg)
 
-    (x, y) = deg2num(latNW, lonNW, 7.0)
-    (extLatNW, extLonNW) = num2deg(x, y+1, 7.0)
-    (x, y) = deg2num(latSE, lonSE, 7.0)
-    (extLatSE, extLonSE) = num2deg(x+1, y, 7.0)
+    (x, y) = deg2num(latNW, lonNW, 6.0)
+    (extLatNW, extLonNW) = num2deg(x, y+1, 6.0)
+    (x, y) = deg2num(latSE, lonSE, 6.0)
+    (extLatSE, extLonSE) = num2deg(x+1, y, 6.0)
 
     print('Run Osmium extract')
     subprocess.run(
