@@ -73,7 +73,7 @@ def getWebp(zoom, x, y):
             # Check the red value
             if r < 128:
                 # Set new RGB values
-                new_r = 127
+                new_r = 128
                 new_g = 0
                 new_b = 0
 
