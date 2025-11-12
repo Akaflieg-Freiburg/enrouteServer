@@ -369,7 +369,7 @@ def removeForeignTiles(filename, country):
     dbConnection.close()
 
 
-def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, country):
+def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName, country):
     """Converts openstreetmap PBF file into mbtiles
 
     This method converts a PBF file with openstreetmap data into an mbtiles
@@ -382,16 +382,16 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, co
 
     :param pbfFileName: Name of input file
 
-    :param latNW: latitude of NW edge of bounding box
+    :param minLon: minimum longitude of the bounding box
 
-    :param lonNW: longitude of NW edge of bounding box
+    :param minLat: minimum latitude of the bounding box
 
-    :param latSE: latitude of SE edge of bounding box
+    :param maxLon: maximum longitude of the bounding box
 
-    :param lonSE: longitude of SE edge of bounding box
+    :param maxLat: maximum latitude of the bounding box
 
     :param mbtilesFileBaseName: Name of output file, without ending and without
-    path. The file will be overwritten if exists.
+        path. The file will be overwritten if exists.
 
     :param country: Country. Tiles that do not intersect this country will be
         removed.
@@ -421,18 +421,17 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, co
         lat_deg = math.degrees(lat_rad)
         return (lat_deg, lon_deg)
 
-    (x, y) = deg2num(latNW, lonNW, 6.0)
-    (extLatNW, extLonNW) = num2deg(x, y+1, 6.0)
-    (x, y) = deg2num(latSE, lonSE, 6.0)
-    (extLatSE, extLonSE) = num2deg(x+1, y, 6.0)
+    (x, y) = deg2num(minLat, minLon, 6.0)
+    (extMinLat, extMinLon) = num2deg(x, y+1, 6.0)
+    (x, y) = deg2num(maxLat, maxLon, 6.0)
+    (extMaxLat, extMaxLon) = num2deg(x+1, y, 6.0)
 
     print('Run Osmium extract')
     subprocess.run(
         "osmium extract --bbox {},{},{},{} {} "
-        "-o bboxed.pbf --overwrite".format(
-            extLonNW, extLatNW, extLonSE, extLatSE, pbfFileName),
+        "-o bboxed.pbf --overwrite".format(extMinLon, extMinLat, extMaxLon, extMaxLat, pbfFileName),
         shell=True,
-        check=True,
+        check=True
     )
 
     print('Run tilemaker')
@@ -440,7 +439,7 @@ def pbf2mbtiles(pbfFileName, lonNW, latNW, lonSE, latSE, mbtilesFileBaseName, co
         ["tilemaker",
         "--config", "tilemaker/config.json",
         "--process", "tilemaker/process.lua",
-        "--bbox", "{},{},{},{}".format(lonNW, latNW, lonSE, latSE, mbtilesFileBaseName+".mbtiles"),
+        "--bbox", "{},{},{},{}".format(minLon, minLat, maxLon, maxLat, mbtilesFileBaseName+".mbtiles"),
         "--input", "bboxed.pbf",
         "--output", mbtilesFileBaseName+".mbtiles"],
         check=True
