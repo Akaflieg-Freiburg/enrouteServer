@@ -32,11 +32,14 @@ regions = [
     {'continent': 'Africa', 'name': 'Tunisia', 'bbox': [7.520699, 30.23888, 11.84919, 37.77474], 'country': 'Tunisia'},
 
     {'continent': 'Asia', 'name': 'Bahrain', 'bbox': [50.2597, 25.5325, 50.9381, 26.6941], 'country': 'Bahrain'},
+    {'continent': 'Asia', 'name': 'Brunei', 'bbox': [114.204016555, 4.007636827, 115.450710484, 5.44772980389], 'country': 'Brunei'},
     {'continent': 'Asia', 'name': 'Japan', 'bbox': [122.5607, 21.20992, 153.8901, 45.80245], 'country': 'Japan'},
     {'continent': 'Asia', 'name': 'Laos', 'bbox': [100.115987583, 13.88109101, 107.564525181, 22.4647531194], 'country': 'Laos'},
+    {'continent': 'Asia', 'name': 'Malaysia', 'bbox': [100.085756871, 0.773131415201, 119.181903925, 6.92805288332], 'country': 'Malaysia'},
     {'continent': 'Asia', 'name': 'Nepal', 'bbox': [80.02361, 26.31982, 88.22574, 30.47746], 'country': 'Nepal'},
     {'continent': 'Asia', 'name': 'Qatar', 'bbox': [50.554, 24.467, 52.646, 26.446], 'country': 'Qatar'},
     {'continent': 'Asia', 'name': 'Sri Lanka', 'bbox': [79.16416, 5.621275, 82.64612, 10.07153], 'country': 'Sri Lanka'},
+    {'continent': 'Asia', 'name': 'Thailand', 'bbox': [97.3758964376, 5.69138418215, 105.589038527, 20.4178496363], 'country': 'Thailand'},
     {'continent': 'Asia', 'name': 'United Arab Emirates', 'bbox': [51.394, 22.594, 56.635, 26.155], 'country': 'United Arab Emirates'},
 
     {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},

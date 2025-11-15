@@ -7,10 +7,10 @@ import vector_tile
 
 import regions
 
-myRegion = ""
-if len(sys.argv) > 1:
-    myRegion = sys.argv[1]
-myRegions = [region for region in regions.regions if myRegion in region['name'] or myRegion in region['continent']]
+myRegions = [
+    region for region in regions.regions
+    if any(arg in region['name'] or arg in region['continent'] for arg in sys.argv[1:])
+]
 
 for continent in regions.continents:
     if len([region for region in myRegions if (region['continent'] == continent['name'])]) == 0:
