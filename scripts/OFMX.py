@@ -574,6 +574,7 @@ def readOFMX():
         else:
             airac_number += 1
     airac = "{:02}{:02}".format(airac_year%100, airac_number)
+    airac = "2511"  # TEMPORARY FIX TO AVOID 404 ERRORS DUE TO MISSING FILES
     print("OFM: Current AIRAC cycle is {}\n".format(airac))
 
     features = []
