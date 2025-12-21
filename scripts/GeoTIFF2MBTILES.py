@@ -43,8 +43,8 @@ def create_lower_zoom_tile(tiles):
     if not any(tiles):
         return None
         
-    # Create 512x512 output image (assuming input tiles are 256x256)
-    new_tile = Image.new('RGBA', (512, 512))
+    # Create 512x512 output image (assuming input tiles are 512x512)
+    new_tile = Image.new('RGBA', (1024, 1024))
     
     # Tile arrangement in MBTILES (y increases downward):
     # (2x, 2y)     (2x+1, 2y)    <- smaller y (top)
@@ -52,14 +52,14 @@ def create_lower_zoom_tile(tiles):
     # Maps to image coords:
     # 2 3  <- top (smaller y in image)
     # 0 1  <- bottom (larger y in image)
-    positions = [(0, 256), (256, 256), (0, 0), (256, 0)]
+    positions = [(0, 512), (512, 512), (0, 0), (512, 0)]
     
     for i, tile_data in enumerate(tiles):
         if tile_data:
             img = Image.open(io.BytesIO(tile_data))
-            # Resize to 256x256 if needed
-            if img.size != (256, 256):
-                img = img.resize((256, 256), Image.Resampling.LANCZOS)
+            # Resize to 512x512 if needed
+            if img.size != (512, 512):
+                img = img.resize((512, 512), Image.Resampling.LANCZOS)
             new_tile.paste(img, positions[i])
     
     # Convert directly to WebP using PIL
@@ -126,7 +126,7 @@ def GeoTIFF2MBTILES(infile, outfile):
     
     # GDAL translate options with potential parameter name corrections
     print("Converting GeoTIFF to MBTILES")
-    translate_options = gdal.TranslateOptions(format='MBTILES', creationOptions=['TILE_FORMAT=WEBP'])
+    translate_options = gdal.TranslateOptions(format='MBTILES', creationOptions=['TILE_FORMAT=WEBP', 'BLOCKSIZE=512'])
     gdal.Translate(outfile, ds, options=translate_options)
 
     process_zoom_levels(outfile, target_zoom=7)
