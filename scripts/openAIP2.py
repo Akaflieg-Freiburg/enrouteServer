@@ -296,7 +296,6 @@ def readOpenAIPAirports(airportData):
             RWYs = []
             bestRWY_isPaved = False
             bestRWY_dir     = 0.0
-            bestRWY_found   = False
             bestRWY_len     = 0.0
 
             for runway in item['runways']:
@@ -361,14 +360,18 @@ def readOpenAIPAirports(airportData):
                 RWYs.append(description)
                 if paved and not bestRWY_isPaved:
                     bestRWY_isPaved = True
-                    bestRWY_dir     = runway['trueHeading']
-                    bestRWY_found   = True
-                    bestRWY_len     = runway['dimension']['length']['value']
+                    if runway['alignedTrueNorth']:
+                        bestRWY_dir = runway['trueHeading']
+                    else:
+                        bestRWY_dir = runway['trueHeading'] + item['magneticDeclination']
+                    bestRWY_len = runway['dimension']['length']['value']
                 if (paved == bestRWY_isPaved) and (runway['dimension']['length']['value'] > bestRWY_len):
                     bestRWY_isPaved = paved
-                    bestRWY_dir     = runway['trueHeading']
-                    bestRWY_found   = True
-                    bestRWY_len     = runway['dimension']['length']['value']
+                    if runway['alignedTrueNorth']:
+                        bestRWY_dir = runway['trueHeading']
+                    else:
+                        bestRWY_dir = runway['trueHeading'] + item['magneticDeclination']
+                    bestRWY_len = runway['dimension']['length']['value']
 
             if RWYs != []:
                 properties['ORI'] = bestRWY_dir
