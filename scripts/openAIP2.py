@@ -64,6 +64,19 @@ def interpretLimit(limit, item):
     exit(-1)
 
 
+def interpretLimitSimple(limit, item):
+    if limit['unit'] == 6:
+        return limit['value']*100
+    if limit['unit'] == 0:
+        return round(limit['value']*3.2808)
+    if limit['unit'] == 1:
+        return limit['value']
+    print('Invalid airspace limit')
+    print(item)
+    print(limit)
+    exit(-1)
+
+
 def interpretLimitMetric(limit, item):
     if limit['unit'] == 6:
         return 'FL ' + str(round(limit['value']*100/3.2808)) + ' m'
@@ -512,6 +525,7 @@ def readOpenAIPAirspaces():
                     properties['NAM'] = properties['NAM'].replace(" " + frequency['value'], '')
 
         properties['TYP'] = "AS"
+        properties['SBO'] = interpretLimitSimple(item['lowerLimit'], item)
         properties['BOT'] = interpretLimit(item['lowerLimit'], item)
         properties['TOP'] = interpretLimit(item['upperLimit'], item)
 
