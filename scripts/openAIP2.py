@@ -65,6 +65,19 @@ def interpretLimit(limit, item):
 
 
 def interpretLimitSimple(limit, item):
+    """Parse vertical airspace limit
+
+    This method parses the item 'limit' and returns a number, which represents
+    the vertical limit in feet. The method ignores the 'referenceDatum'. It
+    assumes standard atmosphere and GND = 0 ft.
+
+    :param limit: Limit that is the be interpreted
+
+    :param item: Item, used only in debug messages.
+
+    :returns: Number, representing the vertical limit in feet.
+
+    """
     if limit['unit'] == 6:
         return limit['value']*100
     if limit['unit'] == 0:

@@ -57,11 +57,11 @@ def removeduplicate(it):
 #
 
 features = []
-#features += OFMX.readOFMX() # OFMX comes first, because we trust OFMX most
+features += OFMX.readOFMX() # OFMX comes first, because we trust OFMX most
 features += openAIP2.readOpenAIP()
 
 # Remove duplicated entries
-#features = list(removeduplicate(features))
+features = list(removeduplicate(features))
 
 # Generate feature collection, set info string
 infoString = "Generated from openAIP and open flightmaps data, {}".format(date.today())
