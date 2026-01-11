@@ -103,8 +103,9 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
     #
     # Find the relevant region and add its bounding box to the map
     #
+    pureFileName = map['path'].split('/')[-1]
     for region in regions.regions:
-        if region['name'] in map['path']:
+        if region['name'] in pureFileName:
             map['bbox'] = region['bbox']
             break
     maps.append(map)
