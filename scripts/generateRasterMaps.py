@@ -18,7 +18,7 @@ maps = [
         'description': 'Swiss Glider Chart. For information only. The <a href="https://www.geo.admin.ch/en/general-terms-of-use-fsdi">license conditions</a> do not allow operational use.',
         'continent': 'Europe',
         'name': 'Switzerland Glider Chart',
-        'url': 'https://data.geo.admin.ch/ch.bazl.segelflugkarte/segelflugkarte/segelflugkarte_total_17.5_2056.tif'
+        'url': 'https://data.geo.admin.ch/ch.bazl.segelflugkarte/segelflugkarte/segelflugkarte_total_35_2056.tif'
     }
 ]
 
