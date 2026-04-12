@@ -410,6 +410,9 @@ def readOpenAIPAirports(airportData):
            
         # Get further properties
         properties['TYP'] = 'AD'
+
+        if 'magneticDeclination' in item:
+            properties['VAR'] = item['magneticDeclination']
         
         #
         # Generate feature
@@ -657,6 +660,9 @@ def readOpenAIPNavaids():
 
         properties['MOR'] = morse(item['identifier'])
         properties['TYP'] = 'NAV'
+
+        if 'magneticDeclination' in item:
+            properties['VAR'] = item['magneticDeclination']
 
         #
         # Generate feature
