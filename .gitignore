@@ -1,0 +1,13 @@
+.vscode/
+docs/
+proxy/.htaccess
+scripts/*.webp
+scripts/__pycache__
+scripts/data
+scripts/out
+scripts/staging
+scripts/worldAviationMap.geojson
+statistics/access.log.*
+statistics/filename.pickle
+**.tiff
+**.raster
