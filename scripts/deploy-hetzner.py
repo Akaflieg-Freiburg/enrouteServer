@@ -31,24 +31,34 @@ subprocess.run(
 
 
 #
-# Copy files over to the mapStorageDir
+# Pass 1: sanity-check all files and determine which ones have changed. No file
+# is touched in this pass, so a sanity-check failure leaves the staging dir in
+# a consistent state and reports all offending files at once.
 #
+maxGeojsonSize = 40*1024*1024
+offenders = []
+filesToProcess = []
 for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtiles", recursive=True)+glob.glob("**/*.terrain", recursive=True)+glob.glob("**/*.raster", recursive=True)+glob.glob("**/*.vac", recursive=True)+glob.glob("**/*.txt", recursive=True):
     stagingFileName = stagingDir+'/'+fileName
     hasChanged = True
-    
+    Asize = os.path.getsize(fileName)
+
     #
-    # If file sizes changes by more than 10%, then probably something is wrong.
-    # In that case, exit with an error.
+    # Aviation GeoJSON files beyond all reasonable size overwhelm the app on
+    # mobile devices (see enroute issue #676). Refuse to deploy them, even if
+    # there is no previously deployed version to compare against.
     #
+    if fileName.endswith('geojson') and (Asize > maxGeojsonSize):
+        offenders.append('{} is {:.1f} MiB, exceeding the limit of {:.0f} MiB'.format(fileName, Asize/(1024*1024), maxGeojsonSize/(1024*1024)))
+
     if os.path.exists(stagingFileName):
-        Asize = os.path.getsize(fileName) 
-        Bsize = os.path.getsize(stagingFileName) 
+        #
+        # If file sizes changes by more than 10%, then probably something is
+        # wrong. In that case, exit with an error.
+        #
+        Bsize = os.path.getsize(stagingFileName)
         if (Asize < 0.9*Bsize) or (0.9*Asize > Bsize):
-            print('Size of file {} has changed by more than 10%'.format(fileName))
-            if "force" not in sys.argv:
-                print('Human intervention is required.')
-                exit(-1)
+            offenders.append('{} has changed size by more than 10% ({:.1f} MiB -> {:.1f} MiB)'.format(fileName, Bsize/(1024*1024), Asize/(1024*1024)))
 
         #
         # Check if files really did change
@@ -70,9 +80,22 @@ for fileName in glob.glob("**/*.geojson", recursive=True)+glob.glob("**/*.mbtile
         if fileName.endswith('mbtiles') or fileName.endswith('terrain') or fileName.endswith('raster') or fileName.endswith('vac'):
             if filecmp.cmp(fileName, stagingFileName, shallow=False):
                 hasChanged = False
-    else:
-        hasChanged = True
-                
+
+    filesToProcess.append((fileName, stagingFileName, hasChanged))
+
+if offenders:
+    print('\nSanity check found {} suspicious file(s):'.format(len(offenders)))
+    for offender in offenders:
+        print('  ' + offender)
+    if "force" not in sys.argv:
+        print('Human intervention is required.')
+        exit(-1)
+    print('Proceeding anyway, because "force" was given.\n')
+
+#
+# Pass 2: copy files over to the staging dir
+#
+for (fileName, stagingFileName, hasChanged) in filesToProcess:
     if hasChanged:
         if fileName.endswith('mbtiles') or fileName.endswith('terrain') or fileName.endswith('raster') or fileName.endswith('vac'):
             print('\033[1mMove {} to staging dir\033[0m'.format(fileName))

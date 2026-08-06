@@ -15,6 +15,8 @@ import math
 import re
 import requests
 import os
+import shapely
+import shapely.geometry
 
 # Dictionary representing the morse code chart
 MORSE_CODE_DICT = { 'A':'•‒', 'B':'‒•••',
@@ -110,6 +112,64 @@ def interpretLimitMetric(limit, item):
     print(item)
     print(limit)
     exit(-1)
+
+
+def _countCoordinates(coordinates):
+    if isinstance(coordinates[0], (int, float)):
+        return 1
+    return sum(_countCoordinates(c) for c in coordinates)
+
+
+def _roundCoordinates(coordinates, numCoordDigits):
+    if isinstance(coordinates[0], (int, float)):
+        return [round(c, numCoordDigits) for c in coordinates]
+    return [_roundCoordinates(c, numCoordDigits) for c in coordinates]
+
+
+def simplifyGeometry(geometry, name='', tolerance=0.0001, maxPoints=1000, numCoordDigits=5):
+    """Round coordinates and simplify oversized geometries.
+
+    All coordinates are rounded to numCoordDigits decimal places. Geometries
+    with more than maxPoints coordinate points are additionally simplified
+    with the given tolerance. Geometries below that threshold are not
+    simplified, so data that openAIP already ships in simplified form is not
+    simplified a second time.
+
+    In July 2026, openAIP imported US airspaces with full-resolution FAA
+    boundary polygons (up to 35k points per polygon, coordinates with 15
+    decimal places), which blew up "USA South.geojson" from 12 MiB to 238 MiB
+    and crashed the app on mobile devices; see enroute issue #676.
+
+    On any error, the input geometry is returned unchanged. This function
+    never drops a geometry.
+
+    :param geometry: GeoJSON geometry dictionary
+
+    :param name: name of the feature, used in warning messages
+
+    :param tolerance: simplification tolerance in degrees, about 10m
+
+    :param maxPoints: geometries with more coordinate points than this are simplified
+
+    :param numCoordDigits: number of decimal places for coordinate rounding
+
+    :returns: GeoJSON geometry dictionary
+    """
+
+    try:
+        result = geometry
+        if _countCoordinates(geometry['coordinates']) > maxPoints:
+            geom = shapely.geometry.shape(geometry)
+            if not geom.is_valid:
+                geom = shapely.make_valid(geom)
+            simplified = geom.simplify(tolerance, preserve_topology=True)
+            if (not simplified.is_empty) and simplified.is_valid:
+                result = shapely.geometry.mapping(simplified)
+        return {'type': result['type'],
+                'coordinates': _roundCoordinates(result['coordinates'], numCoordDigits)}
+    except Exception as e:
+        print('Warning: cannot simplify geometry of "{}" ({}). Keeping the original.'.format(name, e))
+        return geometry
 
 
 def downloadOpenAIPData(typeName):
@@ -418,7 +478,7 @@ def readOpenAIPAirports(airportData):
         # Generate feature
         #
         feature = {'type': 'Feature'}
-        feature['geometry'] = item['geometry']
+        feature['geometry'] = simplifyGeometry(item['geometry'], item.get('name', ''))
         feature['properties'] = properties
         features.append(feature)
     return features
@@ -599,7 +659,7 @@ def readOpenAIPAirspaces():
         # Generate feature
         #
         feature = {'type': 'Feature'}
-        feature['geometry'] = item['geometry']
+        feature['geometry'] = simplifyGeometry(item['geometry'], item.get('name', ''))
         feature['properties'] = properties
         features.append(feature)
     return features
@@ -668,7 +728,7 @@ def readOpenAIPNavaids():
         # Generate feature
         #
         feature = {'type': 'Feature'}
-        feature['geometry'] = item['geometry']
+        feature['geometry'] = simplifyGeometry(item['geometry'], item.get('name', ''))
         feature['properties'] = properties
         features.append(feature)
     return features
@@ -731,7 +791,7 @@ def readOpenAIPReportingPoints(airportData):
         # Generate feature
         #
         feature = {'type': 'Feature'}
-        feature['geometry'] = item['geometry']
+        feature['geometry'] = simplifyGeometry(item['geometry'], item.get('name', ''))
         feature['properties'] = properties
         features.append(feature)
 
