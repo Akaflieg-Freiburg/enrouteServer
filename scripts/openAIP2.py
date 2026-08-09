@@ -530,9 +530,14 @@ def readOpenAIPAirspaces():
         # 11: Upper Flight Information Region (UIR)
         # 12: Air Defense Identification Zone (ADIZ)
         if item['type'] == 13: # 13: Airport Traffic Zone (ATZ)
-            properties['CAT'] = 'ATZ' # openAIP classifies these airspaces as SUA, but they are class G
+            properties['CAT'] = 'ATZ'
         if item['type'] == 14: # 14: Military Airport Traffic Zone (MATZ)
-            properties['CAT'] = 'G' # openAIP classifies these airspaces as SUA, but they are class G
+            # MATZs that carry a proper ICAO class (Italy: D) fall through to
+            # the icaoClass block below, so that their class is preserved. Only
+            # class G/SUA MATZs (UK) are mapped to ATZ, so that they are drawn
+            # as traffic zones and not as bare class G outlines.
+            if item['icaoClass'] in [6, 7, 8]:
+                properties['CAT'] = 'ATZ'
         # 15: Airway
         # 16: Military Training Route (MTR)
         # 17: Alert Area
@@ -631,7 +636,7 @@ def readOpenAIPAirspaces():
         if properties['CAT'] == 'SUA':
             ML.append(properties['CAT'])
             ML.append(properties['NAM'])
-        if properties['CAT'] in ['GLD', 'NRA', 'PJE', 'RMZ', 'TIA', 'TIZ']:
+        if properties['CAT'] in ['ATZ', 'GLD', 'NRA', 'PJE', 'RMZ', 'TIA', 'TIZ']:
             ML.append(properties['CAT'])
 
         # Prepare two variants of the airspace labels, MLI = labels with
