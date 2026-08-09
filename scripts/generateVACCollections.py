@@ -13,8 +13,7 @@ collections = [
         'description': 'Visual approach charts for France',
         'continent': 'Europe',
         'name': 'France',
-        'url': 'sftp://www595.your-server.de/France VAC.zip',
-        'sftp_user': 'akafli_0'
+        'url': 'https://mpmediasoft.de/OpenData/AIPBrowserWW/FR/TripKits/AIP-VFR-France-Enroute.zip'
     }
 ]
 
