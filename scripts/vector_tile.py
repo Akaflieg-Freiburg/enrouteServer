@@ -341,6 +341,8 @@ def optimizeVectorTiles(filename):
     conn.commit()
 
     print("Compactifying database")
+    # Smaller pages reduce unused space in the map database.
+    c.execute("PRAGMA page_size = 4096")
     c.execute("vacuum")
     conn.commit()
 
