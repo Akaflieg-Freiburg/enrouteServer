@@ -348,19 +348,31 @@ def optimizeVectorTiles(filename):
     conn.close()
 
 
-def removeForeignTiles(filename, country):
+def removeForeignTiles(filename, country, minLon, minLat, maxLon, maxLat):
     """
-    This method removes all tiles that do not intersect the country.
+    This method removes all tiles that do not intersect the country or bounding box.
+    It sets the map bounds and center to the bounding box.
     """
 
     dbConnection = sqlite3.connect(filename)
     cursor = dbConnection.cursor()
 
     tileList = [(z,x,2**z-1-y) for (z,x,y) in cursor.execute('SELECT zoom_level, tile_column, tile_row FROM tiles')]
-    tilesToDelete = foreignTiles(tileList, country)
+    tilesToDelete = set(foreignTiles(tileList, country))
+    region = Polygon([(minLon,minLat), (maxLon,minLat), (maxLon,maxLat), (minLon,maxLat)])
+    for (z,x,y) in tileList:
+        tile = Polygon([num2lonlat(x,y,z), num2lonlat(x+1,y,z), num2lonlat(x+1,y+1,z), num2lonlat(x,y+1,z)])
+        if not region.intersects(tile):
+            tilesToDelete.add((z,x,y))
 
     for (z,x,y) in tilesToDelete:
         cursor.execute('DELETE FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?', (z,x,2**z-1-y))
+
+    centerZoom = cursor.execute("SELECT value FROM metadata WHERE name='center'").fetchone()[0].split(',')[2]
+    cursor.execute("REPLACE INTO metadata VALUES (?,?)",
+                   ('bounds', '{:.6f},{:.6f},{:.6f},{:.6f}'.format(minLon, minLat, maxLon, maxLat)))
+    cursor.execute("REPLACE INTO metadata VALUES (?,?)",
+                   ('center', '{:.6f},{:.6f},{}'.format((minLon+maxLon)/2, (minLat+maxLat)/2, centerZoom)))
 
     dbConnection.commit()
     cursor.execute("vacuum")
@@ -439,7 +451,7 @@ def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName
         ["tilemaker",
         "--config", "tilemaker/config.json",
         "--process", "tilemaker/process.lua",
-        "--bbox", "{},{},{},{}".format(minLon, minLat, maxLon, maxLat, mbtilesFileBaseName+".mbtiles"),
+        "--bbox", "{},{},{},{}".format(extMinLon, extMinLat, extMaxLon, extMaxLat),
         "--input", "bboxed.pbf",
         "--output", mbtilesFileBaseName+".mbtiles"],
         check=True
@@ -447,7 +459,7 @@ def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName
     os.remove("bboxed.pbf")
 
     print('Remove tiles that do not intersect {}'.format(country))
-    removeForeignTiles(mbtilesFileBaseName+".mbtiles", country)
+    removeForeignTiles(mbtilesFileBaseName+".mbtiles", country, minLon, minLat, maxLon, maxLat)
 
     print('Optimize vector tiles')
     optimizeVectorTiles(mbtilesFileBaseName+".mbtiles")
