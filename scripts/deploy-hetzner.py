@@ -11,7 +11,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
-whatsNewText = 'Enroute Flight Navigation now offers the official ICAO 500k raster map for France. Open the main menu and go to "Library/Maps and Data" to download it. We thank the french Service de l’Information Aéronautique for providing the data, and Quentin Bossard for making the map available in Enroute.'
+whatsNewText = 'Enroute Flight Navigation now offers aviation maps for six new regions: the Philippines, Saudi Arabia, Uruguay, North Macedonia, New Caledonia and French Polynesia. Open the main menu and go to "Library/Maps and Data" to download them. As always, the aviation data comes from openAIP; please report any errors you find to the openAIP project.'
 minAppVersion = '2.31.8'
 
 # Go to output directory

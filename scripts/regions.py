@@ -37,12 +37,16 @@ regions = [
     {'continent': 'Asia', 'name': 'Laos', 'bbox': [100.115987583, 13.88109101, 107.564525181, 22.4647531194], 'country': 'Laos'},
     {'continent': 'Asia', 'name': 'Malaysia', 'bbox': [100.085756871, 0.773131415201, 119.181903925, 6.92805288332], 'country': 'Malaysia'},
     {'continent': 'Asia', 'name': 'Nepal', 'bbox': [80.02361, 26.31982, 88.22574, 30.47746], 'country': 'Nepal'},
+    {'continent': 'Asia', 'name': 'Philippines', 'bbox': [116.95, 4.6557, 126.62, 21.122], 'country': 'Philippines'},
     {'continent': 'Asia', 'name': 'Qatar', 'bbox': [50.554, 24.467, 52.646, 26.446], 'country': 'Qatar'},
+    {'continent': 'Asia', 'name': 'Saudi Arabia', 'bbox': [34.573, 16.371, 55.638, 32.121], 'country': 'Saudi Arabia'},
     {'continent': 'Asia', 'name': 'Sri Lanka', 'bbox': [79.16416, 5.621275, 82.64612, 10.07153], 'country': 'Sri Lanka'},
     {'continent': 'Asia', 'name': 'Thailand', 'bbox': [97.3758964376, 5.69138418215, 105.589038527, 20.4178496363], 'country': 'Thailand'},
     {'continent': 'Asia', 'name': 'United Arab Emirates', 'bbox': [51.394, 22.594, 56.635, 26.155], 'country': 'United Arab Emirates'},
 
     {'continent': 'Australia Oceanica', 'name': 'Australia', 'bbox': [109.9694, -45.95665, 169.0016, -8.937109], 'country': 'Australia'},
+    {'continent': 'Australia Oceanica', 'name': 'French Polynesia', 'bbox': [-154.54, -27.641, -134.94, -7.9501], 'country': 'France'},
+    {'continent': 'Australia Oceanica', 'name': 'New Caledonia', 'bbox': [163.62, -22.671, 171.34, -19.624], 'country': 'France'},
     {'continent': 'Australia Oceanica', 'name': 'New Zealand', 'bbox': [162.096, -48.77, 179.8167, -32.667], 'country': 'New Zealand'},
     {'continent': 'Australia Oceanica', 'name': 'Vanuatu', 'bbox': [166.5415638, -20.254446647, 170.23828392, -13.071706876], 'country': 'Vanuatu'},
 
@@ -73,6 +77,7 @@ regions = [
     {'continent': 'Europe', 'name': 'Moldova', 'bbox': [26.61889, 45.4689, 30.16374, 48.49017], 'country': 'Moldova'},
     {'continent': 'Europe', 'name': 'Montenegro', 'bbox': [18.17282, 41.61621, 20.36638, 43.55504], 'country': 'Montenegro'},
     {'continent': 'Europe', 'name': 'Netherlands', 'bbox': [2.992192, 50.74753, 7.230455, 54.01786], 'country': 'Netherlands'},
+    {'continent': 'Europe', 'name': 'North Macedonia', 'bbox': [20.444, 40.849, 23.01, 42.37], 'country': 'North Macedonia'},
     {'continent': 'Europe', 'name': 'Northern Ireland', 'bbox': [-8.37516, 53.88797, -5.15067, 55.43195], 'country': 'United Kingdom'},
     {'continent': 'Europe', 'name': 'Norway', 'bbox': [-11.36801, 57.55323, 35.52711, 81.05195], 'country': 'Norway'},
     {'continent': 'Europe', 'name': 'Poland', 'bbox': [14.0998, 48.98568, 24.16522, 55.09949], 'country': 'Poland'},
@@ -98,7 +103,8 @@ regions = [
     {'continent': 'South America', 'name': 'Argentina', 'bbox': [-73.61453, -55.68296, -53.59024, -21.72575], 'country': 'Argentina'},
     {'continent': 'South America', 'name': 'Brazil', 'bbox': [-74.09056, -35.46552, -27.67249, 5.522895], 'country': 'Brazil'},
     {'continent': 'South America', 'name': 'Colombia', 'bbox': [-79.68074, -4.230484, -66.86983, 13.11676], 'country': 'Colombia'},
-    {'continent': 'South America', 'name': 'Falkland Islands', 'bbox': [-63.11192, -53.38141, -56.11363, -50.35743], 'country': 'United Kingdom'}
+    {'continent': 'South America', 'name': 'Falkland Islands', 'bbox': [-63.11192, -53.38141, -56.11363, -50.35743], 'country': 'United Kingdom'},
+    {'continent': 'South America', 'name': 'Uruguay', 'bbox': [-58.439, -34.973, -53.111, -30.097], 'country': 'Uruguay'}
 ]
 
 print('Read country boundary file')
