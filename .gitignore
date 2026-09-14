@@ -6,6 +6,7 @@ scripts/__pycache__
 scripts/data
 scripts/out
 scripts/staging
+scripts/tripkit_storage
 scripts/worldAviationMap.geojson
 statistics/access.log.*
 statistics/filename.pickle

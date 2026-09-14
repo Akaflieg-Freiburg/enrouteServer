@@ -7,9 +7,12 @@ import vector_tile
 
 import regions
 
+# Optional command-line arguments filter regions by name or continent
+# substring. Without arguments, all regions are generated.
+args = sys.argv[1:] or ['']
 myRegions = [
     region for region in regions.regions
-    if any(arg in region['name'] or arg in region['continent'] for arg in sys.argv[1:])
+    if any(arg in region['name'] or arg in region['continent'] for arg in args)
 ]
 
 for continent in regions.continents:
