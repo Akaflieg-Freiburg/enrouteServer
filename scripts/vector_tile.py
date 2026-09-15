@@ -11,6 +11,7 @@ https://github.com/mapbox/vector-tile-spec/tree/master/2.1
 import geopandas
 import math
 import gzip
+import json
 import os
 import sqlite3
 import subprocess
@@ -383,6 +384,66 @@ def removeForeignTiles(filename, country, minLon, minLat, maxLon, maxLat):
     dbConnection.close()
 
 
+def checkTilemakerSources(configFileName):
+    """Checks that every external data source in a tilemaker configuration is usable
+
+    :param configFileName: Name of the tilemaker configuration file
+
+    :raises FileNotFoundError: A layer source is unusable
+    """
+
+    with open(configFileName) as configFile:
+        config = json.load(configFile)
+
+    problems = []
+    for layerName, layer in config['layers'].items():
+        source = layer.get('source')
+        if not source:
+            continue
+
+        requiredFiles = [(source, None)]
+        if source.lower().endswith('.shp'):
+            sourceBase = source[:-4]
+            directory = os.path.dirname(sourceBase) or '.'
+            baseName = os.path.basename(sourceBase)
+            for extension in ['.shx', '.dbf']:
+                try:
+                    matches = sorted(
+                        os.path.join(directory, entry)
+                        for entry in os.listdir(directory)
+                        if os.path.splitext(entry)[0] == baseName
+                        and os.path.splitext(entry)[1].lower() == extension
+                    )
+                except OSError:
+                    matches = []
+                if len(matches) == 1:
+                    requiredFiles.append((matches[0], None))
+                elif len(matches) == 0:
+                    requiredFiles.append((sourceBase + extension, None))
+                else:
+                    requiredFiles.append((sourceBase + extension, 'ambiguous'))
+
+        for fileName, problem in requiredFiles:
+            if problem is not None:
+                problems.append('{} (layer {}): {}'.format(fileName, layerName, problem))
+            elif not os.path.exists(fileName):
+                problems.append('{} (layer {}): missing'.format(fileName, layerName))
+            elif not os.path.isfile(fileName):
+                problems.append('{} (layer {}): not a regular file'.format(fileName, layerName))
+            elif os.path.getsize(fileName) == 0:
+                problems.append('{} (layer {}): empty'.format(fileName, layerName))
+            else:
+                try:
+                    with open(fileName, 'rb') as sourceFile:
+                        sourceFile.read(1)
+                except OSError:
+                    problems.append('{} (layer {}): unreadable'.format(fileName, layerName))
+
+    if problems:
+        raise FileNotFoundError(
+            'Tilemaker data sources are unusable:\n  ' + '\n  '.join(problems))
+
+
 def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName, country):
     """Converts openstreetmap PBF file into mbtiles
 
@@ -448,6 +509,7 @@ def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName
         check=True
     )
 
+    checkTilemakerSources("tilemaker/config.json")
     print('Run tilemaker')
     subprocess.run(
         ["tilemaker",
