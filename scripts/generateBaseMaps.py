@@ -7,6 +7,11 @@ import vector_tile
 
 import regions
 
+# Fail early if any external data source for tilemaker is missing or
+# unusable, before gigabytes of OSM data are downloaded. Tilemaker itself
+# silently continues without such sources. See downloadData.sh.
+vector_tile.checkTilemakerSources(vector_tile.tilemakerConfigFileName)
+
 # Optional command-line arguments filter regions by name or continent
 # substring. Without arguments, all regions are generated.
 args = sys.argv[1:] or ['']

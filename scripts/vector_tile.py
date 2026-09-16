@@ -20,6 +20,10 @@ import vector_tile_pb2
 from datetime import date
 from shapely.geometry import Polygon
 
+# Tilemaker configuration, relative to the scripts/ directory. The data
+# sources listed in this file are also resolved relative to scripts/.
+tilemakerConfigFileName = "tilemaker/config.json"
+
 
 def num2lonlat(xtile, ytile, zoom):
     """
@@ -470,6 +474,10 @@ def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName
 
     :param country: Country. Tiles that do not intersect this country will be
         removed.
+
+    :raises FileNotFoundError: A data source listed in the tilemaker
+        configuration is missing or unusable. This is checked before any
+        data is processed.
     """
 
     def deg2num(lat_deg, lon_deg, zoom):
@@ -501,6 +509,8 @@ def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName
     (x, y) = deg2num(maxLat, maxLon, 6.0)
     (extMaxLat, extMaxLon) = num2deg(x+1, y, 6.0)
 
+    checkTilemakerSources(tilemakerConfigFileName)
+
     print('Run Osmium extract')
     subprocess.run(
         "osmium extract --bbox {},{},{},{} {} "
@@ -509,11 +519,10 @@ def pbf2mbtiles(pbfFileName, minLon, minLat, maxLon, maxLat, mbtilesFileBaseName
         check=True
     )
 
-    checkTilemakerSources("tilemaker/config.json")
     print('Run tilemaker')
     subprocess.run(
         ["tilemaker",
-        "--config", "tilemaker/config.json",
+        "--config", tilemakerConfigFileName,
         "--process", "tilemaker/process.lua",
         "--bbox", "{},{},{},{}".format(extMinLon, extMinLat, extMaxLon, extMaxLat),
         "--input", "bboxed.pbf",

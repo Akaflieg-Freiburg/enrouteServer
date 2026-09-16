@@ -4,6 +4,7 @@ proxy/.htaccess
 scripts/*.webp
 scripts/__pycache__
 scripts/data
+scripts/data.new
 scripts/out
 scripts/staging
 scripts/tripkit_storage
