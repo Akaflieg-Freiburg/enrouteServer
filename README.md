@@ -38,6 +38,22 @@ This script takes a geographic map file in MBTiles format and modifies the file 
 ./shrinkTiles.py ./europe.mbtiles
 ```
 
+### 1.4 generateRasterMaps.py
+
+This script generates raster charts in the MBTiles-based `.raster` format used by the **enroute** app and stores them in `out/{Continent}/`. Two kinds of sources are handled.
+
+* GeoTIFF charts listed in the `maps` table at the top of the script (currently the French and Swiss ICAO charts and the Swiss glider chart). They are converted with **GeoTIFF2MBTILES.py**, which requires GDAL. Source files are cached in `tiff_storage/`.
+
+* VFR charts published by [open flightmaps](https://www.openflightmaps.org) for every AIRAC cycle, listed in the `ofm_maps` table. The script downloads the slippy-tile package of each region from the open flightmaps snapshot server, caches it in `ofm_storage/{airac}/` (older cycles are deleted), and converts the merged chart layer to WEBP tiles with **SlippyTiles2MBTILES.py**. The charts are provided under the OFMA General Users' License.
+
+A chart is only regenerated when the source file has changed on the server. Optional command line arguments restrict the run to charts whose name contains one of the arguments.
+
+```shell
+./generateRasterMaps.py            # all charts
+./generateRasterMaps.py Slovenia   # only "Slovenia VFR Chart (open flightmaps)"
+```
+
+
 ## 2. Setup scripts
 
 These scripts are used by the author to setup files on a file server that is then used by the **enroute** app. These scripts make a lot of assumptions about the setof of the current home directory and are probably not universally useful.

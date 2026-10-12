@@ -38,7 +38,7 @@ regions = [
     ["epww", "Europe/Poland", "pl"],
     ["lrbb", "Europe/Romania", "ro"],
     ["lzbb", "Europe/Slovakia", "sk"],
-    ["ljla", "Europe/Slowenia", "si"],
+    ["ljla", "Europe/Slovenia", "si"],
     ["esaa", "Europe/Sweden", "se"],
     #
     # Europe - other
@@ -556,16 +556,26 @@ def downloadXML(filename):
     return result
 
 
-def readOFMX():
-    #
-    # Compute current airac cycle
-    #
+def currentAirac(today=None):
+    """
+    Compute the AIRAC cycle identifier that is current on a given day.
+
+    :param today: Date for which the AIRAC cycle is computed. Defaults to
+        today's date.
+
+    :returns: The four-digit AIRAC identifier as a string, e.g. "2610".
+        This is the identifier used in the download URLs of the open
+        flightmaps snapshot server.
+    """
+    if today is None:
+        today = datetime.date.today()
+
     airac_number = 1
     airac_year   = 2020
     airac_date   = datetime.date.fromisoformat('2020-01-02')
     airac_delta  = datetime.timedelta(days=28)
 
-    while airac_date+airac_delta < datetime.date.today():
+    while airac_date+airac_delta < today:
         airac_date += airac_delta
 
         if airac_date.year > airac_year:
@@ -573,7 +583,11 @@ def readOFMX():
             airac_number = 1
         else:
             airac_number += 1
-    airac = "{:02}{:02}".format(airac_year%100, airac_number)
+    return "{:02}{:02}".format(airac_year%100, airac_number)
+
+
+def readOFMX():
+    airac = currentAirac()
     print("OFM: Current AIRAC cycle is {}\n".format(airac))
 
     features = []

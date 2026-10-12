@@ -56,7 +56,7 @@ The pipeline has two data-source modules and a chain of generators feeding a sha
    - `generateWorldAviationMap.py` + `splitAviationMap.py` → `.geojson` aviation maps
    - `generateBaseMaps.py` → vector base maps (Geofabrik download → `osmium tags-filter` → `tilemaker`, config in `scripts/tilemaker/`)
    - `generateTerrainMaps.py` → `.terrain` elevation MBTiles
-   - `generateRasterMaps.py` → `.raster` ICAO/glider raster charts (GeoTIFF → WEBP MBTiles via `GeoTIFF2MBTILES.py`/GDAL; source TIFFs cached in `scripts/tiff_storage/`)
+   - `generateRasterMaps.py` → `.raster` raster charts: ICAO/glider GeoTIFFs (→ WEBP MBTiles via `GeoTIFF2MBTILES.py`/GDAL; source TIFFs cached in `scripts/tiff_storage/`) and open flightmaps VFR charts (per-AIRAC slippy-tile zips from the OFM snapshot bucket → WEBP MBTiles via `SlippyTiles2MBTILES.py`; zips cached in `scripts/ofm_storage/{airac}/`, older cycles deleted). Optional name-substring arguments restrict the run, e.g. `python3 generateRasterMaps.py Slovenia`.
    - `generateFlarmDB.py` → Flarm ID → callsign database
 
 4. **`deploy-hetzner.py`** rsyncs the server state into `scripts/staging/`, copies changed files from `out/` over it, regenerates `staging/maps.json` (the app's map index, including `whatsNew` text and `minAppVersion` — both hand-edited constants at the top of the script), then rsyncs staging back to the server. Safety: if any file's size changed by more than 10%, it aborts and requires a human to re-run with the `force` argument. GeoJSON files are compared with their `info` timestamp field neutralized, so a mere date change does not trigger a re-upload.
