@@ -11,7 +11,7 @@ import sys
 
 stagingDir = "../staging"
 serverURL = 'https://enroute-data.akaflieg-freiburg.de/enroute-GeoJSONv003'
-whatsNewText = 'Enroute Flight Navigation now offers aviation maps for six new regions: the Philippines, Saudi Arabia, Uruguay, North Macedonia, New Caledonia and French Polynesia. Open the main menu and go to "Library/Maps and Data" to download them. As always, the aviation data comes from openAIP; please report any errors you find to the openAIP project.'
+whatsNewText = 'Enroute Flight Navigation now offers VFR charts from open flightmaps for many European countries, including Austria, France, Germany, Italy, Poland, Sweden and Switzerland. The charts are updated with every AIRAC cycle. Open the main menu and go to "Library/Maps and Data" to download them.'
 minAppVersion = '2.31.8'
 
 # Go to output directory
