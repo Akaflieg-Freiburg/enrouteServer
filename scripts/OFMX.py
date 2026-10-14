@@ -311,6 +311,82 @@ def readFeatures_RP(root, numCoordDigits):
     return NRAfeatures
 
 
+def readBezierTrajectory(xmlNode, numCoordDigits, samplesPerCurve=10):
+    """Read a Bézier trajectory from an OFMX node and return a polyline
+
+    OFMX procedures carry their rounded geometry in a node '_beztrajectory',
+    whose child 'gmlPosList' contains a chain of cubic Bézier curves, encoded
+    in the style of an SVG path: the first point is the start anchor, and every
+    following group of three points consists of two control points and the
+    next anchor. Straight stretches are encoded as degenerate curves whose
+    control points are collinear with the anchors.
+
+    This method decodes the chain into a polyline. Straight segments are
+    emitted as a single vertex, curved segments are sampled at a fixed number
+    of parameter values, so that the rounded corners of traffic circuits
+    survive the conversion to GeoJSON.
+
+    :param xmlNode: An ElementTree xml node with a child 'gmlPosList'
+
+    :param numCoordDigits: Number of digits for coordinate pairs
+
+    :param samplesPerCurve: Number of vertices generated for each curved
+        segment
+
+    :returns: An array of coordinate pairs [longitude, latitude], or an empty
+        array if the node does not contain a valid Bézier chain.
+
+    """
+
+    posList = xmlNode.find('gmlPosList')
+    if posList is None or not posList.text:
+        return []
+
+    points = []
+    for coordinatePair in posList.text.split():
+        x = coordinatePair.split(',')
+        points.append((float(x[0]), float(x[1])))
+    if (len(points) < 2) or ((len(points)-1) % 3 != 0):
+        print("WARNING: Bézier trajectory with {} points cannot be interpreted".format(len(points)))
+        return []
+
+    def isStraight(p0, p1, p2, p3):
+        # A segment is considered straight if both control points lie on the
+        # line through the anchors, up to a tolerance of 1e-6 degrees (about
+        # 10cm). If the anchors coincide, the control points must coincide
+        # with them as well.
+        dx = p3[0]-p0[0]
+        dy = p3[1]-p0[1]
+        length = (dx*dx+dy*dy)**0.5
+        for p in (p1, p2):
+            if length < 1e-9:
+                dist = ((p[0]-p0[0])**2+(p[1]-p0[1])**2)**0.5
+            else:
+                dist = abs(dx*(p[1]-p0[1])-dy*(p[0]-p0[0]))/length
+            if dist > 1e-6:
+                return False
+        return True
+
+    coordinates = []
+    def append(p):
+        rounded = [round(p[0], numCoordDigits), round(p[1], numCoordDigits)]
+        if (len(coordinates) == 0) or (coordinates[-1] != rounded):
+            coordinates.append(rounded)
+
+    append(points[0])
+    for i in range(0, len(points)-1, 3):
+        p0, p1, p2, p3 = points[i:i+4]
+        if isStraight(p0, p1, p2, p3):
+            append(p3)
+            continue
+        for k in range(1, samplesPerCurve+1):
+            t = k/samplesPerCurve
+            u = 1.0-t
+            append((u*u*u*p0[0] + 3*u*u*t*p1[0] + 3*u*t*t*p2[0] + t*t*t*p3[0],
+                    u*u*u*p0[1] + 3*u*u*t*p1[1] + 3*u*t*t*p2[1] + t*t*t*p3[1]))
+    return coordinates
+
+
 def readFeatures_Procedures(root, numCoordDigits):
     """Generate GeoJSON for airspaces: Procedures
 
@@ -339,15 +415,13 @@ def readFeatures_Procedures(root, numCoordDigits):
         # Feature dictionary, will be filled in here and included into JSON
         PRCfeature = {'type': 'Feature'}
 
-        # Get geometry
-        coordinates = []
+        # Get geometry. The trajectory is a chain of cubic Bézier curves,
+        # which we convert into a polyline with rounded corners.
         if prc.find('_beztrajectory') == None:
             continue;
-        if prc.find('_beztrajectory').find('gmlPosList') == None:
+        coordinates = readBezierTrajectory(prc.find('_beztrajectory'), numCoordDigits)
+        if len(coordinates) < 2:
             continue;
-        for coordinatePair in prc.find('_beztrajectory').find('gmlPosList').text.split():
-            x = coordinatePair.split(',')
-            coordinates.append([round(float(x[0]), numCoordDigits), round(float(x[1]), numCoordDigits)])
         PRCfeature['geometry'] = {'type': 'LineString', 'coordinates': coordinates}
 
         # Get text name
