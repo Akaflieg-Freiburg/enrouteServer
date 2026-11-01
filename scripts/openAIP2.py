@@ -752,20 +752,19 @@ def readOpenAIPReportingPoints(airportData):
     ICAOAlpha = ["ALFA", "BRAVO", "CHARLIE", "DELTA", "ECHO", "FOXTROT", "GOLF", "HOTEL", "INDIA", "JULIETT", "KILO", "LIMA", "MIKE", "NOVEMBER", "OSCAR", "PAPA", "QUEBEC", "ROMEO", "SIERRA", "TANGO", "UNIFORM", "VICTOR", "WHISKEY", "X-RAY", "YANKEE", "ZULU"]
 
     airportCodes = {} # ICAO Codes by _id
-    airportNames = {} # Airport names by _id
     for airport in airportData:
         id = airport['_id']
         if 'icaoCode' in airport:
             airportCodes[id] = airport['icaoCode']
-        airportNames[id] = airport['name']
 
     items = downloadOpenAIPData('reporting-points')
     print("Interpreting reporting-points data…")
     features = []
     for item in items:
-        id = ""
-        if 'airports' in item:
-            id = item['airports'][0]
+        # ICAO codes of all associated airports. A reporting point may serve
+        # several airports (e.g. Jersey and Guernsey share theirs); openAIP
+        # lists them in arbitrary order, so sort for deterministic output.
+        icaoCodes = sorted({airportCodes[id] for id in item.get('airports', []) if id in airportCodes})
 
         #
         # Get properties
@@ -777,18 +776,15 @@ def readOpenAIPReportingPoints(airportData):
             properties['CAT'] = "MRP"
         else:
             properties['CAT'] = "RP"
-        if id != '':
-            properties['NAM'] = airportNames[id]+" ("+item['name']+")"
-        else:
-            properties['NAM'] = item['name']
+        properties['NAM'] = item['name']
         SCO = item['name']
         for letter in ICAOAlpha:
             SCO = re.sub(r'\b'+letter+r'\b', letter[0], SCO)
         properties['SCO'] = SCO
         properties['ELE'] = item['elevation']['value']
-        if id in airportCodes:
-            properties['COD'] = airportCodes[id]+"-"+SCO
-            properties['ICA'] = airportCodes[id]
+        if icaoCodes:
+            properties['COD'] = "/".join(icaoCodes)+"-"+SCO
+            properties['ICA'] = icaoCodes[0]
         else:
             properties['COD'] = SCO
 
