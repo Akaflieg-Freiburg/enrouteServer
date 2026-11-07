@@ -610,6 +610,15 @@ def readOpenAIPAirspaces():
         properties['BOT'] = interpretLimit(item['lowerLimit'], item)
         properties['TOP'] = interpretLimit(item['upperLimit'], item)
 
+        # Optional secondary vertical limits, e.g. "FL 115, but at least 3000
+        # ft above ground". BMN is a minimum for the lower limit, TMX a
+        # maximum for the upper limit. Both use the same string format as BOT
+        # and TOP. Apps unaware of these properties ignore them.
+        if 'lowerLimitMin' in item:
+            properties['BMN'] = interpretLimit(item['lowerLimitMin'], item)
+        if 'upperLimitMax' in item:
+            properties['TMX'] = interpretLimit(item['upperLimitMax'], item)
+
         # Prepare ML=airspace labels, to be shown in the moving map
         ML = []
         if item['icaoClass'] == 0: # A
@@ -641,12 +650,24 @@ def readOpenAIPAirspaces():
 
         # Prepare two variants of the airspace labels, MLI = labels with
         # imperial unity, and MLM = labels with metric units.
+        # Secondary limits are appended with a slash, e.g. "FL 115/3000 AGL - FL 175"
+        botI = properties['BOT']
+        topI = properties['TOP']
+        botM = interpretLimitMetric(item['lowerLimit'], item)
+        topM = interpretLimitMetric(item['upperLimit'], item)
+        if 'lowerLimitMin' in item:
+            botI += "/" + properties['BMN']
+            botM += "/" + interpretLimitMetric(item['lowerLimitMin'], item)
+        if 'upperLimitMax' in item:
+            topI += "/" + properties['TMX']
+            topM += "/" + interpretLimitMetric(item['upperLimitMax'], item)
+
         MLI = copy.deepcopy(ML)
-        MLI.append(properties['BOT'] + " - " + properties['TOP']) 
+        MLI.append(botI + " - " + topI)
         properties['MLI'] = ' • '.join(MLI)
 
         MLM = ML
-        MLM.append(interpretLimitMetric(item['lowerLimit'], item) + " - " + interpretLimitMetric(item['upperLimit'], item)) 
+        MLM.append(botM + " - " + topM)
         properties['MLM'] = ' • '.join(MLM)
 
         if 'frequencies' in item:
