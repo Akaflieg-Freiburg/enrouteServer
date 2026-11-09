@@ -94,7 +94,9 @@ def interpretLimitSimple(limit, item):
 
 def interpretLimitMetric(limit, item):
     if limit['unit'] == 6:
-        return 'FL ' + str(round(limit['value']*100/3.2808)) + ' m'
+        # Keep the original flight level, as printed on ICAO charts and used in
+        # radio communication, and add the metric equivalent, e.g. "FL 75 (2286 m)"
+        return 'FL ' + str(limit['value']) + ' (' + str(round(limit['value']*100/3.2808)) + ' m)'
     value = 0
     if limit['unit'] == 0:
         value = str(round(limit['value']))
