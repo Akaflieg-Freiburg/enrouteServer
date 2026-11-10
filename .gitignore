@@ -5,6 +5,7 @@ scripts/*.webp
 scripts/__pycache__
 scripts/data
 scripts/data.new
+scripts/dfs_storage
 scripts/ofm_storage
 scripts/out
 scripts/staging
@@ -14,3 +15,4 @@ statistics/access.log.*
 statistics/filename.pickle
 **.tiff
 **.raster
+**.raster.part

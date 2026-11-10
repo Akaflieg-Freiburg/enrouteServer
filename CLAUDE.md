@@ -29,6 +29,8 @@ python3 splitAviationMap.py [Region]  # split world map into out/{Continent}/{Re
 python3 generateBaseMaps.py <Region>  # OSM extracts → vector base maps (needs osmium, tilemaker CLIs)
 python3 generateTerrainMaps.py <Region>  # AWS terrarium elevation tiles → terrain MBTiles
 python3 deploy-hetzner.py [force]     # sync staging with server, sanity-check, upload
+python3 downloadDFS.py                # DFS tile server → "Germany ICAO Chart.raster" (stand-alone, not part of
+                                      # the deployed pipeline; tiles cached in scripts/dfs_storage/)
 
 # One-time prerequisite: Natural Earth + OSM water polygon data into scripts/data/
 cd scripts && ./downloadData.sh
