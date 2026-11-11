@@ -1,5 +1,4 @@
 .vscode/
-docs/
 proxy/.htaccess
 scripts/*.webp
 scripts/__pycache__
@@ -9,6 +8,7 @@ scripts/dfs_storage
 scripts/ofm_storage
 scripts/out
 scripts/staging
+scripts/tiff_storage
 scripts/tripkit_storage
 scripts/worldAviationMap.geojson
 statistics/access.log.*
