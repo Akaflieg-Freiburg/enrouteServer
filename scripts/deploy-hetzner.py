@@ -1,3 +1,17 @@
+"""
+deploy-hetzner
+==============
+Upload changed files from out/ to the download server and regenerate maps.json.
+Maintainer only: needs ssh access to the server.
+
+Usage (from inside scripts/)::
+
+    python3 deploy-hetzner.py [force]
+
+The script aborts if a GeoJSON file exceeds 40 MiB or if any file changed its
+size by more than 10 %, unless "force" is given. See docs/operations.md.
+"""
+
 import datetime
 import filecmp
 import glob

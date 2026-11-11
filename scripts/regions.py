@@ -1,5 +1,15 @@
 #!/usr/bin/python3
 
+"""
+regions
+=======
+Central registry of the continents and regions for which maps are generated.
+See docs/howto/add-region.md before changing anything.
+
+Importing this module reads the Natural Earth country shapes from data/, see
+downloadData.sh.
+"""
+
 from shapely.geometry import Polygon
 import geopandas
 

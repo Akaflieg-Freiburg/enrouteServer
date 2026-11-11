@@ -1,3 +1,14 @@
+"""
+GeoTIFF2MBTILES
+===============
+Convert a GeoTIFF chart into an MBTiles raster file with WEBP tiles (GDAL) and
+compute the lower zoom levels.
+
+Usage (from inside scripts/)::
+
+    python3 GeoTIFF2MBTILES.py input.tif output.mbtiles
+"""
+
 import argparse
 import sqlite3
 import math

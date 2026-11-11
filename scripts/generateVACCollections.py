@@ -1,3 +1,15 @@
+"""
+generateVACCollections
+======================
+Convert TripKit archives of visual approach charts (table "collections") into
+VAC collections and write them to out/{Continent}/{Name}.vac. Unchanged
+sources are not processed again.
+
+Usage (from inside scripts/)::
+
+    python3 generateVACCollections.py
+"""
+
 import requests
 import os
 import shutil

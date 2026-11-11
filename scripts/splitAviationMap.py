@@ -1,3 +1,17 @@
+"""
+splitAviationMap
+================
+Cut worldAviationMap.geojson into one aviation map per region of regions.py
+and write them to out/{Continent}/{Region}.geojson.
+
+Usage (from inside scripts/)::
+
+    python3 splitAviationMap.py [filter]
+
+The optional filter restricts the run to regions whose name or continent
+contains the given string.
+"""
+
 import geopandas
 import json
 import os

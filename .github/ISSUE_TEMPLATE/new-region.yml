@@ -1,0 +1,34 @@
+name: Request a new country or region
+description: Ask for maps of a country that Enroute Flight Navigation does not cover yet.
+title: "Add maps for <country>"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Aviation maps for new regions are built from [openAIP](https://www.openaip.net) data. We only add a country if that data is good enough to fly with. Please help us judge that.
+  - type: input
+    id: country
+    attributes:
+      label: Country or region
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Who are you, and where do you fly?
+      description: For example "Glider pilot, flying mostly in the north of the country."
+    validations:
+      required: true
+  - type: textarea
+    id: quality
+    attributes:
+      label: How did you check the openAIP data?
+      description: Compare airspaces, airfields, frequencies and reporting points with the official AIP. What did you find? Missing or wrong data should be fixed in openAIP first.
+    validations:
+      required: true
+  - type: textarea
+    id: other
+    attributes:
+      label: Anything else?
+      description: For example official chart sources (GeoTIFF, VACs) and their license, or open flightmaps coverage.

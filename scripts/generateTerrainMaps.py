@@ -1,5 +1,19 @@
 #!/usr/bin/python3
 
+"""
+generateTerrainMaps
+===================
+Generate terrain data (Terrarium-encoded WEBP elevation tiles, zoom 7-10) from
+the AWS Terrain Tiles and write them to out/{Continent}/{Region}.terrain.
+
+Usage (from inside scripts/)::
+
+    python3 generateTerrainMaps.py [filter]
+
+The optional filter restricts the run to regions whose name or continent
+contains the given string.
+"""
+
 import math
 import multiprocessing
 import os

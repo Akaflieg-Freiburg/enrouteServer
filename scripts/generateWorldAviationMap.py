@@ -1,3 +1,15 @@
+"""
+generateWorldAviationMap
+========================
+Read all open flightmaps (OFMX) and openAIP data, remove duplicates, and write
+one aviation map of the whole world to worldAviationMap.geojson. Needs the
+openAIP API key in the environment variable "openAIP".
+
+Usage (from inside scripts/)::
+
+    python3 generateWorldAviationMap.py
+"""
+
 from datetime import date
 
 import geopy.distance

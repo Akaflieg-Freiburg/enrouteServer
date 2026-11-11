@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Wrong airspace, airfield, frequency or reporting point outside the open flightmaps regions
+    url: https://www.openaip.net
+    about: Most aviation data comes from openAIP. Please correct it there; the maps are rebuilt from openAIP data regularly.
+  - name: Wrong data in an open flightmaps region
+    url: https://www.openflightmaps.org
+    about: For the countries covered by open flightmaps, report errors to the open flightmaps team of that country.
+  - name: Problem with the Enroute app itself
+    url: https://github.com/Akaflieg-Freiburg/enroute/issues
+    about: Crashes, user interface, features of the app.
