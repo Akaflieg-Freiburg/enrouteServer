@@ -1,13 +1,18 @@
 #!/usr/bin/python3
 
-import os
-
 """
-flarmDB
+generateFlarmDB
 ====================================
-Toolset to create a compact database the maps Flarm IDs to aircraft callsigns.
+Create a compact database that maps Flarm IDs to aircraft callsigns, from
+Flarmnet and Open Glider Network data, and write it to out/Flarm Database.txt.
+See docs/formats/flarm-database.md.
+
+Usage (from inside scripts/)::
+
+    python3 generateFlarmDB.py
 """
 
+import os
 from datetime import date
 import re
 import requests
@@ -21,8 +26,6 @@ def readFlarmnetDB(dictionary):
     dicitionary that maps Flarm IDs to aircraft callsigns. Input data where the
     'callsign' field is not obviously a well-defined callsign are ignored. This
     function will raise an exception on error
-
-    :param inFileName: Name of input file
 
     :param dictionary: Dictionary to which the results will be appended
 
@@ -74,8 +77,6 @@ def readOGNDB(dictionary):
     The method fills a dicitionary that maps Flarm IDs to aircraft callsigns.
     Input data where the 'callsign' field is not obviously a well-defined
     callsign are ignored. This function will raise an exception on error
-
-    :param inFileName: Name of input file
 
     :param dictionary: Dictionary to which the results will be appended
 
@@ -134,10 +135,6 @@ def readFlarmDB(outFileName):
     The lines in the output file are sorted alphabetically by Flarm ID.
 
     This function will raise an exception on error
-
-    :param flarmnetFileName: Name of input file
-
-    :param ognFileName: Name of input file
 
     :param outFileName: Name of output file
 

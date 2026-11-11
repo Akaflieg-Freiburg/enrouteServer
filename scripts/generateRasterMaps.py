@@ -1,3 +1,18 @@
+"""
+generateRasterMaps
+==================
+Generate raster charts from GeoTIFF sources (table "maps") and from open
+flightmaps slippy tiles (table "ofm_maps") and write them to
+out/{Continent}/{Name}.raster. Unchanged sources are not processed again.
+
+Usage (from inside scripts/)::
+
+    python3 generateRasterMaps.py [filter ...]
+
+Optional filters restrict the run to charts whose name contains one of the
+given strings. SFTP sources need the environment variable SFTP_PASSWORD.
+"""
+
 import requests
 import os
 import shutil

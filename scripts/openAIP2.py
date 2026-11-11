@@ -6,7 +6,7 @@ openAIP2
 
 Toolset to read aviation data from the openAIP2 web site and to transform the
 data into the GeoJSON format described here:
-https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+https://github.com/Akaflieg-Freiburg/enrouteServer/blob/main/docs/formats/geojson.md
 """
 
 import copy
@@ -223,7 +223,7 @@ def readOpenAIPAirports(airportData):
     :param airportData: Data about airports, as downloaded from openAIP
 
     :returns: GeoJSON feature array, in the format described here:
-        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/blob/main/docs/formats/geojson.md
 
     """
 
@@ -490,7 +490,7 @@ def readOpenAIPAirspaces():
     """Read airspaces from the openAIP2 API.
 
     :returns: GeoJSON feature array, in the format described here:
-        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/blob/main/docs/formats/geojson.md
 
     """
 
@@ -697,7 +697,7 @@ def readOpenAIPNavaids():
     """Read navaids from the openAIP2 API.
 
     :returns: GeoJSON feature array, in the format described here:
-        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/blob/main/docs/formats/geojson.md
 
     """
 
@@ -768,7 +768,7 @@ def readOpenAIPReportingPoints(airportData):
     :param airportData: Data about airports, as downloaded from openAIP
 
     :returns: GeoJSON feature array, in the format described here:
-        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/blob/main/docs/formats/geojson.md
 
     """
 
@@ -826,7 +826,7 @@ def readOpenAIP():
     """Read complete database from the openAIP2 API.
 
     :returns: GeoJSON feature array, in the format described here:
-        https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/GeoJSON-files-used-in-enroute-flight-navigation
+        https://github.com/Akaflieg-Freiburg/enrouteServer/blob/main/docs/formats/geojson.md
 
     """
 

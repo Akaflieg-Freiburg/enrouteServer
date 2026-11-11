@@ -1,89 +1,51 @@
-# enroute-server
+# enrouteServer
 
-The repository contains a number of scripts to set up server for the enroute app. These are python3 and shell scripts meant to be used from the Linux command line. They have never been used on any system other than Linux.
+This repository holds the data pipeline behind the maps of [**Enroute Flight Navigation**](https://akaflieg-freiburg.github.io/enroute/), a free flight navigation app for VFR pilots developed by [Akaflieg Freiburg](https://github.com/Akaflieg-Freiburg).
 
-## 1. Data-transforming scripts
+The Python and shell scripts here download public aviation and geographic data, convert it into formats that the app understands, and publish the results on `enroute-data.akaflieg-freiburg.de`. That is where the app downloads its maps.
 
-### 1.1 any2GeoJSON.py
+| Product | Source |
+|---|---|
+| Aviation maps: airspaces, airfields, navaids, reporting points, traffic circuits | [openAIP](https://www.openaip.net), [open flightmaps](https://www.openflightmaps.org) |
+| Vector base maps | [OpenStreetMap](https://www.openstreetmap.org) via [Geofabrik](https://download.geofabrik.de), [Natural Earth](https://www.naturalearthdata.com) |
+| Terrain data | [AWS Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) |
+| Raster charts: ICAO charts, VFR charts | swisstopo, SIA, open flightmaps |
+| Visual approach charts | SIA, via [mpmediasoft](https://mpmediasoft.de) TripKits |
+| FLARM ID database | [Flarmnet](https://www.flarmnet.org), [Open Glider Network](http://ddb.glidernet.org) |
 
-This script takes a number of files with aviation data and generates a file on GeoJSON format, suitable for use with the enroute app. The following file types are accepted as input.
-
-* asp.aip - openAIP file in XML format, containing airspace data
-
-* nav.aip - openAIP file in XML format, describing navaids
-
-* wpt.aip - openAIP file in XML format, describing airfields
-
-* aixm.xml - open flightmaps file in AIXM format
-
-The script accepts any number of files. If competing data is found in openAIP and in open flightmaps files, the data from open flightmaps is preferred.
-
-```shell
-./any2GeoJSON.py asp.aip nav.aip wpt.aip
+```mermaid
+flowchart LR
+    S[Public data sources] --> G[Generators<br/>scripts/generate*.py] --> O[(scripts/out/)] --> D[deploy-hetzner.py] --> SRV[Download server<br/>maps.json + files] --> A[Enroute app]
 ```
 
-The output file is always called **test.geojson**. Existing files with that name will be overwritten.
+## Start here
 
+- **Want to understand how it works?** Read the [architecture overview](docs/architecture.md).
+- **Want to contribute code, a new region or a new chart?** Read [CONTRIBUTING.md](CONTRIBUTING.md), then [set up a working copy](docs/setup.md). The how-tos cover [adding a region](docs/howto/add-region.md), [a raster chart](docs/howto/add-raster-chart.md) and [a VAC collection](docs/howto/add-vac-collection.md).
+- **Developing the app and need the file formats?** The [format specifications](docs/formats/README.md) are the contract between this repository and the app.
+- **Running production?** See the [operations runbook](docs/operations.md).
 
-### 1.2 flarmDB.py
+All pages are listed in the [documentation index](docs/README.md).
 
-This script takes a Flarmnet database in FLN format, as downloaded from [this URL](https://www.flarmnet.org/static/files/wfn/data.fln) on [this page](https://www.flarmnet.org/flarmnet/downloads/). The FLN is also used by LXNavigation / XCSoar, WinPilot, LK8000 and ClearNav.  It removes a lot of data and produces a much shorter file in the format described [here](https://github.com/Akaflieg-Freiburg/enrouteServer/wiki/Flarmnet-data-format).
+## Quick start
 
+Linux only. You need no server credentials to run the generators.
 
-### 1.3 shrinkTiles.py
-
-This script takes a geographic map file in MBTiles format and modifies the file in-place. It simply removes all tiles with zoom > 10 and adjusts the meta-data accordingly. This will usually reduce the file size dramatically.
-
-```shell
-./shrinkTiles.py ./europe.mbtiles
+```bash
+git clone https://github.com/Akaflieg-Freiburg/enrouteServer.git
+cd enrouteServer
+pip install -r requirements.txt          # plus GDAL and system tools, see docs/setup.md
+cd scripts
+./downloadData.sh                        # one-time: Natural Earth + OSM water polygons
+python3 generateRasterMaps.py Slovenia   # build one chart into out/Europe/
 ```
 
-### 1.4 generateRasterMaps.py
+## Missing a country, or found wrong data?
 
-This script generates raster charts in the MBTiles-based `.raster` format used by the **enroute** app and stores them in `out/{Continent}/`. Two kinds of sources are handled.
+- **Wrong or missing aviation data** (an airspace, frequency or reporting point) usually comes from the upstream databases. Please correct it at [openAIP](https://www.openaip.net) or [open flightmaps](https://www.openflightmaps.org). The maps here are rebuilt from their data regularly. If the error is not upstream, [open an issue](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/new/choose).
+- **A new country or region** can be requested with an [issue](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/new/choose). Please say how you checked that the openAIP data for that country is good enough.
+- **Problems with the app itself** belong in the [app repository](https://github.com/Akaflieg-Freiburg/enroute/issues).
 
-* GeoTIFF charts listed in the `maps` table at the top of the script (currently the French and Swiss ICAO charts and the Swiss glider chart). They are converted with **GeoTIFF2MBTILES.py**, which requires GDAL. Source files are cached in `tiff_storage/`.
+## License
 
-* VFR charts published by [open flightmaps](https://www.openflightmaps.org) for every AIRAC cycle, listed in the `ofm_maps` table. The script downloads the slippy-tile package of each region from the open flightmaps snapshot server, caches it in `ofm_storage/{airac}/` (older cycles are deleted), and converts the merged chart layer to WEBP tiles with **SlippyTiles2MBTILES.py**. The charts are provided under the OFMA General Users' License.
-
-A chart is only regenerated when the source file has changed on the server. Optional command line arguments restrict the run to charts whose name contains one of the arguments.
-
-```shell
-./generateRasterMaps.py            # all charts
-./generateRasterMaps.py Slovenia   # only "Slovenia VFR Chart (open flightmaps)"
-```
-
-
-## 2. Setup scripts
-
-These scripts are used by the author to setup files on a file server that is then used by the **enroute** app. These scripts make a lot of assumptions about the setof of the current home directory and are probably not universally useful.
-
-### 2.1 serverScript.py
-
-This script does the following.
-
-1. Downloads aviation data files from the openAIP and open flightmaps web sites
-
-2. Run **any2GeoJSON** on the files and stores the generated files in `/home/kebekus/Austausch/aviation_maps/{Continent}`, overwriting GeoJSON files that might already exist there. 
-
-3. Generate a new file `/home/kebekus/Austausch/aviation_maps/maps.json`. 
-
-4. After asking interactively for permission, it uploads all file via **rsync** to the server cplx.vm.uni-freiburg.de, where the **enroute** app expects the files.
-
-```shell
-./serverScript.py
-```
-
-### 2.2. shrinkTileSet.sh
-
-This is a trivial shell script that the author uses to set up mbtile file for use with the **enroute** app.
-
-1. The script takes a large number of mbtile files from the directory `/mnt/storage/mbtiles/raw`, copies them to `/mnt/storage/mbtiles/working/{Continent}/{Country}.mbtiles`. Look at the script to see what files are expected.
-
-2. It applies the script **shrinkTiles.py** to every copy. 
-
-3. It will then move the files to `/home/kebekus/Austausch/aviation_maps/OpenMapTiles` and delete the working directory.
-
-```shell
-./shrinkTileSet.sh
-```
+The scripts are licensed under the [GNU General Public License v3](LICENSE). The generated data is subject to the licenses of its sources, listed above. Each output file names its source in its metadata.

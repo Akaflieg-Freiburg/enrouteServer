@@ -1,5 +1,19 @@
 #!/usr/bin/python3
 
+"""
+generateBaseMaps
+================
+Generate vector base maps from OpenStreetMap data (Geofabrik extracts, osmium,
+tilemaker) and write them to out/{Continent}/{Region}.mbtiles.
+
+Usage (from inside scripts/)::
+
+    python3 generateBaseMaps.py [filter ...]
+
+Optional filters restrict the run to regions whose name or continent contains
+one of the given strings.
+"""
+
 import os
 import subprocess
 import sys
