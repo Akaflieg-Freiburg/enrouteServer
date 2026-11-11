@@ -17,7 +17,7 @@ A `.raster` file is an [MBTiles 1.3](https://github.com/mapbox/mbtiles-spec/blob
 - `tile_data` is a **WEBP** image of **512 × 512 px**, in Web Mercator (EPSG:3857).
 - The zoom range depends on the producer: 7–10 for GeoTIFF sources, 4–11 for open flightmaps. Lower zoom levels are computed from the highest one.
 
-> **Known deviation:** in files produced from GeoTIFF sources, the computed lower zoom levels currently hold 1024 × 1024 px tiles (zoom 7–9; zoom 10 is 512 px). The code comment in `GeoTIFF2MBTILES.create_lower_zoom_tile` says that 512 px was intended.
+> **Known deviation:** in files produced from GeoTIFF sources, the computed lower zoom levels currently hold 1024 × 1024 px tiles (zoom 7–9; zoom 10 is 512 px). The code comment in `GeoTIFF2MBTILES.create_lower_zoom_tile` says that 512 px was intended ([#72](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/72)).
 
 ## Metadata
 

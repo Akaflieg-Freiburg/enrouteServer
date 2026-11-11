@@ -34,4 +34,4 @@ Table `metadata(name, value)`:
 | `bounds` | `lon_min,lat_min,lon_max,lat_max` (the region's bounding box) |
 | `attribution` | attribution text required by the elevation data providers, lines separated by `<br>` |
 
-> **Known deviation:** the metadata table has no unique key. The producer inserts `attribution` twice, the second time with the value `None yet`.
+> **Known deviation:** the metadata table has no unique key. The producer inserts `attribution` twice, the second time with the value `None yet` ([#73](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/73)).

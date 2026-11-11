@@ -73,7 +73,7 @@ The producer writes the file with sorted keys and an indentation of four spaces.
 
 `deploy-hetzner.py` adds a `bbox` by looking for the first region in [`regions.py`](../../scripts/regions.py) whose name occurs as a substring of the file name. For example, `Europe/France ICAO Chart.raster` and `Europe/France.vac` both get the bounding box of the region "France". Files that match no region, such as the databases, have no `bbox`.
 
-> **Known defect:** substring matching with "first match wins" assigns the wrong box when one region name contains another. Currently, the files of "Northern Ireland" receive the bounding box of "Ireland", which comes first in `regions.py`.
+> **Known defect:** substring matching with "first match wins" assigns the wrong box when one region name contains another. Currently, the files of "Northern Ireland" receive the bounding box of "Ireland", which comes first in `regions.py` ([#71](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/71)).
 
 ### Compressed copies
 

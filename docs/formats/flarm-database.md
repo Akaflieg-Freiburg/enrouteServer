@@ -41,7 +41,7 @@ FLARM ID database. Compiled from Flarmnet Data version 00db84 and Open Glider Ne
 
 ## Other `.txt` databases on the server
 
-The server also holds `METAR Stations.txt`. It is listed in `maps.json`, but **no script in this repository generates it**. It is a legacy file compiled in December 2024 from Aviation Weather Center data. Its first line is a comment, followed by fixed-width station identifiers.
+The server also holds `METAR Stations.txt`. It is listed in `maps.json`, but **no script in this repository generates it**. It is a legacy file compiled in December 2024 from Aviation Weather Center data. Its first line is a comment, followed by fixed-width station identifiers. See [#75](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/75).
 
 ## Changes to this specification
 
