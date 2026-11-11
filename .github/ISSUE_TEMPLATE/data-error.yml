@@ -1,0 +1,29 @@
+name: Report a data error
+description: Something in the maps is wrong or missing, and it is NOT an error in openAIP or open flightmaps.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Please check the upstream databases first.** Most data comes from [openAIP](https://www.openaip.net) or [open flightmaps](https://www.openflightmaps.org). If the error is there, fix or report it there; this benefits everyone using those databases, and our maps pick up the fix automatically.
+
+        Use this form if the upstream data is correct but our map is wrong, e.g. an item is missing, duplicated, or drawn in the wrong place.
+  - type: input
+    id: region
+    attributes:
+      label: Map / region
+      description: E.g. "Italy", "Switzerland ICAO Chart", "France VAC collection"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong?
+      description: Name, position and what you expected. A screenshot from the app helps.
+    validations:
+      required: true
+  - type: textarea
+    id: upstream
+    attributes:
+      label: What does the upstream source say?
+      description: Link to the item in openAIP or open flightmaps, or the AIP page.

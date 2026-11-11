@@ -1,0 +1,15 @@
+name: Check documentation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check links, anchors and script coverage
+      run: python3 .github/check-docs.py

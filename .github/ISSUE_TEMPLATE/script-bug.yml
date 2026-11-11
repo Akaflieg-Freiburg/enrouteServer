@@ -1,0 +1,24 @@
+name: Bug in a script
+description: A script in this repository fails or produces wrong output.
+labels: ["bug"]
+body:
+  - type: input
+    id: script
+    attributes:
+      label: Script and command line
+      description: E.g. `python3 generateBaseMaps.py Slovenia`
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      description: Include the error message or the relevant part of the output.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Linux distribution, Python version, versions of osmium/tilemaker/GDAL if relevant.
