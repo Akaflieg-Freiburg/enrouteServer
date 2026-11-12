@@ -67,7 +67,7 @@ The producer writes the file with sorted keys and an indentation of four spaces.
 | `.raster` | raster chart | [raster.md](raster.md) |
 | `.terrain` | elevation data | [terrain.md](terrain.md) |
 | `.vac` | visual approach chart collection | [vac.md](vac.md) |
-| `.txt` | database (Flarm ID database, METAR station list) | [flarm-database.md](flarm-database.md) |
+| `.txt` | database (Flarm ID database) | [flarm-database.md](flarm-database.md) |
 
 ### How the producer derives `bbox`
 
@@ -89,3 +89,4 @@ The path component `enroute-GeoJSONv003` is the version of the server layout. A 
   - updated the server URL (the old one was `cplx.vm.uni-freiburg.de/…v001`)
   - added `minAppVersion` and `bbox`
   - documented the file extensions and the `.gz` copies
+- **2026-11**: the server no longer lists `METAR Stations.txt`; the Flarm ID database is the only `.txt` file ([#75](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/75)).

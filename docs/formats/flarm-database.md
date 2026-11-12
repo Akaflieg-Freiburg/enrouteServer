@@ -39,10 +39,7 @@ FLARM ID database. Compiled from Flarmnet Data version 00db84 and Open Glider Ne
   - byte 23: `\n`
 - The lines are sorted alphabetically by device ID. The app relies on the sort order and on the fixed record length: it looks up an ID by binary search directly in the file. **Any line with a different length breaks the lookup.**
 
-## Other `.txt` databases on the server
-
-The server also holds `METAR Stations.txt`. It is listed in `maps.json`, but **no script in this repository generates it**. It is a legacy file compiled in December 2024 from Aviation Weather Center data. Its first line is a comment, followed by fixed-width station identifiers. See [#75](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/75).
-
 ## Changes to this specification
 
 - **2026-11**: moved here from the GitHub wiki. Documented the merge with Open Glider Network data, the actual header line, the byte layout and the METAR station file.
+- **2026-11**: removed the section on `METAR Stations.txt`. The app never read that file, and it has been deleted from the server ([#75](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/75)).
