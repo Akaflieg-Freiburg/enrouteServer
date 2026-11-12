@@ -17,7 +17,7 @@ The producer merges two public databases:
 1. [Flarmnet](https://www.flarmnet.org) (`https://www.flarmnet.org/files/data.fln`)
 2. the [Open Glider Network device database](http://ddb.glidernet.org) (`http://ddb.glidernet.org/download`)
 
-If both sources contain the same ID, **Flarmnet wins**. Entries whose registration does not look like a real registration are dropped. A real registration matches `^([A-Z0-9]{1,2}-[A-Z0-9]*|N[A-Z0-9]{2,6})$`, for example `D-KLJC` or `N135GS`.
+If both sources contain the same ID, **Flarmnet wins**. Entries are dropped unless the device ID consists of six hexadecimal digits and the registration looks like a real registration. A real registration matches `^([A-Z0-9]{1,2}-[A-Z0-9]{1,13}|N[A-Z0-9]{2,6})$`, for example `D-KLJC` or `N135GS`. This also guarantees that no registration is longer than 16 characters.
 
 ## File format
 
@@ -43,3 +43,4 @@ FLARM ID database. Compiled from Flarmnet Data version 00db84 and Open Glider Ne
 
 - **2026-11**: moved here from the GitHub wiki. Documented the merge with Open Glider Network data, the actual header line, the byte layout and the METAR station file.
 - **2026-11**: removed the section on `METAR Stations.txt`. The app never read that file, and it has been deleted from the server ([#75](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/75)).
+- **2026-11**: entries with malformed device IDs or registrations longer than 16 characters are now dropped, so every record is guaranteed to be 24 bytes ([#74](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/74)).

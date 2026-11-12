@@ -34,7 +34,8 @@ def readFlarmnetDB(dictionary):
     """
 
     # Regular expression to check if a callsign is valid
-    validReg = re.compile('^([A-Z0-9]{1,2}-[A-Z0-9]*|N[A-Z0-9]{2,6})$')
+    validReg = re.compile('^([A-Z0-9]{1,2}-[A-Z0-9]{1,13}|N[A-Z0-9]{2,6})$')
+    validID = re.compile('^[0-9A-F]{6}$')
 
     try:
         response = requests.get('https://www.flarmnet.org/files/data.fln')
@@ -61,7 +62,9 @@ def readFlarmnetDB(dictionary):
         FlarmID  = ascii[0:6].upper()
         callsign = ascii[27:48].strip().upper()
 
-        # Check if registration is meaningful
+        # Check if FLARM ID and registration are meaningful
+        if not validID.match(FlarmID):
+            continue
         if not validReg.match(callsign):
             continue
         if callsign == "":
@@ -85,7 +88,8 @@ def readOGNDB(dictionary):
     """
 
     # Regular expression to check if a callsign is valid
-    validReg = re.compile('^([A-Z0-9]{1,2}-[A-Z0-9]*|N[A-Z0-9]{2,6})$')
+    validReg = re.compile('^([A-Z0-9]{1,2}-[A-Z0-9]{1,13}|N[A-Z0-9]{2,6})$')
+    validID = re.compile('^[0-9A-F]{6}$')
 
     try:
         response = requests.get('http://ddb.glidernet.org/download')
@@ -111,7 +115,9 @@ def readOGNDB(dictionary):
         FlarmID  = list[1].upper()
         callsign = list[3].upper() #ascii[27:48].strip().upper()
 
-        # Check if registration is meaningful
+        # Check if FLARM ID and registration are meaningful
+        if not validID.match(FlarmID):
+            continue
         if not validReg.match(callsign):
             continue
         if callsign == "":
@@ -151,6 +157,8 @@ def readFlarmDB(outFileName):
     for FLARMID, callsign in sorted(result.items()):
         outfile.write(FLARMID)
         outfile.write(",")
+        # Every record must be exactly 24 bytes, or the app's binary search breaks
+        assert len(FLARMID) == 6 and len(callsign) <= 16, (FLARMID, callsign)
         outfile.write(callsign.ljust(16))
         outfile.write("\n")
 

@@ -104,10 +104,10 @@ def validate_mbtiles(mbtiles_path, verbose=False):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python validate_mbtiles.py <path_to_mbtiles> [--verbose]")
+        print("Usage: python3 verifyRasterMBTILES.py <path_to_mbtiles> [--verbose]")
         print("\nExample:")
-        print("  python validate_mbtiles.py tiles.mbtiles")
-        print("  python validate_mbtiles.py tiles.mbtiles --verbose")
+        print("  python3 verifyRasterMBTILES.py tiles.mbtiles")
+        print("  python3 verifyRasterMBTILES.py tiles.mbtiles --verbose")
         sys.exit(1)
     
     mbtiles_path = sys.argv[1]
