@@ -54,7 +54,8 @@ def create_lower_zoom_tile(tiles):
     if not any(tiles):
         return None
         
-    # Create 512x512 output image (assuming input tiles are 512x512)
+    # Assemble the four 512x512 child tiles in a 1024x1024 image, which is
+    # scaled down to the 512x512 output tile below
     new_tile = Image.new('RGBA', (1024, 1024))
     
     # Tile arrangement in MBTILES (y increases downward):
@@ -73,6 +74,10 @@ def create_lower_zoom_tile(tiles):
                 img = img.resize((512, 512), Image.Resampling.LANCZOS)
             new_tile.paste(img, positions[i])
     
+    # Scale down to the tile size used at all zoom levels. Lanczos keeps text
+    # crisper than plain averaging of 2x2 pixels.
+    new_tile = new_tile.resize((512, 512), Image.Resampling.LANCZOS)
+
     # Convert directly to WebP using PIL
     output = io.BytesIO()
     new_tile.save(output, format='WEBP', quality=85)
