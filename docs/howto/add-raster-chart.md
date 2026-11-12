@@ -23,7 +23,7 @@ Add an entry to the `maps` list at the top of the script:
 ```
 
 - **`name`** becomes the file name (`Europe/Switzerland ICAO Chart.raster`). It should **start with the region name from `regions.py`**, because `deploy-hetzner.py` finds the chart's bounding box by searching the file name for a region name.
-- **`url`** may be `https://…` or `sftp://host/path`. The server must send a `Last-Modified` header; the chart is rebuilt only when that date is newer than the cached copy in `tiff_storage/`. SFTP sources also need `'sftp_user'` and the environment variable `SFTP_PASSWORD`.
+- **`url`** may be `https://…` or `sftp://host/path`. The server must send a `Last-Modified` header; the file is downloaded again only when that date is newer than the cached copy in `tiff_storage/`. SFTP sources also need `'sftp_user'` and the environment variable `SFTP_PASSWORD`.
 - The GeoTIFF may use any projection that GDAL understands. It is reprojected to Web Mercator.
 
 Test it:
@@ -34,7 +34,7 @@ python3 generateRasterMaps.py "Switzerland ICAO"
 python3 verifyRasterMBTILES.py "out/Europe/Switzerland ICAO Chart.raster"
 ```
 
-If the cached TIFF in `tiff_storage/` is current, nothing is written to `out/`. Delete the cached file to force a rebuild.
+If the cached TIFF in `tiff_storage/` is current and has already been converted, nothing is written to `out/`. To force a rebuild without a new download, delete `tiff_storage/{Chart name}.tiff.converted`. To force a new download as well, delete the cached TIFF.
 
 ## An open flightmaps VFR chart
 

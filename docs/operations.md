@@ -69,5 +69,7 @@ Deleting a file in `staging/` has no effect, because the next deployment first p
 | `Error in bufferedBoundary(), country is empty` | the `country` of a region in `regions.py` is not a `SOVEREIGNT` value in Natural Earth |
 | error while reading `data/ne_10m_admin_0_countries/…` or other files in `data/` | run `./downloadData.sh` in `scripts/` |
 | `Unknown layer …` from `optimizeVectorTiles` | a layer was added to `tilemaker/config.json` but not to `vector_tile.optimizeVectorTiles` |
+| "No download needed, but the cached file needs to be converted." | the last conversion of that GeoTIFF chart did not finish, or `VERSION` in `GeoTIFF2MBTILES.py` has changed; the chart is rebuilt from the cached TIFF |
+| "Conversion error occurred: …" for a GeoTIFF chart | GDAL could not convert the cached TIFF; the deployed chart stays online and the conversion is tried again on the next run. If the TIFF is damaged, delete it from `tiff_storage/` |
 | "OFM: no raster tiles for … in cycle …" | open flightmaps has not published charts for that region in this cycle; the previously deployed chart stays online |
 | rsync asks for a password or fails | ssh key not loaded, or port 222 blocked |

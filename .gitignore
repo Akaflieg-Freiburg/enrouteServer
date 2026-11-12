@@ -16,3 +16,4 @@ statistics/filename.pickle
 **.tiff
 **.raster
 **.raster.part
+**.part.mbtiles
