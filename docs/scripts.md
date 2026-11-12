@@ -73,6 +73,7 @@ Builds elevation data from the AWS Terrain Tiles (Terrarium encoding), zoom 7–
 
 - **Argument:** optional substring that filters regions by name or continent.
 - **Writes:** `out/{Continent}/{Region}.terrain`.
+- **Cache:** finished tiles are kept in `terrain_storage/v1/{zoom}/{x}/{y}.webp`, each with an `.etag` file that holds the ETag of its source. On every run the script asks the server whether the source has changed (`If-None-Match`) and rebuilds only the tiles that have. Tiles shared by neighbouring regions are built once. If you change the tile processing in `getWebp()`, increase the version number in `cacheDir`.
 - **Tools:** `cwebp`.
 
 ### `generateRasterMaps.py [filter …]`

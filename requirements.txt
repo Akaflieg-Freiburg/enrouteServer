@@ -3,6 +3,7 @@
 # install them with the system package manager (python3-gdal), see docs/setup.md.
 geopandas
 geopy
+numpy
 paramiko
 Pillow
 # vector_tile_pb2.py is generated for protobuf 7.35.1 and refuses older runtimes

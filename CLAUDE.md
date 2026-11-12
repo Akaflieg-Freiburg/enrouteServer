@@ -53,7 +53,7 @@ The pipeline has two data-source modules and a chain of generators feeding a sha
 3. **Generators** write output into `scripts/out/{Continent}/{Region}.<ext>`:
    - `generateWorldAviationMap.py` + `splitAviationMap.py` → `.geojson` aviation maps
    - `generateBaseMaps.py` → vector base maps (Geofabrik download → `osmium tags-filter` → `tilemaker`, config in `scripts/tilemaker/`)
-   - `generateTerrainMaps.py` → `.terrain` elevation MBTiles
+   - `generateTerrainMaps.py` → `.terrain` elevation MBTiles (finished tiles cached in `scripts/terrain_storage/v1/` with the ETag of their source; bump the version in `cacheDir` when the tile processing changes)
    - `generateRasterMaps.py` → `.raster` raster charts: ICAO/glider GeoTIFFs (→ WEBP MBTiles via `GeoTIFF2MBTILES.py`/GDAL; source TIFFs cached in `scripts/tiff_storage/`) and open flightmaps VFR charts (per-AIRAC slippy-tile zips from the OFM snapshot bucket → WEBP MBTiles via `SlippyTiles2MBTILES.py`; zips cached in `scripts/ofm_storage/{airac}/`, older cycles deleted). Optional name-substring arguments restrict the run, e.g. `python3 generateRasterMaps.py Slovenia`.
    - `generateVACCollections.py` → `.vac` visual approach chart collections (TripKit zips via `TripKit2VACCollection.py`)
    - `generateFlarmDB.py` → Flarm ID → callsign database

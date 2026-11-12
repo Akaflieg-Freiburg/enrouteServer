@@ -91,7 +91,7 @@ The aviation maps combine two sources:
 | `out/` | Freshly generated files, waiting for deployment. `deploy-hetzner.py` moves changed files to `staging/` and deletes unchanged ones. | no |
 | `staging/` | A mirror of the server directory. It is synchronized with the server at the start and at the end of every deployment. | no |
 | `data/` | Natural Earth shapes and OSM water polygons, from `downloadData.sh` | no |
-| `tiff_storage/`, `ofm_storage/{airac}/`, `tripkit_storage/`, `dfs_storage/` | Download caches, so that unchanged sources are not downloaded again. Delete an entry to force a rebuild. | no |
+| `tiff_storage/`, `ofm_storage/{airac}/`, `tripkit_storage/`, `dfs_storage/`, `terrain_storage/` | Download caches, so that unchanged sources are not downloaded again. Delete an entry to force a rebuild. | no |
 | `tilemaker/` | tilemaker configuration (`config.json`) and tag processing (`process.lua`) for base maps | yes |
 
 Never edit `out/` or `staging/` by hand. Both are production data.

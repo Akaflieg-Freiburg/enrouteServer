@@ -8,6 +8,7 @@ scripts/dfs_storage
 scripts/ofm_storage
 scripts/out
 scripts/staging
+scripts/terrain_storage
 scripts/tiff_storage
 scripts/tripkit_storage
 scripts/worldAviationMap.geojson

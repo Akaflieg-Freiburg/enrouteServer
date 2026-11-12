@@ -12,12 +12,15 @@ Usage (from inside scripts/)::
 
 The optional filter restricts the run to regions whose name or continent
 contains the given string.
+
+Finished tiles are cached in terrain_storage/, together with the ETag of the
+source file. A tile is downloaded and processed again only if the server
+reports that its source has changed.
 """
 
 import math
 import multiprocessing
 import os
-from urllib import response
 import requests
 import sqlite3
 import subprocess
@@ -25,10 +28,22 @@ import sys
 import time
 import vector_tile
 
+import numpy
+
 from datetime import date
 from PIL import Image
 
 import regions
+
+
+# Directory where finished tiles are cached. The version number is part of the
+# name: increase it whenever the tile processing in getWebp() changes (clamping,
+# encoder settings, ...), so that tiles produced by the old code are ignored.
+cacheDir = 'terrain_storage/v1'
+
+# HTTP session of the current worker process, created on first use. Re-using
+# the session keeps the connection to the server open between tiles.
+session = None
 
 
 def deg2num(lat_deg, lon_deg, zoom):
@@ -45,13 +60,48 @@ def deg2num(lat_deg, lon_deg, zoom):
 
 
 def getWebp(zoom, x, y):
+    """Make sure that the cache holds a current WEBP file for the given tile
+
+    The tile is requested from the AWS Terrain Tiles. If the cache already
+    holds a WEBP file for the tile, the request is conditional (ETag of the
+    source file), and the server answers "304 Not Modified" unless the source
+    has changed. Otherwise, the source PNG is downloaded, all elevations below
+    0 m are set to 0 m, the blue channel is set to zero, and the result is
+    stored as a lossless WEBP file, together with the ETag of the source.
+
+    :param zoom: Zoom level of the tile
+
+    :param x: Column of the tile (XYZ scheme)
+
+    :param y: Row of the tile (XYZ scheme)
+
+    :returns: Name of the WEBP file in the cache
+
+    """
+
+    global session
+    if session is None:
+        session = requests.Session()
+
+    tileDir = '{}/{}/{}'.format(cacheDir, zoom, x)
+    os.makedirs(tileDir, exist_ok=True)
+    webpFileName = '{}/{}.webp'.format(tileDir, y)
+    etagFileName = '{}/{}.etag'.format(tileDir, y)
+    tmpBaseName = '{}/{}.{}.tmp'.format(tileDir, y, os.getpid())
+
+    headers = {}
+    if os.path.exists(webpFileName) and os.path.exists(etagFileName):
+        with open(etagFileName) as f:
+            headers['If-None-Match'] = f.read()
 
     retries = 1
     success = False
     while not success:
         try:
-            response = requests.get(
-                'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{}/{}/{}.png'.format(zoom, x, y))
+            response = session.get(
+                'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{}/{}/{}.png'.format(zoom, x, y),
+                headers=headers,
+                timeout=60)
             response.raise_for_status()
             success = True
         except Exception as e:
@@ -60,54 +110,51 @@ def getWebp(zoom, x, y):
             time.sleep(wait)
             retries += 1
 
-    pngFileName = '{}.{}.{}.png'.format(zoom, x, y)
-    webpFileName = '{}.{}.{}.webp'.format(zoom, x, y)
+    # Source unchanged: the cached file is current
+    if response.status_code == 304:
+        return webpFileName
 
+    pngFileName = tmpBaseName+'.png'
     with open(pngFileName, 'wb') as f:
         f.write(response.content)
-        f.close()
 
+    # Keep the red and green channels, set the blue channel to zero
     img = Image.open(pngFileName)
     matrix = ( 1, 0, 0, 0,
                0, 1, 0, 0,
                0, 0, 0, 0)
-    img = img.convert("RGB", matrix)
+    pixels = numpy.array(img.convert("RGB", matrix))
 
-    #   
-    # Next, we can to delete all data that is below -127m MSL. 
-    #
-    # Get the dimensions of the image
-    width, height = img.size
-    # Process each pixel
-    for x in range(width):
-        for y in range(height):
-            # Get the RGB values of the current pixel
-            r, g, b = img.getpixel((x, y))
+    # A red value of 128 with green 0 is 0 m MSL. Set all elevations below
+    # 0 m to 0 m. This flattens the sea floor and keeps coastal tiles small.
+    pixels[pixels[:, :, 0] < 128] = (128, 0, 0)
+    Image.fromarray(pixels).save(pngFileName)
 
-            # Check the red value
-            if r < 128:
-                # Set new RGB values
-                new_r = 128
-                new_g = 0
-                new_b = 0
-
-                # Modify the pixel with the new values
-                img.putpixel((x, y), (new_r, new_g, new_b))
-
-    img.save(pngFileName)
-
+    # "-z 8" is lossless. It is about 20 times faster than "-z 9", and the
+    # files are less than 1% larger.
     subprocess.run(
         ["cwebp",
          pngFileName,
-         "-z", "9",
+         "-z", "8",
          "-quiet",
          "-noalpha",
-         "-o", webpFileName],
+         "-o", tmpBaseName+'.webp'],
         check=True
     )
-    newBlob = open(webpFileName, 'rb').read()
     os.remove(pngFileName)
-    
+
+    # Write the ETag last, so that an interrupted run never leaves a WEBP file
+    # with an ETag that does not belong to it.
+    if os.path.exists(etagFileName):
+        os.remove(etagFileName)
+    os.replace(tmpBaseName+'.webp', webpFileName)
+    if 'ETag' in response.headers:
+        with open(tmpBaseName+'.etag', 'w') as f:
+            f.write(response.headers['ETag'])
+        os.replace(tmpBaseName+'.etag', etagFileName)
+
+    return webpFileName
+
 
 if __name__ == '__main__':
 
@@ -181,16 +228,16 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
         foreignTiles = vector_tile.foreignTiles(tiles, region['country'])
         tiles = [tile for tile in tiles if tile not in foreignTiles]
 
-        pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        pool.starmap(getWebp, tiles)
-        pool.close()
-        
-        for (zoom,x,y) in tiles:
+        # Most of the time is spent waiting for the server, so use more
+        # processes than there are CPUs.
+        with multiprocessing.Pool(max(16, multiprocessing.cpu_count())) as pool:
+            webpFileNames = pool.starmap(getWebp, tiles)
+
+        for (zoom,x,y), webpFileName in zip(tiles, webpFileNames):
             yflipped = 2**zoom-1-y
 
-            webpFileName = '{}.{}.{}.webp'.format(zoom, x, y)
-            blob = open(webpFileName, 'rb').read()
-            os.remove(webpFileName)
+            with open(webpFileName, 'rb') as f:
+                blob = f.read()
 
             cursor.execute(
                 "INSERT INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)", (zoom, x, yflipped, blob))
