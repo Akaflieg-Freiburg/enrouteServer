@@ -71,9 +71,7 @@ The producer writes the file with sorted keys and an indentation of four spaces.
 
 ### How the producer derives `bbox`
 
-`deploy-hetzner.py` adds a `bbox` by looking for the first region in [`regions.py`](../../scripts/regions.py) whose name occurs as a substring of the file name. For example, `Europe/France ICAO Chart.raster` and `Europe/France.vac` both get the bounding box of the region "France". Files that match no region, such as the databases, have no `bbox`.
-
-> **Known defect:** substring matching with "first match wins" assigns the wrong box when one region name contains another. Currently, the files of "Northern Ireland" receive the bounding box of "Ireland", which comes first in `regions.py` ([#71](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/71)).
+`deploy-hetzner.py` adds a `bbox` by looking for the regions in [`regions.py`](../../scripts/regions.py) whose name occurs as a substring of the file name, and taking the one with the longest name. For example, `Europe/France ICAO Chart.raster` and `Europe/France.vac` both get the bounding box of the region "France", and `Europe/Northern Ireland.geojson` gets the box of "Northern Ireland", not that of "Ireland". Files that match no region, such as the databases, have no `bbox`.
 
 ### Compressed copies
 
@@ -90,3 +88,4 @@ The path component `enroute-GeoJSONv003` is the version of the server layout. A 
   - added `minAppVersion` and `bbox`
   - documented the file extensions and the `.gz` copies
 - **2026-11**: the server no longer lists `METAR Stations.txt`; the Flarm ID database is the only `.txt` file ([#75](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/75)).
+- **2026-11**: the files of "Northern Ireland" carry their own `bbox`; before, they received that of "Ireland" ([#71](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/71)).

@@ -138,13 +138,16 @@ for fileName in glob.glob(stagingDir + "/**/*.geojson", recursive=True)+glob.glo
     map['size'] = os.path.getsize(fileName)
 
     #
-    # Find the relevant region and add its bounding box to the map
+    # Find the relevant region and add its bounding box to the map. Charts and
+    # VAC collections carry the region name only as part of their file name
+    # ("France ICAO Chart.raster"), so look for region names contained in the
+    # file name. Take the longest one, because region names may contain each
+    # other ("Ireland" and "Northern Ireland").
     #
     pureFileName = map['path'].split('/')[-1]
-    for region in regions.regions:
-        if region['name'] in pureFileName:
-            map['bbox'] = region['bbox']
-            break
+    matches = [region for region in regions.regions if region['name'] in pureFileName]
+    if matches:
+        map['bbox'] = max(matches, key=lambda region: len(region['name']))['bbox']
     maps.append(map)
 
 top = {'maps': maps}
