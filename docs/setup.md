@@ -22,7 +22,6 @@ pip install -r requirements.txt
 | `tilemaker` ≥ 3.0 | `generateBaseMaps.py` | build from [source](https://github.com/systemed/tilemaker) if your distribution has no recent package |
 | `curl` | `generateBaseMaps.py` | `curl` |
 | `wget`, `unzip` | `downloadData.sh` | `wget`, `unzip` |
-| `cwebp` | `generateTerrainMaps.py` | `libwebp-tools` / `webp` |
 | `zopfli` | `deploy-hetzner.py` | `zopfli` |
 | `rsync`, `ssh` | `deploy-hetzner.py` | `rsync`, `openssh-clients` / `openssh-client` |
 | `sqlite3` (optional) | inspecting output files | `sqlite` / `sqlite3` |

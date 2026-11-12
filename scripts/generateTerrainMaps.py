@@ -18,13 +18,15 @@ source file. A tile is downloaded and processed again only if the server
 reports that its source has changed.
 """
 
+import io
 import math
 import multiprocessing
 import os
 import requests
 import sqlite3
-import subprocess
+import shutil
 import sys
+import tempfile
 import time
 import vector_tile
 
@@ -114,12 +116,8 @@ def getWebp(zoom, x, y):
     if response.status_code == 304:
         return webpFileName
 
-    pngFileName = tmpBaseName+'.png'
-    with open(pngFileName, 'wb') as f:
-        f.write(response.content)
-
     # Keep the red and green channels, set the blue channel to zero
-    img = Image.open(pngFileName)
+    img = Image.open(io.BytesIO(response.content))
     matrix = ( 1, 0, 0, 0,
                0, 1, 0, 0,
                0, 0, 0, 0)
@@ -128,20 +126,18 @@ def getWebp(zoom, x, y):
     # A red value of 128 with green 0 is 0 m MSL. Set all elevations below
     # 0 m to 0 m. This flattens the sea floor and keeps coastal tiles small.
     pixels[pixels[:, :, 0] < 128] = (128, 0, 0)
-    Image.fromarray(pixels).save(pngFileName)
 
-    # "-z 8" is lossless. It is about 20 times faster than "-z 9", and the
-    # files are less than 1% larger.
-    subprocess.run(
-        ["cwebp",
-         pngFileName,
-         "-z", "8",
-         "-quiet",
-         "-noalpha",
-         "-o", tmpBaseName+'.webp'],
-        check=True
-    )
-    os.remove(pngFileName)
+    # Lossless WEBP. These settings are those of "cwebp -z 8". They are about
+    # 20 times faster than the maximal settings (quality 100), and the files
+    # are less than 1% larger.
+    webp = io.BytesIO()
+    Image.fromarray(pixels).save(webp, 'WEBP', lossless=True, quality=90, method=6)
+
+    # The only file that is written is the cache entry itself. It is written
+    # under a temporary name and then renamed, so that an interrupted run
+    # never leaves a truncated file in the cache.
+    with open(tmpBaseName+'.webp', 'wb') as f:
+        f.write(webp.getvalue())
 
     # Write the ETag last, so that an interrupted run never leaves a WEBP file
     # with an ETag that does not belong to it.
@@ -184,12 +180,10 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
 
         print("Working on country {}.".format(region['name']))
 
-        tmpFileName = '{}.terrain'.format(region['name'])
-        dbConnection = None
-        try:
-            os.remove(tmpFileName)
-        except BaseException as err:
-            True
+        # Build the file in the system's temporary directory. The directory is
+        # removed when the script ends, also if it ends with an error.
+        tmpDir = tempfile.TemporaryDirectory(prefix='generateTerrainMaps-')
+        tmpFileName = os.path.join(tmpDir.name, region['name']+'.terrain')
         dbConnection = sqlite3.connect(tmpFileName)
         cursor = dbConnection.cursor()
         cursor.execute('CREATE TABLE metadata (name text, value text, UNIQUE (name))')
@@ -256,4 +250,5 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
         dbConnection.close()
 
         os.makedirs("out/"+region['continent'], exist_ok=True)
-        os.rename(tmpFileName, fileName)
+        shutil.move(tmpFileName, fileName)
+        tmpDir.cleanup()

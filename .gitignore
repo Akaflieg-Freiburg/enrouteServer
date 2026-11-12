@@ -1,6 +1,5 @@
 .vscode/
 proxy/.htaccess
-scripts/*.webp
 scripts/__pycache__
 scripts/data
 scripts/data.new

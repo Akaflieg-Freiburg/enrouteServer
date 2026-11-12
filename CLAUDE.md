@@ -39,7 +39,7 @@ cd scripts && ./downloadData.sh
 
 - `openAIP` — openAIP API key (`x-openaip-api-key` header), needed by `openAIP2.py`.
 - `SFTP_PASSWORD` — for SFTP sources in `generateRasterMaps.py` (currently only the France ICAO chart) and `generateVACCollections.py` (currently none; France is fetched via HTTPS).
-- CLI tools: `osmium`, `tilemaker`, `curl`, `cwebp`, `zopfli`, `rsync` (server uses ssh port 222).
+- CLI tools: `osmium`, `tilemaker`, `curl`, `zopfli`, `rsync` (server uses ssh port 222).
 - Python packages: `requirements.txt`, plus GDAL (`osgeo`) from the system package manager. Details in `docs/setup.md`.
 
 ## Architecture
