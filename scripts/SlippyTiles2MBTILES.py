@@ -119,6 +119,7 @@ def SlippyTiles2MBTILES(zip_path, outfile, name, layer='merged', tile_size=512, 
         'bounds': ','.join('{:.6f}'.format(b) for b in bounds),
         'minzoom': str(min_z),
         'maxzoom': str(max_z),
+        'tileSize': str(tile_size),
     }
     cursor.executemany("INSERT INTO metadata (name, value) VALUES (?, ?)", metadata.items())
     conn.commit()

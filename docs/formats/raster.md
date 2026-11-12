@@ -15,9 +15,7 @@ A `.raster` file is an [MBTiles 1.3](https://github.com/mapbox/mbtiles-spec/blob
 - Table `tiles(zoom_level, tile_column, tile_row, tile_data)` with a unique index on `(zoom_level, tile_column, tile_row)`.
 - `tile_row` uses the **TMS** scheme (row 0 is in the south), as MBTiles requires.
 - `tile_data` is a **WEBP** image of **512 × 512 px**, in Web Mercator (EPSG:3857).
-- The zoom range depends on the producer: 7–10 for GeoTIFF sources, 4–11 for open flightmaps. Lower zoom levels are computed from the highest one.
-
-> **Known deviation:** in files produced from GeoTIFF sources, the computed lower zoom levels currently hold 1024 × 1024 px tiles (zoom 7–9; zoom 10 is 512 px). The code comment in `GeoTIFF2MBTILES.create_lower_zoom_tile` says that 512 px was intended ([#72](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/72)).
+- The zoom range depends on the producer: 7–10 or 7–11 for GeoTIFF sources (the highest level is chosen to match the resolution of the source), 4–11 for open flightmaps. Lower zoom levels are computed from the highest one.
 
 ## Metadata
 
@@ -30,6 +28,7 @@ Table `metadata(name, value)`:
 | `format` | `webp` |
 | `bounds` | `lon_min,lat_min,lon_max,lat_max` |
 | `minzoom`, `maxzoom` | zoom range present in the file |
+| `tileSize` | tile edge length in pixels, always `512`. The app passes it to the map renderer. In files without this entry (generated before November 2026), the app measures one tile instead. |
 | `attribution` | data owner, e.g. `Federal Office of Topography swisstopo` or `open flightmaps association (OFMA)`; may contain HTML links |
 | `description` | short description; for open flightmaps charts it names the AIRAC cycle and states "For information only." |
 | `version` | version of the source; for GeoTIFF sources it is the `Last-Modified` time of the remote file |

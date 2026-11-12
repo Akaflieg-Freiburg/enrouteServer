@@ -4,6 +4,8 @@ generateRasterMaps
 Generate raster charts from GeoTIFF sources (table "maps") and from open
 flightmaps slippy tiles (table "ofm_maps") and write them to
 out/{Continent}/{Name}.raster. Unchanged sources are not processed again.
+GeoTIFF sources are also converted again when the last conversion did not
+finish or was done by an older version of GeoTIFF2MBTILES.py.
 
 Usage (from inside scripts/)::
 
@@ -93,6 +95,22 @@ name_filters = sys.argv[1:]
 def is_selected(name):
     return (not name_filters) or any(f in name for f in name_filters)
 
+def conversion_stamp(tiff_filename):
+    """
+    Text that identifies a conversion of a cached GeoTIFF: the version of the
+    converter and the modification time of the file. It is stored in the file
+    tiff_filename + '.converted' after a successful conversion.
+    """
+    return f"{GeoTIFF2MBTILES.VERSION} {os.path.getmtime(tiff_filename)}"
+
+def is_converted(tiff_filename):
+    """Check if the cached GeoTIFF was converted by the current converter"""
+    try:
+        with open(tiff_filename + '.converted') as file:
+            return file.read().strip() == conversion_stamp(tiff_filename)
+    except OSError:
+        return False
+
 for map_data in maps:
     if not is_selected(map_data['name']):
         continue
@@ -134,10 +152,13 @@ for map_data in maps:
                 os.makedirs(os.path.dirname(local_filename_tiff), exist_ok=True)
                 response = requests.get(map_data['url'], stream=True)
                 response.raise_for_status()
-                with open(local_filename_tiff, 'wb') as file:
-                    for chunk in response.iter_content(chunk_size=8192):
+                # Download to a temporary file, so that an interrupted download
+                # is not mistaken for a complete one.
+                with open(local_filename_tiff + '.part', 'wb') as file:
+                    for chunk in response.iter_content(chunk_size=1024*1024):
                         if chunk:
                             file.write(chunk)
+                os.replace(local_filename_tiff + '.part', local_filename_tiff)
                 print("Download complete!")
 
         except Exception as e:
@@ -182,7 +203,10 @@ for map_data in maps:
                 print("Downloading via SFTP...")
                 os.makedirs(os.path.dirname(local_filename_tiff), exist_ok=True)
                 # SFTP handles the chunking and streaming internally via the get() method
-                sftp.get(filepath, local_filename_tiff)
+                # Download to a temporary file, so that an interrupted download
+                # is not mistaken for a complete one.
+                sftp.get(filepath, local_filename_tiff + '.part')
+                os.replace(local_filename_tiff + '.part', local_filename_tiff)
                 print("Download complete!")
                 
             # Always close connections when done
@@ -201,20 +225,25 @@ for map_data in maps:
     # PROCESSING (Common for both)
     # ---------------------------------------------------------
     if not do_download:
-        print("No download needed.")
-        continue
-        
+        if is_converted(local_filename_tiff):
+            print("No download needed.")
+            continue
+        # The last conversion failed, or GeoTIFF2MBTILES.py has changed since
+        print("No download needed, but the cached file needs to be converted.")
+
     print("Processing raster maps...")
-    directory = os.path.dirname(local_filename_raster)
-    if directory != "":
-        os.makedirs(directory, exist_ok=True)
-        
-    GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename_tiff, local_filename_raster)
+    try:
+        GeoTIFF2MBTILES.GeoTIFF2MBTILES(local_filename_tiff, local_filename_raster)
+    except Exception as e:
+        print(f"Conversion error occurred: {e}")
+        continue
     GeoTIFF2MBTILES.update_mbtiles_metadata(local_filename_raster, map_data['attribution'], map_data['description'], remote_time)
-    
+
     out_dir = "out/" + map_data['continent'] + "/"
     os.makedirs(out_dir, exist_ok=True) # Ensure the output directory exists before moving
     shutil.move(local_filename_raster, out_dir + local_filename_raster)
+    with open(local_filename_tiff + '.converted', 'w') as file:
+        file.write(conversion_stamp(local_filename_tiff))
     print("Processing complete.\n")
 
 

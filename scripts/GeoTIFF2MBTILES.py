@@ -1,151 +1,89 @@
 """
 GeoTIFF2MBTILES
 ===============
-Convert a GeoTIFF chart into an MBTiles raster file with WEBP tiles (GDAL) and
-compute the lower zoom levels.
+Convert a GeoTIFF chart into an MBTiles raster file with WEBP tiles, including
+the lower zoom levels. All image processing is done by GDAL.
 
 Usage (from inside scripts/)::
 
     python3 GeoTIFF2MBTILES.py input.tif output.mbtiles
 """
 
-import argparse
+import os
 import sqlite3
-import math
-from osgeo import gdal
-from PIL import Image
-import io
 import sys
+from osgeo import gdal
 
-def get_existing_zoom_level(db_path):
-    """Get the zoom level from the MBTILES metadata"""
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT value FROM metadata WHERE name = 'maxzoom'")
-    zoom = int(cursor.fetchone()[0])
-    conn.close()
-    return zoom
+# Version of the conversion. generateRasterMaps.py converts a cached GeoTIFF
+# again when this number differs from the one used for the last conversion.
+# Increase it whenever a change here alters the generated files.
+VERSION = 2
 
-def get_tile_bounds(db_path, zoom):
-    """Get min/max x and y coordinates for tiles at given zoom level"""
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT MIN(tile_column), MAX(tile_column), 
-               MIN(tile_row), MAX(tile_row) 
-        FROM tiles WHERE zoom_level = ?
-    """, (zoom,))
-    result = cursor.fetchone()
-    conn.close()
-    return result
+# Tile edge length in pixels, at all zoom levels
+TILE_SIZE = 512
 
-def get_tile_data(conn, z, x, y):
-    """Get tile image data from database"""
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT tile_data FROM tiles 
-        WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?
-    """, (z, x, y))
-    result = cursor.fetchone()
-    return result[0] if result else None
-
-def create_lower_zoom_tile(tiles):
-    """Create a tile by combining 4 higher-level tiles"""
-    if not any(tiles):
-        return None
-        
-    # Assemble the four 512x512 child tiles in a 1024x1024 image, which is
-    # scaled down to the 512x512 output tile below
-    new_tile = Image.new('RGBA', (1024, 1024))
-    
-    # Tile arrangement in MBTILES (y increases downward):
-    # (2x, 2y)     (2x+1, 2y)    <- smaller y (top)
-    # (2x, 2y+1)   (2x+1, 2y+1)  <- larger y (bottom)
-    # Maps to image coords:
-    # 2 3  <- top (smaller y in image)
-    # 0 1  <- bottom (larger y in image)
-    positions = [(0, 512), (512, 512), (0, 0), (512, 0)]
-    
-    for i, tile_data in enumerate(tiles):
-        if tile_data:
-            img = Image.open(io.BytesIO(tile_data))
-            # Resize to 512x512 if needed
-            if img.size != (512, 512):
-                img = img.resize((512, 512), Image.Resampling.LANCZOS)
-            new_tile.paste(img, positions[i])
-    
-    # Scale down to the tile size used at all zoom levels. Lanczos keeps text
-    # crisper than plain averaging of 2x2 pixels.
-    new_tile = new_tile.resize((512, 512), Image.Resampling.LANCZOS)
-
-    # Convert directly to WebP using PIL
-    output = io.BytesIO()
-    new_tile.save(output, format='WEBP', quality=85)
-    return output.getvalue()
-
-def process_zoom_levels(mbtiles_path, target_zoom=7):
-    """Generate lower zoom levels down to target_zoom"""
-    conn = sqlite3.connect(mbtiles_path)
-    cursor = conn.cursor()
-    
-    # Get starting zoom level
-    start_zoom = get_existing_zoom_level(mbtiles_path)
-    if start_zoom <= target_zoom:
-        print(f"Starting zoom ({start_zoom}) is already at or below target ({target_zoom})")
-        return
-    
-    # Process each zoom level
-    for current_zoom in range(start_zoom - 1, target_zoom - 1, -1):
-        print(f"Processing zoom level {current_zoom}")
-        min_x, max_x, min_y, max_y = get_tile_bounds(mbtiles_path, current_zoom + 1)
-        
-        # Calculate parent tile coordinates
-        parent_min_x = min_x // 2
-        parent_max_x = max_x // 2
-        parent_min_y = min_y // 2
-        parent_max_y = max_y // 2
-        
-        for x in range(parent_min_x, parent_max_x + 1):
-            for y in range(parent_min_y, parent_max_y + 1):
-                # Get the four child tiles
-                child_tiles = [
-                    get_tile_data(conn, current_zoom + 1, x*2, y*2),
-                    get_tile_data(conn, current_zoom + 1, x*2 + 1, y*2),
-                    get_tile_data(conn, current_zoom + 1, x*2, y*2 + 1),
-                    get_tile_data(conn, current_zoom + 1, x*2 + 1, y*2 + 1)
-                ]
-                
-                # Create and save new tile
-                new_tile_data = create_lower_zoom_tile(child_tiles)
-                if new_tile_data:
-                    cursor.execute("""
-                        INSERT OR REPLACE INTO tiles 
-                        (zoom_level, tile_column, tile_row, tile_data) 
-                        VALUES (?, ?, ?, ?)
-                    """, (current_zoom, x, y, new_tile_data))
-        
-        # Update metadata
-        cursor.execute("""
-            UPDATE metadata SET value = ? 
-            WHERE name = 'minzoom'
-        """, (current_zoom,))
-        
-        conn.commit()
-    
-    conn.close()
-    print("Processing complete")
+# Lowest zoom level in the generated files
+MIN_ZOOM = 7
 
 def GeoTIFF2MBTILES(infile, outfile):
-    # Open the input dataset
-    gdal.UseExceptions()
-    ds = gdal.Open(infile)
-    
-    # GDAL translate options with potential parameter name corrections
-    print("Converting GeoTIFF to MBTILES")
-    translate_options = gdal.TranslateOptions(format='MBTILES', creationOptions=['TILE_FORMAT=WEBP', 'BLOCKSIZE=512'])
-    gdal.Translate(outfile, ds, options=translate_options)
+    """
+    Convert a GeoTIFF file to an MBTiles file with WEBP tiles
 
-    process_zoom_levels(outfile, target_zoom=7)
+    GDAL reprojects the image to Web Mercator and picks the highest zoom level
+    to match the resolution of the source. The lower zoom levels, down to
+    MIN_ZOOM, are then computed from the highest one. Lanczos resampling is
+    used in both steps, because it keeps text and lines crisp.
+
+    :param infile: Path of the GeoTIFF file
+
+    :param outfile: Path of the MBTiles file to create
+    """
+    gdal.UseExceptions()
+
+    # GDAL opens an MBTiles file for update only if its name ends in
+    # '.mbtiles'. So work on a temporary file with that ending. This also
+    # ensures that an unfinished file never appears under the name 'outfile'.
+    tmpfile = outfile + '.part.mbtiles'
+    if os.path.exists(tmpfile):
+        os.remove(tmpfile)
+
+    try:
+        print("Converting GeoTIFF to MBTILES")
+        ds = gdal.Open(infile)
+        # The 'name' metadata entry is the name of 'outfile' without its
+        # ending, e.g. "Switzerland ICAO Chart".
+        name = os.path.splitext(os.path.basename(outfile))[0]
+        translate_options = gdal.TranslateOptions(format='MBTILES', creationOptions=[
+            'TILE_FORMAT=WEBP', f'BLOCKSIZE={TILE_SIZE}', 'RESAMPLING=LANCZOS', f'NAME={name}', f'DESCRIPTION={name}'])
+        out_ds = gdal.Translate(tmpfile, ds, options=translate_options)
+        out_ds = None  # Closes the file
+        ds = None
+
+        conn = sqlite3.connect(tmpfile)
+        max_zoom = int(conn.execute("SELECT value FROM metadata WHERE name = 'maxzoom'").fetchone()[0])
+        conn.close()
+
+        # Lower zoom levels are overviews in GDAL terms. GDAL writes them as
+        # tiles of the same size and updates the 'minzoom' metadata entry.
+        factors = [2**n for n in range(1, max_zoom - MIN_ZOOM + 1)]
+        if factors:
+            print(f"Computing zoom levels {MIN_ZOOM}-{max_zoom - 1}")
+            out_ds = gdal.OpenEx(tmpfile, gdal.OF_RASTER | gdal.OF_UPDATE, open_options=['TILE_FORMAT=WEBP', 'QUALITY=85'])
+            out_ds.BuildOverviews('LANCZOS', factors)
+            out_ds = None
+
+        # The app reads the tile size from this entry. Without it, the app has
+        # to guess the size from an arbitrary tile.
+        conn = sqlite3.connect(tmpfile)
+        conn.execute("INSERT INTO metadata (name, value) VALUES ('tileSize', ?)", (str(TILE_SIZE),))
+        conn.commit()
+        conn.close()
+    except BaseException:
+        if os.path.exists(tmpfile):
+            os.remove(tmpfile)
+        raise
+
+    os.replace(tmpfile, outfile)
 
 def update_mbtiles_metadata(mbtiles_path, attribution=None, description=None, version=None):
     """

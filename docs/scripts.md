@@ -84,7 +84,7 @@ Builds raster charts from two kinds of sources:
 - **GeoTIFF charts** are listed in the `maps` table at the top of the script: currently the French ICAO chart and the Swiss ICAO and glider charts.
   - They are downloaded by HTTPS or SFTP and cached in `tiff_storage/`.
   - They are converted to WEBP MBTiles by `GeoTIFF2MBTILES.py`, which needs GDAL.
-  - A chart is reconverted only if the remote file is newer than the cached copy.
+  - A chart is converted if the remote file is newer than the cached copy. It is also converted if the last conversion did not finish, or if `VERSION` in `GeoTIFF2MBTILES.py` has changed since. The script records each successful conversion in `tiff_storage/{Chart name}.tiff.converted`.
 - **open flightmaps VFR charts** are listed in the `ofm_maps` table.
   - For the current AIRAC cycle, the script downloads the slippy-tile package of each region from the open flightmaps snapshot bucket and caches it in `ofm_storage/{airac}/`, together with an `.etag` file.
   - Cached data of older cycles is deleted after the first successful download in a new cycle.
@@ -127,7 +127,7 @@ These modules are imported by the generators and have no command-line interface 
 | [`OFMX.py`](../scripts/OFMX.py) | Reads open flightmaps OFMX files: nature reserve areas, procedures, reporting points. The list of regions is at the top of the file. `currentAirac()` returns the current AIRAC cycle. |
 | [`openAIP2.py`](../scripts/openAIP2.py) | Reads the openAIP REST API (`x-openaip-api-key` header, env `openAIP`) and converts airports, airspaces, navaids and reporting points to GeoJSON features. Also simplifies geometries. |
 | [`vector_tile.py`](../scripts/vector_tile.py) | Base map helpers: `pbf2mbtiles` (osmium + tilemaker), `removeForeignTiles`, `optimizeVectorTiles`, `checkTilemakerSources`. Uses `vector_tile_pb2.py`, generated from `vector_tile.proto` (the Mapbox vector tile schema). To regenerate it, run `pip install grpcio-tools` and then `python3 -m grpc_tools.protoc -I. --python_out=. vector_tile.proto` in `scripts/`. |
-| [`GeoTIFF2MBTILES.py`](../scripts/GeoTIFF2MBTILES.py) | GeoTIFF → WEBP MBTiles with GDAL; computes lower zoom levels; `update_mbtiles_metadata()` is also used for open flightmaps charts. Can be run directly: `python3 GeoTIFF2MBTILES.py in.tif out.mbtiles`. |
+| [`GeoTIFF2MBTILES.py`](../scripts/GeoTIFF2MBTILES.py) | GeoTIFF → WEBP MBTiles, including the lower zoom levels, all done by GDAL with Lanczos resampling. Increase `VERSION` when a change alters the generated files, so that cached GeoTIFFs are converted again. `update_mbtiles_metadata()` is also used for open flightmaps charts. Can be run directly: `python3 GeoTIFF2MBTILES.py in.tif out.mbtiles`. |
 | [`SlippyTiles2MBTILES.py`](../scripts/SlippyTiles2MBTILES.py) | open flightmaps slippy-tile zip → WEBP MBTiles. Can be run directly: `python3 SlippyTiles2MBTILES.py in.zip out.raster "Map name"`. |
 | [`TripKit2VACCollection.py`](../scripts/TripKit2VACCollection.py) | TripKit zip → `.vac` SQLite container. |
 

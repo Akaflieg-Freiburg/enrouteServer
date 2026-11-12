@@ -489,6 +489,7 @@ def build(cache, outfile, source_zoom, content, quality):
             'bounds': ','.join('{:.6f}'.format(b) for b in bounds),
             'minzoom': str(min_zoom),
             'maxzoom': str(max_zoom),
+            'tileSize': str(OUTPUT_TILE_SIZE),
             'attribution': MAP_ATTRIBUTION,
             'description': MAP_DESCRIPTION,
         }
