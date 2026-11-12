@@ -145,7 +145,7 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
             True
         dbConnection = sqlite3.connect(tmpFileName)
         cursor = dbConnection.cursor()
-        cursor.execute('CREATE TABLE metadata (name text, value text)')
+        cursor.execute('CREATE TABLE metadata (name text, value text, UNIQUE (name))')
         cursor.execute("INSERT INTO metadata (name, value) VALUES ('name', '{}')".format(
             region['continent']+'/'+region['name']))
         cursor.execute(
@@ -168,8 +168,6 @@ United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data cou
             ','+str(bbox[2])+','+str(bbox[3])
         cursor.execute(
             "INSERT INTO metadata (name, value) VALUES ('bounds', '{}')".format(bboxString))
-        cursor.execute(
-            "INSERT INTO metadata (name, value) VALUES ('attribution', 'None yet')")
         cursor.execute(
             'CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)')
 

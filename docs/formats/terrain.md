@@ -20,7 +20,7 @@ A `.terrain` file is an MBTiles SQLite database that contains elevation tiles.
 
 ## Metadata
 
-Table `metadata(name, value)`:
+Table `metadata(name, value)`, with `name` unique:
 
 | Key | Value |
 |---|---|
@@ -34,4 +34,6 @@ Table `metadata(name, value)`:
 | `bounds` | `lon_min,lat_min,lon_max,lat_max` (the region's bounding box) |
 | `attribution` | attribution text required by the elevation data providers, lines separated by `<br>` |
 
-> **Known deviation:** the metadata table has no unique key. The producer inserts `attribution` twice, the second time with the value `None yet` ([#73](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/73)).
+## Changes to this specification
+
+- **2026-11**: the metadata table now has a unique key on `name`, and `attribution` appears only once. Before, the producer inserted a second `attribution` row with the value `None yet` ([#73](https://github.com/Akaflieg-Freiburg/enrouteServer/issues/73)).
